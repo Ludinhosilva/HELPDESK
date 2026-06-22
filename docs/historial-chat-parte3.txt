@@ -1,0 +1,182 @@
+======================================================================
+HISTORIAL DE CHAT - PC REPAIR HELP DESK (Completo)
+Fecha: 26/05/2026
+======================================================================
+
+ARCHIVOS DE HISTORIAL DEL PROYECTO:
+  1. docs/historial-chat.txt         - Plan inicial y decisiones
+  2. docs/historial-chat-parte2.txt  - Fase 0 y Fase 1 (setup + auth)
+  3. docs/historial-chat-parte3.txt  - ESTE ARCHIVO (completo hasta ahora)
+
+======================================================================
+RESUMEN CRONOLOGICO COMPLETO
+======================================================================
+
+FASE 0: PLANIFICACION Y SETUP
+------------------------------
+- Exploracion del workspace D:\HelpDesk, encontrados grtc-helpdesk y pc-watchdog-api
+- Decisiones del usuario: proyecto NUEVO desde cero, monolito Next.js, NextUI, solo gratis
+- Stack: Next.js 14 + NextUI + Prisma/SQLite + Vitest + Playwright
+- Proyecto creado con create-next-app, dependencias instaladas
+- Prisma schema refinado (SQLite no soporta enums, autoincrement en no-id)
+- Archivos fundacionales: DESIGN_TOKENS.md, domain-model.md, ADRs, spec Gherkin
+- Estructura de carpetas: core/, lib/, modules/, docs/, __tests__/, e2e/
+
+FASE 1: AUTH (LOGIN, REGISTER, LOGOUT)
+---------------------------------------
+- Middleware JWT con jose, cookie httpOnly, protege /dashboard/* y /api/*
+- API routes: POST /api/auth/login, /api/auth/register, /api/auth/logout
+- Zod schemas para validacion (LoginSchema, RegisterSchema)
+- LoginForm con NextUI (email, password, link a register)
+- RegisterForm con NextUI (nombre, email, password, rol Select)
+- Seed con admin@taller.com y tecnico@taller.com
+- Tests unitarios 12/12 pasando (auth actions + API routes)
+- Tests E2E 22 escritos con Playwright (caja negra)
+- Bugs corregidos: IconWrench→IconTool, colores dinamicos Tailwind, SelectItem value
+- Login/register usan window.location.href (router.push no funcionaba en tests)
+
+FASE 2: CRUD CUSTOMERS + DEVICES
+---------------------------------
+- API Customers: GET/POST /api/customers, GET/PUT/DELETE /api/customers/[id]
+- API Devices: GET/POST /api/devices, GET/PUT/DELETE /api/devices/[id]
+- Zod schemas: CustomerSchema, DeviceSchema con validaciones
+- Customers page: tabla con busqueda, modal crear/editar (nombre, telefono, email)
+- Devices page: tabla con busqueda, modal crear/editar (marca, modelo, serial, tipo, cliente selector)
+- Validaciones: serial unico, cliente requerido, device pertenece al customer seleccionado
+
+FASE 3: CORE TICKETING
+-----------------------
+- Tipos: CreateTicketSchema, UpdateTicketSchema, AssignTicketSchema
+- VALID_STATUS_TRANSITIONS: RECEIVED→DIAGNOSING→REPAIRING/WAITING→READY→DELIVERED
+- TicketNumber autoincremental (MAX+1)
+- API Tickets: GET/POST /api/tickets, GET/PUT/PATCH /api/tickets/[id]
+- API Users: GET /api/users (lista tecnicos para asignacion)
+- Tickets page: tabla con busqueda + filtro por estado
+  - Modal crear: cliente selector → device filtrado, descripcion, prioridad, costo
+  - Modal detalle: info completa + historial + cambio de estado con botones
+  - Modal asignar: selector de tecnico
+- Historial en cada accion: CREATED, STATUS_CHANGE, ASSIGNMENT
+- api-client actualizado para soportar PATCH
+- Dashboard con datos reales de BD (4 cards)
+- Technicians page con listado de usuarios
+
+FASE 4: SEED DEMO + CIERRE DE TICKET
+-------------------------------------
+- Seed masivo con datos realistas:
+  - 4 usuarios (admin + 3 tecnicos con especialidades)
+  - 6 clientes (persona natural + empresa + colegio)
+  - 10 equipos (LAPTOP, DESKTOP, ALL_IN_ONE, TABLET)
+  - 12 tickets en TODOS los estados:
+    2 RECEIVED, 2 DIAGNOSING, 2 REPAIRING, 2 WAITING_PARTS, 2 READY, 2 DELIVERED
+- Cierre de ticket: READY → DELIVERED registra costo final en historial
+- History: "Ticket entregado al cliente. Costo final: S/ XX.XX"
+
+======================================================================
+ESTRUCTURA FINAL DEL PROYECTO
+======================================================================
+
+pc-repair-helpdesk/
+  prisma/
+    schema.prisma         - 5 modelos (User, Customer, Device, Ticket, TicketHistory)
+    seed.ts               - 4 users, 6 customers, 10 devices, 12 tickets
+    dev.db                - SQLite generado
+  src/
+    core/
+      prisma.ts           - Prisma singleton
+      api-client.ts       - Fetch wrapper (GET/POST/PUT/DELETE/PATCH)
+    lib/
+      utils.ts            - cn() helper
+    middleware.ts          - JWT cookie auth, protege /dashboard/* y /api/*
+    modules/
+      auth/
+        types/auth.types.ts       - LoginSchema, RegisterSchema (Zod)
+        actions/auth-actions.ts   - loginUser(), registerUser(), generateToken()
+        components/
+          login-form.tsx          - Email, password, link a register
+          register-form.tsx       - Nombre, email, password, rol Select
+      customers/
+        types/customer.types.ts   - CustomerSchema
+        actions/customer-actions.ts - CRUD con paginacion y busqueda
+      devices/
+        types/device.types.ts     - DeviceSchema
+        actions/device-actions.ts - CRUD con validacion de serial y cliente
+      tickets/
+        types/ticket.types.ts     - Schemas + VALID_STATUS_TRANSITIONS
+        actions/ticket-actions.ts - create, update, assign, getNextTicketNumber
+    app/
+      layout.tsx          - Root layout (<html class="dark"> + Inter + Providers)
+      providers.tsx        - NextUIProvider
+      page.tsx             - Login form
+      globals.css          - Tailwind + design tokens
+      (auth)/
+        login/page.tsx     - Login page
+        register/page.tsx  - Register page
+      (dashboard)/
+        layout.tsx         - Sidebar + Navbar + User avatar
+        dashboard/page.tsx - 4 cards con datos reales
+        tickets/page.tsx   - Tabla + crear + detalle + historial + asignar
+        customers/page.tsx - Tabla + crear/editar/eliminar
+        devices/page.tsx   - Tabla + crear/editar/eliminar con selector cliente
+        technicians/page.tsx - Listado de tecnicos
+      api/
+        auth/login/route.ts     - POST
+        auth/register/route.ts  - POST
+        auth/logout/route.ts    - POST
+        customers/route.ts      - GET, POST
+        customers/[id]/route.ts - GET, PUT, DELETE
+        devices/route.ts        - GET, POST
+        devices/[id]/route.ts   - GET, PUT, DELETE
+        tickets/route.ts        - GET, POST
+        tickets/[id]/route.ts   - GET, PUT, PATCH
+        users/route.ts          - GET (tecnicos)
+  docs/
+    DESIGN_TOKENS.md      - Colores, tipografia, spacing, sombras, iconos
+    domain-model.md       - 5 entidades, ciclo de vida, 7 reglas de negocio
+    adr/001-monolito-nextjs.md   - Arquitectura
+    adr/002-auth-strategy.md     - JWT + cookie httpOnly
+    specs/001-crear-ticket.md    - Spec SDD con 10 casos Gherkin
+  __tests__/
+    services/auth.test.ts - 9 tests (login/register)
+    api/auth.test.ts      - 3 tests (API endpoints)
+  e2e/
+    auth.spec.ts          - 5 tests (login UI)
+    register.spec.ts      - 5 tests (register UI)
+    dashboard.spec.ts     - 5 tests (dashboard UI)
+    auth-guard.spec.ts    - 4 tests (auth middleware)
+    security.spec.ts      - 3 tests (SQL Injection, XSS)
+
+======================================================================
+CONFIGURACION
+======================================================================
+
+package.json:
+  Scripts: dev, build, test, test:watch, test:cov, test:e2e, db:*
+  Dependencies: Next.js 14, NextUI v2, Prisma 5, bcryptjs, jose 5, zod, framer-motion, tabler-icons, clsx, tailwind-merge
+  DevDeps: vitest, playwright, typescript, tailwind, postcss, eslint, prisma, tsx, testing-library
+
+tailwind.config.ts: nextui() plugin, darkMode "class"
+vitest.config.ts: jsdom, include __tests__/**, path aliases
+playwright.config.ts: chromium, baseURL localhost:3000
+
+======================================================================
+ESTADISTICAS
+======================================================================
+
+Archivos de codigo: 50+
+Rutas Next.js: 19 (paginas + API routes)
+Tests unitarios: 12/12 pasando
+Tests E2E escritos: 22 (inestables en Windows dev server)
+Build: verde
+Base de datos: SQLite (prisma/dev.db)
+Seed: 4 users, 6 customers, 10 devices, 12 tickets
+
+======================================================================
+CREDENCIALES
+======================================================================
+
+admin@taller.com    / 123456  (ADMIN - Gestion)
+carlos@taller.com   / 123456  (TECHNICIAN - Hardware)
+maria@taller.com    / 123456  (TECHNICIAN - Software)
+pedro@taller.com    / 123456  (TECHNICIAN - Electronica)
+
+======================================================================

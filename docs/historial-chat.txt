@@ -1,0 +1,165 @@
+======================================================================
+HISTORIAL DE CONVERSACION - PC REPAIR HELP DESK
+Fecha: 25/05/2026
+======================================================================
+
+1. CONTEXTO INICIAL
+-------------------
+Resumen de conocimientos adquiridos en clase:
+- Testing: unitarias, integracion, regresion
+- Caja Blanca: logica interna, seguridad (SQL Injection, XSS)
+- Caja Negra: entradas/salidas, flujos de usuario
+- SDD (Spec-Driven Development): agentes de IA con roles definidos
+  - Arquitecto: orquestador que toma decisiones de diseno y patrones
+  - Desarrollador: ejecutor enfocado en tareas tecnicas
+  - Disenador/Tester: validacion de resultados
+- Principios SOLID para software testeable
+- Cobertura de codigo target: 80-100%
+- OpenCode + DeepSeek como alternativa gratuita para modelos IA
+- Archivos .md para specs, ADRs, design tokens (mantienen contexto IA)
+- Design tokens: colores, tipografia, espaciado para evitar caos visual
+
+2. EXPLORACION DEL WORKSPACE (D:\HelpDesk)
+-------------------------------------------
+Proyectos existentes:
+
+A) grtc-helpdesk/
+   - Next.js 14 + NextUI + Prisma/SQLite
+   - Frontend con login, RBAC (usuarios/roles/permisos)
+   - La mayoria de paginas son placeholders vacios
+   - Autentica contra API Django externa (no local)
+   - CERO tests
+
+B) pc-watchdog-api/
+   - NestJS 10 + Prisma + JWT + Swagger
+   - CRUD completo: tickets, maquinas, errores, usuarios, notificaciones
+   - Directorios de test vacios (solo config, sin tests escritos)
+   - Modulo dashboard registrado pero sin implementar
+
+Ambos forman "PC Watchdog": help desk universitario de monitoreo de PCs.
+
+3. DECISIONES DEL USUARIO
+--------------------------
+Pregunta: Mejorar existente o crear nuevo?
+Respuesta: Crear uno nuevo desde cero
+
+Pregunta: Entorno de IA?
+Respuesta: Solo herramientas gratuitas
+
+Pregunta: Funcionalidad minima?
+Respuesta: Ticketing completo (crear/editar/cerrar, asignar tecnicos, historial)
+
+Pregunta: Arquitectura (NestJS+React separados vs Monolito Next.js)?
+Respuesta: Monolito Next.js (Recomendado)
+
+Pregunta: Libreria UI (shadcn/ui vs NextUI)?
+Respuesta: NextUI (Recomendado)
+
+4. PLAN FINAL APROBADO
+-----------------------
+Nombre del proyecto: PC Repair Help Desk
+Ubicacion: D:\HelpDesk\pc-repair-helpdesk\
+
+Stack tecnologico (100% gratuito):
+- Frontend/Backend: Next.js 14 (App Router)
+- UI: NextUI + Tailwind CSS
+- ORM: Prisma + SQLite
+- Auth: JWT + bcryptjs
+- Testing unitario: Vitest + Testing Library
+- Testing E2E: Playwright
+- Linting: ESLint + Prettier
+
+Estructura del proyecto:
+pc-repair-helpdesk/
+  prisma/schema.prisma
+  src/
+    app/
+      api/                   # Backend: API Routes
+        auth/                # Login/register
+        tickets/             # CRUD + asignar + cerrar
+        customers/           # CRUD clientes
+        devices/             # CRUD equipos
+        technicians/         # CRUD tecnicos
+      (auth)/page.tsx        # Login page
+      (dashboard)/           # Protected pages
+        dashboard/           # Metricas
+        tickets/             # Gestion de tickets
+        customers/           # Clientes
+        layout.tsx           # Sidebar + Navbar
+    core/
+      prisma.ts              # Prisma singleton
+      api-client.ts          # Fetch wrapper tipado
+    lib/utils.ts             # cn() + helpers
+    middleware.ts             # JWT/cookie auth protection
+  docs/
+    specs/                   # SDD: specs por feature (Gherkin)
+      001-crear-ticket.md
+      002-listar-tickets.md
+      003-asignar-tecnico.md
+      004-cambiar-estado.md
+      005-cerrar-ticket.md
+    adr/                     # Decisiones de arquitectura
+    DESIGN_TOKENS.md         # Tokens de diseno
+    domain-model.md          # Modelo de dominio
+  __tests__/                 # Vitest unitarios (caja blanca)
+    services/                # Tests de logica de negocio
+    api/                     # Tests de API routes
+  e2e/                       # Playwright (caja negra)
+    auth.spec.ts             # Flujo login/registro
+    tickets.spec.ts          # Flujo completo de tickets
+    security.spec.ts         # SQL Injection, XSS
+  vitest.config.ts
+  playwright.config.ts
+  package.json
+
+Modelo de dominio (MVP Ticketing):
+- Customer (name, phone, email)
+- Device (brand, model, serial, type, accessories)
+- Ticket (description, status, priority, cost, notes)
+- Technician (name, email, specialty)
+- TicketHistory (action, description, timestamp)
+
+Estados del ticket:
+RECEIVED -> DIAGNOSING -> REPAIRING -> WAITING_PARTS -> READY -> DELIVERED
+
+Especificaciones SDD (formato Gherkin):
+Cada spec sigue el template:
+  - Descripcion del feature
+  - Casos de uso: Given/When/Then
+  - Caso happy path
+  - Caso validaciones/errores
+  - Caso SQL Injection (caja blanca - seguridad)
+  - Reglas de negocio
+  - Criterios de aceptacion
+
+Estrategia de testing:
++----------------+-------------+----------------------------------+-----------------+
+| Capa           | Herramienta | Que prueba                       | Cobertura       |
++----------------+-------------+----------------------------------+-----------------+
+| Unitarios      | Vitest      | Services, validaciones, helpers  | >90%            |
+| API            | Vitest      | API Routes: happy+error+edge     | >85%            |
+| E2E            | Playwright  | Flujos de usuario (caja negra)   | >80% flujos     |
+| Seguridad      | Playwright  | SQL Injection, XSS, auth bypass  | Todos los forms |
++----------------+-------------+----------------------------------+-----------------+
+
+Fases de implementacion:
++------+---------------------------------------------+---------------------+
+| Fase | Entregable                                  | Tests               |
++------+---------------------------------------------+---------------------+
+| 0    | Setup: proyecto, Prisma, DESIGN_TOKENS, DM  | --                  |
+| 1    | Auth (login/register JWT) + middleware      | Unit + API          |
+| 2    | CRUD Customers + CRUD Devices               | Unit + API          |
+| 3    | Core: Crear ticket, listar, ver detalle     | Unit + API + E2E    |
+| 4    | Asignar tecnico, cambiar estado, cerrar     | Unit + API + E2E    |
+| 5    | Dashboard + tests de seguridad              | E2E + Security      |
++------+---------------------------------------------+---------------------+
+
+Flujo SDD con roles IA:
+  1. Arquitecto IA produce spec en docs/specs/
+  2. Desarrollador IA implementa codigo segun spec
+  3. Desarrollador IA escribe tests caja blanca (unitarios)
+  4. Tester IA escribe tests caja negra (E2E/seguridad)
+
+======================================================================
+Estado: Plan aprobado, Fase 0 pendiente de inicio
+======================================================================

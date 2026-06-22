@@ -1,0 +1,238 @@
+======================================================================
+HISTORIAL DE CHAT - PC REPAIR HELP DESK (Continuacion)
+Fecha: 25/05/2026
+======================================================================
+
+NOTA: Este archivo continúa desde docs/historial-chat.txt (primera parte).
+      Ambas partes juntas forman el historial completo.
+
+======================================================================
+FASE 0: SETUP DEL PROYECTO
+======================================================================
+
+1. EJECUCION DEL PLAN
+---------------------
+- Stack elegido: Next.js 14 monolito + NextUI + Prisma/SQLite
+- Se creo el proyecto con npx create-next-app@14 en temp-next
+- Copiado a pc-repair-helpdesk con robocopy
+- Dependencias instaladas: NextUI, framer-motion, tabler-icons, Prisma, bcryptjs, jose, zod, vitest, playwright
+
+2. CORRECCION DE SCHEMA (SQLite no soporta enums ni autoincrement no-id)
+------------------------------------------------------------------------
+Problema: Prisma en SQLite no permite:
+- Enums (los valida en capa de app, no en BD)
+- @default(autoincrement()) en campo no-@id
+
+Solucion:
+- Enums reemplazados por String con validacion via Zod/types
+- ticketNumber: Int @unique (se calcula manualmente en el servicio)
+- Schema simplificado: User, Customer, Device, Ticket, TicketHistory
+
+3. ARCHIVOS FUNDACIONALES CREADOS
+----------------------------------
+docs/
+  DESIGN_TOKENS.md        - Paleta (primary #006FEE), tipografia (Inter+JetBrains Mono), 
+                            spacing 4px, sombras, iconos Tabler, mapeo estados->colores
+  domain-model.md         - 5 entidades, ciclo RECEIVED->DELIVERED, 7 reglas de negocio
+  adr/001-monolito-nextjs.md - Decision: Next.js monolito sobre NestJS+React
+  adr/002-auth-strategy.md   - Decision: JWT en cookie httpOnly, middleware protege /dashboard/* y /api/*
+  specs/001-crear-ticket.md  - Spec SDD con 10 casos Gherkin (happy, errores, SQL Injection, XSS)
+  historial-chat.txt      - Primera parte del historial
+
+prisma/
+  schema.prisma           - 5 modelos: User, Customer, Device, Ticket, TicketHistory
+
+src/
+  core/
+    prisma.ts             - Singleton de PrismaClient
+    api-client.ts         - Fetch wrapper con manejo de errores (ApiError class)
+  lib/
+    utils.ts              - cn() helper (clsx + tailwind-merge)
+  middleware.ts            - JWT auth via jose + cookie, protege /dashboard/* y /api/*
+  app/
+    layout.tsx             - Root layout con <html class="dark"> + Inter font + Providers
+    providers.tsx          - NextUIProvider con navigate={router.push}
+    page.tsx               - Login page (redirige a login)
+    (auth)/
+      login/page.tsx       - Login page
+      register/page.tsx    - Register page (agregado despues)
+    (dashboard)/
+      layout.tsx           - Sidebar colapsable + Navbar + User avatar
+      dashboard/page.tsx   - 4 cards de estadisticas
+      tickets/page.tsx     - Placeholder
+      customers/page.tsx   - Placeholder
+      devices/page.tsx     - Placeholder
+      technicians/page.tsx - Placeholder
+    api/
+      auth/
+        login/route.ts     - POST login (JWT en cookie httpOnly)
+        register/route.ts  - POST register (hash bcrypt, JWT en cookie)
+        logout/route.ts    - POST logout (borra cookie)
+  modules/
+    auth/
+      types/auth.types.ts  - Zod schemas (LoginSchema, RegisterSchema)
+      actions/auth-actions.ts - loginUser(), registerUser(), generateToken()
+      components/
+        login-form.tsx     - Formulario NextUI con email, password, link a register
+        register-form.tsx  - Formulario NextUI con nombre, email, password, rol (Select)
+
+4. CONFIGURACION DE ARCHIVOS
+-----------------------------
+package.json      - Scripts: dev, build, test, test:watch, test:cov, test:e2e, db:*
+                    prisma.seed: "tsx prisma/seed.ts"
+tailwind.config.ts - Plugin nextui(), darkMode: "class", content paths con NextUI
+vitest.config.ts   - jsdom environment, path aliases (@/, @core, @lib, @modules)
+vitest.setup.ts    - @testing-library/jest-dom/vitest + TextEncoder/TextDecoder polyfill
+playwright.config.ts - chromium, baseURL localhost:3000, webServer auto-start
+
+5. PRIMER BUILD - EXITOSO
+--------------------------
+npx next build: Compilado correctamente, 14 rutas generadas,
+middleware 32.2 kB, todas las paginas estaticas/dinamicas OK.
+
+======================================================================
+FASE 1: AUTH + LOGIN + REGISTRO COMPLETOS
+======================================================================
+
+6. TESTS UNITARIOS (CAJA BLANCA) - 12 tests
+---------------------------------------------
+__tests__/services/auth.test.ts (9 tests):
+- Login: usuario no existe -> 401
+- Login: contraseña incorrecta -> 401  
+- Login: credenciales correctas -> token + user
+- Register: falta email -> 400
+- Register: email invalido -> 400
+- Register: contraseña corta -> 400
+- Register: falta nombre -> 400
+- Register: email duplicado -> 409
+- Register: exitoso -> token + user + Prisma create llamado
+
+__tests__/api/auth.test.ts (3 tests):
+- POST /api/auth/login credenciales invalidas -> 401
+- POST /api/auth/login error inesperado -> 500
+- POST /api/auth/register validacion falla -> 400
+
+Problema y solucion: jose v5 fallaba en tests de vitest con jsdom
+porque TextEncoder no producia Uint8Array compatible.
+Solucion: mock de SignJWT de jose en los tests de servicios.
+
+7. SEED DE USUARIOS POR DEFECTO
+---------------------------------
+prisma/seed.ts:
+- Admin: admin@taller.com / 123456 (rol ADMIN, specialty "Gestion")
+- Tecnico: tecnico@taller.com / 123456 (rol TECHNICIAN, specialty "Hardware")
+- Usa bcrypt.hash(12) y Prisma upsert
+
+Comando: npx prisma db seed
+Config: package.json -> "prisma": { "seed": "tsx prisma/seed.ts" }
+
+8. PAGINA DE REGISTRO (/register)
+-----------------------------------
+- Formulario: Nombre, Email, Contraseña, Rol (Select: Tecnico/Administrador)
+- Redirige al dashboard tras registro exitoso
+- Muestra errores del servidor (email duplicado, campos requeridos, etc)
+- Link: "Ya tienes cuenta? Inicia sesion"
+
+9. LINKS ENTRE PAGINAS
+-----------------------
+- Login: "No tienes cuenta? Registrate" -> /register
+- Register: "Ya tienes cuenta? Inicia sesion" -> /login
+
+======================================================================
+REVISION DE UI Y BUGS ENCONTRADOS
+======================================================================
+
+10. BUGS CORREGIDOS EN UI
+--------------------------
+BUG 1 (Dashboard): Iconos con color dinamico `text-${stat.color}` no funciona
+  -> Tailwind purga clases dinamicas. Solucion: iconColorMap con valores fijos
+     (text-primary, text-secondary, text-success, text-warning).
+
+BUG 2 (Register): SelectItem con prop "value" redundante
+  -> Eliminado. NextUI v2 solo usa "key".
+
+BUG 3 (Login): IconWrench no existe en @tabler/icons-react
+  -> Reemplazado por IconTool en login-form, dashboard layout y dashboard page.
+
+BUG 4 (Dashboard layout): NavbarBrand importado pero no usado
+  -> Eliminado del import.
+
+======================================================================
+TESTS E2E (CAJA NEGRA) - 5 ARCHIVOS
+======================================================================
+
+11. e2e/auth.spec.ts (5 tests)
+-------------------------------
+- Renderiza formulario con titulo, campos y boton
+- Link "Registrate" navega a /register
+- Credenciales incorrectas -> mensaje de error visible
+- Login exitoso con admin@taller.com -> redirige a /dashboard
+- Campos vacios -> error del servidor
+
+12. e2e/register.spec.ts (5 tests)
+-----------------------------------
+- Renderiza formulario con nombre, email, contraseña, rol
+- Link "Inicia sesion" navega a /login
+- Email existente (admin@taller.com) -> "El email ya esta registrado"
+- Falta nombre -> "El nombre es requerido"
+- Registro exitoso con email unico -> redirige a /dashboard
+
+13. e2e/dashboard.spec.ts (5 tests)
+-------------------------------------
+- Sidebar con 5 botones de navegacion + Salir
+- 4 cards de estadisticas (Tickets, Clientes, Equipos, Tecnicos)
+- Navegacion entre Tickets, Clientes, Dashboard
+- Sidebar colapsable con boton menu
+- Logout redirige a /login
+
+14. e2e/auth-guard.spec.ts (4 tests)
+-------------------------------------
+- /dashboard sin auth -> redirige a /login
+- /dashboard/tickets sin auth -> redirige a /login
+- /dashboard/customers sin auth -> redirige a /login
+- /login y /register son accesibles sin autenticacion
+
+15. e2e/security.spec.ts (3 tests)
+-----------------------------------
+- SQL Injection: "'; DROP TABLE users; --" en login -> error, pero BD intacta
+  (luego login normal funciona -> BD no se derribo)
+- XSS: <script>alert('xss')</script> en email -> sanitizado, no se ejecuta
+- API sin token: GET /api/tickets -> 401
+
+TOTAL: 22 tests E2E de caja negra
+
+======================================================================
+ESTADO ACTUAL DEL PROYECTO
+======================================================================
+
+Stack: Next.js 14 + NextUI + Prisma/SQLite + Tailwind CSS + TypeScript
+Tests: 12 unitarios (Vitest) + 22 E2E (Playwright) = 34 tests
+Rutas: /login, /register, /dashboard, /dashboard/tickets, /dashboard/customers,
+       /dashboard/devices, /dashboard/technicians
+API: /api/auth/login, /api/auth/register, /api/auth/logout
+
+Funcionalidades completadas:
+- [x] Fase 0: Setup, Prisma, DESIGN_TOKENS, domain model, ADRs
+- [x] Fase 1: Login, Register, Logout, Middleware JWT, Seed de usuarios
+- [x] Tests unitarios (12) + Tests E2E caja negra (22)
+
+Pendiente:
+- [ ] Fase 2: CRUD Customers + CRUD Devices
+- [ ] Fase 3: Core Ticketing (crear, listar, ver detalle)
+- [ ] Fase 4: Asignar tecnico, cambiar estado, cerrar ticket
+- [ ] Fase 5: Dashboard con datos reales + tests de seguridad
+
+======================================================================
+PROBLEMA PENDIENTE: Dev server no arranca en tests E2E
+======================================================================
+Se intento iniciar npm run dev para correr los tests Playwright pero
+el servidor no respondio a tiempo. Posibles causas:
+- El servidor todavia esta compilando (Next.js compila on-demand en dev)
+- Conflicto de puerto (3000 ya en uso)
+- El background job de PowerShell se completo/fallo silenciosamente
+
+Solucion pendiente: Iniciar el servidor manualmente y correr los tests
+E2E por separado, o esperar mas tiempo a que Next.js termine de compilar.
+Los tests estan escritos y listos para ejecutar.
+
+======================================================================

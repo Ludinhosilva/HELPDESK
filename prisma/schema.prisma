@@ -1,0 +1,74 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  password   String
+  name       String
+  role       String   @default("TECHNICIAN")
+  specialty  String   @default("")
+  tickets    Ticket[] @relation("AssignedTechnician")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String
+  email     String?
+  devices   Device[]
+  tickets   Ticket[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Device {
+  id          String   @id @default(uuid())
+  brand       String
+  model       String
+  serial      String   @unique
+  type        String
+  accessories String?
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  tickets     Ticket[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Ticket {
+  id           String          @id @default(uuid())
+  ticketNumber Int             @unique
+  description  String
+  status       String          @default("RECEIVED")
+  priority     String          @default("MEDIUM")
+  cost         Int             @default(0)
+  notes        String?
+  customerId   String
+  customer     Customer        @relation(fields: [customerId], references: [id])
+  deviceId     String
+  device       Device          @relation(fields: [deviceId], references: [id])
+  technicianId String?
+  technician   User?           @relation("AssignedTechnician", fields: [technicianId], references: [id])
+  history      TicketHistory[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+}
+
+model TicketHistory {
+  id          String   @id @default(uuid())
+  ticketId    String
+  ticket      Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  action      String
+  description String
+  userId      String?
+  timestamp   DateTime @default(now())
+}
