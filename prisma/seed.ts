@@ -5,94 +5,137 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log("Limpiando base de datos...");
+  await prisma.emailLog.deleteMany();
+  await prisma.payment.deleteMany();
+  await prisma.subscription.deleteMany();
+  await prisma.subscriptionPlan.deleteMany();
+  await prisma.knowledgeArticle.deleteMany();
+  await prisma.evaluation.deleteMany();
   await prisma.ticketHistory.deleteMany();
+  await prisma.comment.deleteMany();
   await prisma.ticket.deleteMany();
-  await prisma.device.deleteMany();
-  await prisma.customer.deleteMany();
+  await prisma.category.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.organization.deleteMany();
 
-  console.log("Creando usuarios...");
-  const hashedPassword = await bcrypt.hash("123456", 12);
+  const hashedPassword = await bcrypt.hash("admin123", 12);
 
-  const admin = await prisma.user.create({
-    data: { email: "admin@taller.com", password: hashedPassword, name: "Administrador", role: "ADMIN", specialty: "Gestion" },
+  console.log("Creando planes de suscripcion...");
+  const planFree = await prisma.subscriptionPlan.create({
+    data: {
+      name: "Gratis", slug: "free", price: 0, ticketLimit: 50,
+      features: JSON.stringify(["50 tickets/mes", "Dashboard basico", "Base de conocimiento"]),
+      isPopular: false,
+    },
+  });
+  const planBasico = await prisma.subscriptionPlan.create({
+    data: {
+      name: "Basico", slug: "basico", price: 2900, ticketLimit: null,
+      features: JSON.stringify(["Tickets ilimitados", "Analytics basico", "Notificaciones por correo", "Soporte por correo"]),
+      isPopular: false,
+    },
+  });
+  const planPro = await prisma.subscriptionPlan.create({
+    data: {
+      name: "Pro", slug: "pro", price: 7900, ticketLimit: null,
+      features: JSON.stringify(["Todo del plan Basico", "IA clasificacion automatica", "Sugerencias de solucion", "Analytics avanzado", "Soporte prioritario"]),
+      isPopular: true,
+    },
   });
 
+  console.log("Creando organizacion 1: TechCorp...");
+  const org1 = await prisma.organization.create({
+    data: { name: "TechCorp S.A.C.", slug: "techcorp" },
+  });
+
+  const admin1 = await prisma.user.create({
+    data: { email: "admin@techcorp.com", password: hashedPassword, name: "Danny Ordoñez", role: "ADMIN", organizationId: org1.id },
+  });
   const tech1 = await prisma.user.create({
-    data: { email: "carlos@taller.com", password: hashedPassword, name: "Carlos Lopez", role: "TECHNICIAN", specialty: "Hardware" },
+    data: { email: "ludwing@techcorp.com", password: hashedPassword, name: "Ludwing Silva", role: "TECHNICIAN", organizationId: org1.id },
   });
-
   const tech2 = await prisma.user.create({
-    data: { email: "maria@taller.com", password: hashedPassword, name: "Maria Garcia", role: "TECHNICIAN", specialty: "Software" },
+    data: { email: "jhor@techcorp.com", password: hashedPassword, name: "Jhor Grandez", role: "TECHNICIAN", organizationId: org1.id },
+  });
+  const user1 = await prisma.user.create({
+    data: { email: "alex@techcorp.com", password: hashedPassword, name: "Alexander Paredes", role: "END_USER", organizationId: org1.id },
+  });
+  const user2 = await prisma.user.create({
+    data: { email: "andre@techcorp.com", password: hashedPassword, name: "Andre Burga", role: "END_USER", organizationId: org1.id },
   });
 
-  const tech3 = await prisma.user.create({
-    data: { email: "pedro@taller.com", password: hashedPassword, name: "Pedro Mendez", role: "TECHNICIAN", specialty: "Electronica" },
+  console.log("Creando organizacion 2: InnovaSoft...");
+  const org2 = await prisma.organization.create({
+    data: { name: "InnovaSoft E.I.R.L.", slug: "innovasoft" },
+  });
+  const admin2 = await prisma.user.create({
+    data: { email: "admin@innovasoft.com", password: hashedPassword, name: "Renzo Bereca", role: "ADMIN", organizationId: org2.id },
   });
 
-  console.log(`  Admin: ${admin.email}`);
-  console.log(`  Tecnicos: ${tech1.name}, ${tech2.name}, ${tech3.name}`);
+  console.log("Creando categorias...");
+  const cat1 = await prisma.category.create({ data: { name: "Hardware", slug: "hardware", organizationId: org1.id } });
+  const cat2 = await prisma.category.create({ data: { name: "Software", slug: "software", organizationId: org1.id } });
+  const cat3 = await prisma.category.create({ data: { name: "Red", slug: "red", organizationId: org1.id } });
+  const cat4 = await prisma.category.create({ data: { name: "Accesos", slug: "accesos", organizationId: org1.id } });
+  const cat5 = await prisma.category.create({ data: { name: "Otros", slug: "otros", organizationId: org1.id } });
 
-  console.log("Creando clientes...");
-  const c1 = await prisma.customer.create({ data: { name: "Roberto Angulo", phone: "987654321", email: "roberto@gmail.com" } });
-  const c2 = await prisma.customer.create({ data: { name: "Lucia Fernandez", phone: "999888777", email: "lucia@outlook.com" } });
-  const c3 = await prisma.customer.create({ data: { name: "Empresa Comercial SAC", phone: "945123789" } });
-  const c4 = await prisma.customer.create({ data: { name: "Jorge Castillo", phone: "978456123", email: "jorge.castillo@hotmail.com" } });
-  const c5 = await prisma.customer.create({ data: { name: "Colegio San Martin", phone: "963852741" } });
-  const c6 = await prisma.customer.create({ data: { name: "Ana Maria Torres", phone: "991234567", email: "ana.torres@gmail.com" } });
+  await prisma.category.create({ data: { name: "Hardware", slug: "hardware", organizationId: org2.id } });
+  await prisma.category.create({ data: { name: "Software", slug: "software", organizationId: org2.id } });
 
-  console.log(`  ${[c1, c2, c3, c4, c5, c6].length} clientes creados`);
+  console.log("Creando suscripcion...");
+  await prisma.subscription.create({
+    data: {
+      status: "ACTIVE", organizationId: org1.id, planId: planPro.id,
+      nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      payments: {
+        create: { amount: 7900, status: "SUCCESS", reference: "CULQI-001" },
+      },
+    },
+  });
 
-  console.log("Creando equipos...");
-  const d1 = await prisma.device.create({ data: { brand: "Dell", model: "Latitude 5520", serial: "DL5520-001", type: "LAPTOP", accessories: "Cargador original", customerId: c1.id } });
-  const d2 = await prisma.device.create({ data: { brand: "HP", model: "Pavilion x360", serial: "HP360-8822", type: "LAPTOP", accessories: "Cargador, mochila", customerId: c2.id } });
-  const d3 = await prisma.device.create({ data: { brand: "Lenovo", model: "ThinkCentre M720", serial: "LTC720-334", type: "DESKTOP", accessories: "Teclado, mouse", customerId: c3.id } });
-  const d4 = await prisma.device.create({ data: { brand: "Dell", model: "OptiPlex 3080", serial: "DL3080-556", type: "DESKTOP", customerId: c3.id } });
-  const d5 = await prisma.device.create({ data: { brand: "Asus", model: "Vivobook 15", serial: "ASUS15-991", type: "LAPTOP", customerId: c4.id } });
-  const d6 = await prisma.device.create({ data: { brand: "Apple", model: "iMac 24 2023", serial: "IMAC24-772", type: "ALL_IN_ONE", accessories: "Teclado Magic, Magic Mouse", customerId: c5.id } });
-  const d7 = await prisma.device.create({ data: { brand: "HP", model: "EliteBook 840", serial: "HP840-445", type: "LAPTOP", accessories: "Cargador USB-C", customerId: c5.id } });
-  const d8 = await prisma.device.create({ data: { brand: "Acer", model: "Aspire 5", serial: "ACER5-223", type: "LAPTOP", customerId: c6.id } });
-  const d9 = await prisma.device.create({ data: { brand: "Samsung", model: "Galaxy Tab S9", serial: "SGT9-881", type: "TABLET", accessories: "S Pen, funda", customerId: c6.id } });
-  const d10 = await prisma.device.create({ data: { brand: "Lenovo", model: "IdeaPad 3", serial: "LIP3-667", type: "LAPTOP", customerId: c1.id } });
-
-  console.log(`  ${[d1, d2, d3, d4, d5, d6, d7, d8, d9, d10].length} equipos creados`);
-
-  console.log("Creando tickets en diferentes estados...");
-
+  console.log("Creando tickets...");
   const now = new Date();
   const daysAgo = (n: number) => new Date(now.getTime() - n * 24 * 60 * 60 * 1000);
 
-  // --- RECEIVED (recien ingresados) ---
   const tk1 = await prisma.ticket.create({
     data: {
-      ticketNumber: 1, description: "No enciende. El LED del cargador no prende. El cliente menciona que olia a quemado.",
-      status: "RECEIVED", priority: "HIGH", cost: 0, customerId: c1.id, deviceId: d1.id,
-      createdAt: daysAgo(0),
-      history: { create: { action: "CREATED", description: "Ticket TK-1 creado. Equipo ingresado con cargador original." } },
+      ticketNumber: 1, title: "No enciende la laptop Dell",
+      description: "La laptop Dell Latitude no enciende. El LED del cargador no prende. El cliente menciona que olia a quemado.",
+      status: "OPEN", priority: "HIGH", organizationId: org1.id, categoryId: cat1.id, createdById: user1.id,
+      createdAt: daysAgo(2),
+      history: { create: [{ action: "CREATED", description: "Ticket #1 creado por Alexander Paredes" }] },
     },
   });
 
   const tk2 = await prisma.ticket.create({
     data: {
-      ticketNumber: 2, description: "Pantalla parpadea constantemente. A veces se queda en negro por varios segundos.",
-      status: "RECEIVED", priority: "MEDIUM", cost: 0, customerId: c6.id, deviceId: d8.id,
-      createdAt: daysAgo(0),
-      history: { create: { action: "CREATED", description: "Ticket TK-2 creado." } },
+      ticketNumber: 2, title: "Pantalla parpadea constantemente",
+      description: "La pantalla del laptop HP Pavilion parpadea constantemente. A veces se queda en negro por varios segundos.",
+      status: "IN_PROGRESS", priority: "MEDIUM", organizationId: org1.id, categoryId: cat1.id,
+      createdById: user2.id, assignedToId: tech1.id,
+      createdAt: daysAgo(3),
+      history: {
+        create: [
+          { action: "CREATED", description: "Ticket #2 creado por Andre Burga" },
+          { action: "ASSIGNED", description: "Asignado a Ludwing Silva" },
+          { action: "STATUS_CHANGE", description: "Estado cambiado de OPEN a IN_PROGRESS" },
+        ],
+      },
     },
   });
 
-  // --- DIAGNOSING ---
   const tk3 = await prisma.ticket.create({
     data: {
-      ticketNumber: 3, description: "Lentitud extrema al abrir programas. Sospecha de disco duro dañado.",
-      status: "DIAGNOSING", priority: "MEDIUM", cost: 0, technicianId: tech2.id,
-      customerId: c3.id, deviceId: d3.id,
-      createdAt: daysAgo(1),
+      ticketNumber: 3, title: "No funciona el correo electronico",
+      description: "No puedo enviar ni recibir correos desde Outlook. Me marca error de conexion al servidor SMTP.",
+      status: "ON_HOLD", priority: "MEDIUM", organizationId: org1.id, categoryId: cat4.id,
+      createdById: user1.id, assignedToId: tech2.id,
+      createdAt: daysAgo(5),
       history: {
         create: [
-          { action: "CREATED", description: "Ticket TK-3 creado." },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de RECEIVED a DIAGNOSING" },
-          { action: "ASSIGNMENT", description: "Asignado a Maria Garcia" },
+          { action: "CREATED", description: "Ticket #3 creado" },
+          { action: "ASSIGNED", description: "Asignado a Jhor Grandez" },
+          { action: "STATUS_CHANGE", description: "Estado cambiado a ON_HOLD - Esperando configuracion del servidor" },
         ],
       },
     },
@@ -100,74 +143,64 @@ async function main() {
 
   const tk4 = await prisma.ticket.create({
     data: {
-      ticketNumber: 4, description: "Teclas no responden (W, A, S, D). Posible derrame de liquido.",
-      status: "DIAGNOSING", priority: "HIGH", cost: 0, technicianId: tech1.id,
-      customerId: c2.id, deviceId: d2.id,
-      createdAt: daysAgo(1),
+      ticketNumber: 4, title: "Instalar Office 2021 en 5 equipos",
+      description: "Se necesita instalar Microsoft Office 2021 en 5 laptops nuevas para el equipo de contabilidad.",
+      status: "RESOLVED", priority: "LOW", organizationId: org1.id, categoryId: cat2.id,
+      createdById: user2.id, assignedToId: tech1.id, resolvedAt: daysAgo(1),
+      createdAt: daysAgo(7),
       history: {
         create: [
-          { action: "CREATED", description: "Ticket TK-4 creado. Equipo ingresado con cargador y mochila." },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de RECEIVED a DIAGNOSING" },
-          { action: "ASSIGNMENT", description: "Asignado a Carlos Lopez" },
+          { action: "CREATED", description: "Ticket #4 creado" },
+          { action: "ASSIGNED", description: "Asignado a Ludwing Silva" },
+          { action: "STATUS_CHANGE", description: "Estado cambiado a IN_PROGRESS" },
+          { action: "STATUS_CHANGE", description: "Estado cambiado a RESOLVED" },
         ],
       },
     },
   });
 
-  // --- REPAIRING ---
   const tk5 = await prisma.ticket.create({
     data: {
-      ticketNumber: 5, description: "No detecta disco duro. BIOS no muestra el SSD NVMe.",
-      status: "REPAIRING", priority: "CRITICAL", cost: 15000, technicianId: tech1.id,
-      notes: "Se reemplazara el SSD NVMe por uno nuevo de 512GB.",
-      customerId: c4.id, deviceId: d5.id,
-      createdAt: daysAgo(3),
-      history: {
-        create: [
-          { action: "CREATED", description: "Ticket TK-5 creado." },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de RECEIVED a DIAGNOSING" },
-          { action: "ASSIGNMENT", description: "Asignado a Carlos Lopez" },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de DIAGNOSING a REPAIRING" },
-          { action: "NOTE", description: "Diagnostico: SSD NVMe fallado. Sector de arranque corrupto." },
-        ],
-      },
+      ticketNumber: 5, title: "Internet lento en piso 3",
+      description: "El internet del piso 3 esta extremadamente lento. Velocidad de descarga menor a 1 Mbps.",
+      status: "OPEN", priority: "URGENT", organizationId: org1.id, categoryId: cat3.id,
+      createdById: user1.id,
+      createdAt: daysAgo(0),
+      history: { create: [{ action: "CREATED", description: "Ticket #5 creado - URGENTE" }] },
     },
   });
 
   const tk6 = await prisma.ticket.create({
     data: {
-      ticketNumber: 6, description: "Sobrecalentamiento. Ventilador gira al maximo constantemente.",
-      status: "REPAIRING", priority: "MEDIUM", cost: 5000, technicianId: tech3.id,
-      notes: "Se realizara limpieza interna y cambio de pasta termica.",
-      customerId: c5.id, deviceId: d6.id,
-      createdAt: daysAgo(2),
+      ticketNumber: 6, title: "Formateo de laptop ASUS",
+      description: "Laptop ASUS Vivobook muy lenta, necesita formateo completo e instalacion de Windows 11.",
+      status: "CLOSED", priority: "MEDIUM", organizationId: org1.id, categoryId: cat2.id,
+      createdById: user2.id, assignedToId: tech2.id, resolvedAt: daysAgo(3), closedAt: daysAgo(2),
+      createdAt: daysAgo(10),
       history: {
         create: [
-          { action: "CREATED", description: "Ticket TK-6 creado." },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de RECEIVED a DIAGNOSING" },
-          { action: "ASSIGNMENT", description: "Asignado a Pedro Mendez" },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de DIAGNOSING a REPAIRING" },
+          { action: "CREATED", description: "Ticket #6 creado" },
+          { action: "ASSIGNED", description: "Asignado a Jhor Grandez" },
+          { action: "STATUS_CHANGE", description: "Estado cambiado a IN_PROGRESS" },
+          { action: "STATUS_CHANGE", description: "Estado cambiado a RESOLVED" },
+          { action: "STATUS_CHANGE", description: "Estado cambiado a CLOSED" },
         ],
       },
     },
   });
 
-  // --- WAITING_PARTS ---
   const tk7 = await prisma.ticket.create({
     data: {
-      ticketNumber: 7, description: "Pantalla rota. Se necesita reemplazar el panel LCD 15.6 pulgadas.",
-      status: "WAITING_PARTS", priority: "HIGH", cost: 35000, technicianId: tech1.id,
-      notes: "Repuesto pedido: Panel LCD 15.6 FHD IPS. Llegada estimada: 3 dias.",
-      customerId: c5.id, deviceId: d7.id,
-      createdAt: daysAgo(5),
+      ticketNumber: 7, title: "Impresora no responde",
+      description: "La impresora HP LaserJet del area de administracion no responde a solicitudes de impresion.",
+      status: "IN_PROGRESS", priority: "HIGH", organizationId: org1.id, categoryId: cat1.id,
+      createdById: user1.id, assignedToId: tech1.id,
+      createdAt: daysAgo(1),
       history: {
         create: [
-          { action: "CREATED", description: "Ticket TK-7 creado." },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de RECEIVED a DIAGNOSING" },
-          { action: "ASSIGNMENT", description: "Asignado a Carlos Lopez" },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de DIAGNOSING a REPAIRING" },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de REPAIRING a WAITING_PARTS" },
-          { action: "NOTE", description: "Repuesto solicitado a proveedor. Panel LCD 15.6 FHD IPS $350" },
+          { action: "CREATED", description: "Ticket #7 creado" },
+          { action: "ASSIGNED", description: "Asignado a Ludwing Silva" },
+          { action: "STATUS_CHANGE", description: "Estado cambiado a IN_PROGRESS" },
         ],
       },
     },
@@ -175,123 +208,78 @@ async function main() {
 
   const tk8 = await prisma.ticket.create({
     data: {
-      ticketNumber: 8, description: "Bateria no carga. Solo funciona conectado a corriente.",
-      status: "WAITING_PARTS", priority: "MEDIUM", cost: 12000, technicianId: tech3.id,
-      notes: "Repuesto pedido: Bateria original Dell de 4 celdas.",
-      customerId: c1.id, deviceId: d10.id,
-      createdAt: daysAgo(4),
-      history: {
-        create: [
-          { action: "CREATED", description: "Ticket TK-8 creado." },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de RECEIVED a DIAGNOSING" },
-          { action: "ASSIGNMENT", description: "Asignado a Pedro Mendez" },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de DIAGNOSING a WAITING_PARTS" },
-        ],
-      },
+      ticketNumber: 8, title: "Acceso denegado a carpeta compartida",
+      description: "Los usuarios del departamento de ventas no pueden acceder a la carpeta compartida en el servidor.",
+      status: "OPEN", priority: "HIGH", organizationId: org1.id, categoryId: cat4.id,
+      createdById: user2.id,
+      createdAt: daysAgo(0),
+      history: { create: [{ action: "CREATED", description: "Ticket #8 creado" }] },
     },
   });
 
-  // --- READY (listo para entregar) ---
-  const tk9 = await prisma.ticket.create({
+  console.log("Creando evaluaciones...");
+  await prisma.evaluation.create({
+    data: { rating: 5, comment: "Excelente trabajo, rapido y profesional.", ticketId: tk4.id, userId: user2.id },
+  });
+  await prisma.evaluation.create({
+    data: { rating: 4, comment: "Buen servicio, tardó un poco pero quedo bien.", ticketId: tk6.id, userId: user2.id },
+  });
+
+  console.log("Creando articulos de base de conocimiento...");
+  await prisma.knowledgeArticle.create({
     data: {
-      ticketNumber: 9, description: "Formateo e instalacion de Windows 11 + Office 2021.",
-      status: "READY", priority: "LOW", cost: 8000, technicianId: tech2.id,
-      notes: "Instalacion completada. Se realizo respaldo de datos del usuario antes del formateo.",
-      customerId: c6.id, deviceId: d9.id,
-      createdAt: daysAgo(3),
-      history: {
-        create: [
-          { action: "CREATED", description: "Ticket TK-9 creado." },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de RECEIVED a DIAGNOSING" },
-          { action: "ASSIGNMENT", description: "Asignado a Maria Garcia" },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de DIAGNOSING a REPAIRING" },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de REPAIRING a READY" },
-          { action: "NOTE", description: "Equipo probado. Todos los drivers instalados. Windows activado." },
-        ],
-      },
+      title: "Como reiniciar la impresora HP", slug: "reiniciar-impresora-hp",
+      content: "1. Apague la impresora presionando el boton de encendido.\n2. Espere 30 segundos.\n3. Desconecte el cable de corriente.\n4. Espere 1 minuto.\n5. Reconecte y encienda.\n6. Si persiste el problema, verifique el cable USB o la conexion de red.",
+      status: "PUBLISHED", organizationId: org1.id, categoryId: cat1.id, viewCount: 24, helpfulCount: 18,
     },
   });
-
-  const tk10 = await prisma.ticket.create({
+  await prisma.knowledgeArticle.create({
     data: {
-      ticketNumber: 10, description: "Reemplazo de teclado dañado por derrame de cafe.",
-      status: "READY", priority: "HIGH", cost: 9000, technicianId: tech1.id,
-      notes: "Teclado reemplazado. Se limpio placa base para evitar corrosion futura.",
-      customerId: c2.id, deviceId: d2.id,
-      createdAt: daysAgo(6),
-      history: {
-        create: [
-          { action: "CREATED", description: "Ticket TK-10 creado." },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de RECEIVED a DIAGNOSING" },
-          { action: "ASSIGNMENT", description: "Asignado a Carlos Lopez" },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de DIAGNOSING a REPAIRING" },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de REPAIRING a READY" },
-        ],
-      },
+      title: "Configuracion de correo en Outlook", slug: "config-outlook",
+      content: "1. Abra Outlook y vaya a Archivo > Configuracion de cuenta.\n2. Haga clic en Nuevo.\n3. Ingrese su correo electronico.\n4. Ingrese la contraseña proporcionada por TI.\n5. Outlook detectara la configuracion automaticamente.\n6. Haga clic en Finalizar.",
+      status: "PUBLISHED", organizationId: org1.id, categoryId: cat4.id, viewCount: 45, helpfulCount: 32,
     },
   });
-
-  // --- DELIVERED (entregados) ---
-  const tk11 = await prisma.ticket.create({
+  await prisma.knowledgeArticle.create({
     data: {
-      ticketNumber: 11, description: "Equipo no detectaba RAM instalada. Se reemplazo modulo DDR4 8GB.",
-      status: "DELIVERED", priority: "MEDIUM", cost: 12000, technicianId: tech1.id,
-      notes: "Cliente recogio equipo. Todo funcionando correctamente.",
-      customerId: c3.id, deviceId: d4.id,
-      createdAt: daysAgo(10),
-      updatedAt: daysAgo(2),
-      history: {
-        create: [
-          { action: "CREATED", description: "Ticket TK-11 creado." },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de RECEIVED a DIAGNOSING" },
-          { action: "ASSIGNMENT", description: "Asignado a Carlos Lopez" },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de DIAGNOSING a REPAIRING" },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de REPAIRING a READY" },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de READY a DELIVERED" },
-          { action: "NOTE", description: "Entregado al cliente. Pago recepcionado S/ 120.00 en efectivo." },
-        ],
-      },
+      title: "Solucion a internet lento", slug: "internet-lento",
+      content: "1. Reinicie el router desconnectandolo por 30 segundos.\n2. Verifique que no haya descargas pesadas en curso.\n3. Compruebe la velocidad en speedtest.net.\n4. Si el problema persiste, contacte al area de TI para revisar el switch del piso.",
+      status: "PUBLISHED", organizationId: org1.id, categoryId: cat3.id, viewCount: 67, helpfulCount: 41,
     },
   });
-
-  const tk12 = await prisma.ticket.create({
+  await prisma.knowledgeArticle.create({
     data: {
-      ticketNumber: 12, description: "Respaldo de datos y migracion a nueva laptop.",
-      status: "DELIVERED", priority: "LOW", cost: 5000, technicianId: tech2.id,
-      notes: "Datos migrados exitosamente a nuevo equipo Dell XPS 15.",
-      customerId: c4.id, deviceId: d5.id,
-      createdAt: daysAgo(15),
-      updatedAt: daysAgo(5),
-      history: {
-        create: [
-          { action: "CREATED", description: "Ticket TK-12 creado." },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de RECEIVED a DIAGNOSING" },
-          { action: "ASSIGNMENT", description: "Asignado a Maria Garcia" },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de DIAGNOSING a REPAIRING" },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de REPAIRING a READY" },
-          { action: "STATUS_CHANGE", description: "Estado cambiado de READY a DELIVERED" },
-        ],
-      },
+      title: "Borrador: Politica de uso de TI", slug: "politica-uso-ti",
+      content: "Este articulo esta en borrador. Pendiente de aprobacion por el administrador.",
+      status: "DRAFT", organizationId: org1.id, categoryId: cat5.id,
     },
   });
 
-  console.log(`  ${[tk1, tk2, tk3, tk4, tk5, tk6, tk7, tk8, tk9, tk10, tk11, tk12].length} tickets creados`);
+  console.log("Creando logs de email...");
+  await prisma.emailLog.create({
+    data: { to: "alex@techcorp.com", subject: "Ticket #1 creado", body: "Su ticket ha sido registrado exitosamente.", type: "TICKET_CREATED", organizationId: org1.id, ticketId: tk1.id },
+  });
+  await prisma.emailLog.create({
+    data: { to: "ludwing@techcorp.com", subject: "Ticket #2 asignado", body: "Se le ha asignado el ticket #2.", type: "TICKET_ASSIGNED", organizationId: org1.id, ticketId: tk2.id },
+  });
+
   console.log("---");
-  console.log("Resumen de tickets:");
-  console.log("  RECEIVED:     TK-1 (No enciende), TK-2 (Pantalla parpadea)");
-  console.log("  DIAGNOSING:   TK-3 (Lentitud), TK-4 (Teclas no responden)");
-  console.log("  REPAIRING:    TK-5 (SSD fallado), TK-6 (Sobrecalentamiento)");
-  console.log("  WAITING:      TK-7 (Pantalla rota), TK-8 (Bateria no carga)");
-  console.log("  READY:        TK-9 (Formateo), TK-10 (Teclado reemplazado)");
-  console.log("  DELIVERED:    TK-11 (RAM), TK-12 (Migracion datos)");
+  console.log("Resumen:");
+  console.log("  Org 1: TechCorp S.A.C. (slug: techcorp)");
+  console.log("  Org 2: InnovaSoft E.I.R.L. (slug: innovasoft)");
+  console.log("  8 tickets creados en diferentes estados");
+  console.log("  3 articulos de KB (2 publicados, 1 borrador)");
+  console.log("  2 evaluaciones");
   console.log("---");
   console.log("Credenciales:");
-  console.log("  admin@taller.com / 123456 (ADMIN)");
-  console.log("  carlos@taller.com / 123456 (TECHNICIAN - Hardware)");
-  console.log("  maria@taller.com / 123456 (TECHNICIAN - Software)");
-  console.log("  pedro@taller.com / 123456 (TECHNICIAN - Electronica)");
+  console.log("  admin@techcorp.com / admin123 (ADMIN - TechCorp)");
+  console.log("  ludwing@techcorp.com / admin123 (TECHNICIAN - TechCorp)");
+  console.log("  jhor@techcorp.com / admin123 (TECHNICIAN - TechCorp)");
+  console.log("  alex@techcorp.com / admin123 (END_USER - TechCorp)");
+  console.log("  andre@techcorp.com / admin123 (END_USER - TechCorp)");
+  console.log("  admin@innovasoft.com / admin123 (ADMIN - InnovaSoft)");
   console.log("---");
-  console.log("Seed completado exitosamente!");
+  console.log("Seed completado!");
 }
 
 main()

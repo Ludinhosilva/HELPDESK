@@ -1,47 +1,32 @@
 import { z } from "zod";
 
+export const VALID_STATUS_TRANSITIONS: Record<string, string[]> = {
+  OPEN: ["IN_PROGRESS", "ON_HOLD", "CLOSED"],
+  IN_PROGRESS: ["ON_HOLD", "RESOLVED"],
+  ON_HOLD: ["IN_PROGRESS", "CLOSED"],
+  RESOLVED: ["CLOSED", "OPEN"],
+  CLOSED: [],
+};
+
 export const CreateTicketSchema = z.object({
-  customerId: z.string().min(1, "El cliente es requerido"),
-  deviceId: z.string().min(1, "El equipo es requerido"),
-  description: z
-    .string()
-    .min(1, "La descripcion es requerida")
-    .max(500, "Maximo 500 caracteres"),
-  priority: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]).default("MEDIUM"),
-  cost: z.number().int().min(0).default(0),
-  notes: z.string().max(1000).optional(),
+  title: z.string().min(3, "El titulo debe tener al menos 3 caracteres"),
+  description: z.string().min(10, "La descripcion debe tener al menos 10 caracteres"),
+  priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]).default("MEDIUM"),
+  categoryId: z.string().optional(),
 });
 
 export const UpdateTicketSchema = z.object({
-  description: z.string().min(1).max(500).optional(),
-  priority: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]).optional(),
-  cost: z.number().int().min(0).optional(),
-  notes: z.string().max(1000).optional(),
-  status: z
-    .enum([
-      "RECEIVED",
-      "DIAGNOSING",
-      "REPAIRING",
-      "WAITING_PARTS",
-      "READY",
-      "DELIVERED",
-    ])
-    .optional(),
+  status: z.string().optional(),
+  assignedToId: z.string().nullable().optional(),
+  categoryId: z.string().nullable().optional(),
+  priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]).optional(),
 });
 
-export const AssignTicketSchema = z.object({
-  technicianId: z.string().min(1, "El tecnico es requerido"),
+export const CreateCommentSchema = z.object({
+  content: z.string().min(1, "El comentario no puede estar vacio"),
 });
 
-export type CreateTicketInput = z.infer<typeof CreateTicketSchema>;
-export type UpdateTicketInput = z.infer<typeof UpdateTicketSchema>;
-export type AssignTicketInput = z.infer<typeof AssignTicketSchema>;
-
-export const VALID_STATUS_TRANSITIONS: Record<string, string[]> = {
-  RECEIVED: ["DIAGNOSING"],
-  DIAGNOSING: ["REPAIRING", "WAITING_PARTS"],
-  REPAIRING: ["WAITING_PARTS", "READY"],
-  WAITING_PARTS: ["REPAIRING", "READY"],
-  READY: ["DELIVERED"],
-  DELIVERED: [],
-};
+export const CreateEvaluationSchema = z.object({
+  rating: z.number().int().min(1).max(5),
+  comment: z.string().optional(),
+});

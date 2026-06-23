@@ -2,22 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
 function getJwtSecret(): Uint8Array {
-  const secret = process.env.JWT_SECRET || "pc-repair-secret-key-change-in-production";
+  const secret = process.env.JWT_SECRET || "servidesk-secret-2026";
   return new TextEncoder().encode(secret);
 }
-
-const protectedPaths = ["/dashboard", "/api/tickets", "/api/customers", "/api/devices", "/api/users"];
-const publicPaths = ["/api/auth/login", "/api/auth/register"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const isProtected = protectedPaths.some((p) => pathname.startsWith(p));
-  const isPublic = publicPaths.some((p) => pathname.startsWith(p));
-
-  if (!isProtected) {
-    return NextResponse.next();
-  }
+  const isPublic =
+    pathname === "/" ||
+    pathname === "/login" ||
+    pathname === "/register" ||
+    pathname.startsWith("/api/auth/");
 
   if (isPublic) {
     return NextResponse.next();
@@ -42,6 +38,7 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.next();
     response.headers.set("x-user-id", payload.sub as string);
     response.headers.set("x-user-role", payload.role as string);
+    response.headers.set("x-org-id", payload.orgId as string);
     return response;
   } catch {
     if (pathname.startsWith("/api/")) {
@@ -58,5 +55,17 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/api/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/tickets/:path*",
+    "/knowledge/:path*",
+    "/users/:path*",
+    "/categories/:path*",
+    "/analytics/:path*",
+    "/subscriptions/:path*",
+    "/emails/:path*",
+    "/settings/:path*",
+    "/profile/:path*",
+    "/api/:path*",
+  ],
 };

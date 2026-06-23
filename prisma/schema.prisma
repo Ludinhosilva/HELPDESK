@@ -1,74 +1,195 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 generator client {
   provider = "prisma-client-js"
 }
 
+model Organization {
+  id              String           @id @default(cuid())
+  name            String
+  slug            String           @unique
+  logoUrl         String?
+  planStatus      String           @default("ACTIVE")
+  culqiCustomerId String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  users           User[]
+  tickets         Ticket[]
+  categories      Category[]
+  knowledgeArticles KnowledgeArticle[]
+  subscription    Subscription?
+  emailLogs       EmailLog[]
+}
+
 model User {
-  id         String   @id @default(uuid())
-  email      String   @unique
-  password   String
-  name       String
-  role       String   @default("TECHNICIAN")
-  specialty  String   @default("")
-  tickets    Ticket[] @relation("AssignedTechnician")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id             String    @id @default(cuid())
+  email          String
+  password       String
+  name           String
+  role           String    @default("END_USER")
+  isActive       Boolean   @default(true)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  createdTickets Ticket[]  @relation("TicketCreator")
+  assignedTickets Ticket[] @relation("TicketAssignee")
+  comments       Comment[]
+  evaluations    Evaluation[]
+
+  @@unique([email, organizationId])
+  @@index([organizationId, role])
 }
 
-model Customer {
-  id        String   @id @default(uuid())
-  name      String
-  phone     String
-  email     String?
-  devices   Device[]
-  tickets   Ticket[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+model Category {
+  id             String           @id @default(cuid())
+  name           String
+  slug           String
+  organizationId String
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  tickets        Ticket[]
+  knowledgeArticles KnowledgeArticle[]
+  createdAt      DateTime         @default(now())
 
-model Device {
-  id          String   @id @default(uuid())
-  brand       String
-  model       String
-  serial      String   @unique
-  type        String
-  accessories String?
-  customerId  String
-  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  tickets     Ticket[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  @@unique([slug, organizationId])
 }
 
 model Ticket {
-  id           String          @id @default(uuid())
-  ticketNumber Int             @unique
-  description  String
-  status       String          @default("RECEIVED")
-  priority     String          @default("MEDIUM")
-  cost         Int             @default(0)
-  notes        String?
-  customerId   String
-  customer     Customer        @relation(fields: [customerId], references: [id])
-  deviceId     String
-  device       Device          @relation(fields: [deviceId], references: [id])
-  technicianId String?
-  technician   User?           @relation("AssignedTechnician", fields: [technicianId], references: [id])
-  history      TicketHistory[]
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  id                  String         @id @default(cuid())
+  ticketNumber        Int
+  title               String
+  description         String
+  status              String         @default("OPEN")
+  priority            String         @default("MEDIUM")
+  aiCategorySuggested String?
+  resolvedAt          DateTime?
+  closedAt            DateTime?
+  organizationId      String
+  organization        Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  categoryId          String?
+  category            Category?      @relation(fields: [categoryId], references: [id])
+  createdById         String
+  createdBy           User           @relation("TicketCreator", fields: [createdById], references: [id])
+  assignedToId        String?
+  assignedTo          User?          @relation("TicketAssignee", fields: [assignedToId], references: [id])
+  comments            Comment[]
+  history             TicketHistory[]
+  evaluation          Evaluation?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  @@unique([ticketNumber, organizationId])
+  @@index([organizationId, status])
+  @@index([organizationId, assignedToId])
+  @@index([organizationId, createdById])
+  @@index([organizationId, priority])
+  @@index([createdAt])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@index([ticketId, createdAt])
 }
 
 model TicketHistory {
-  id          String   @id @default(uuid())
+  id          String   @id @default(cuid())
   ticketId    String
   ticket      Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   action      String
   description String
   userId      String?
   timestamp   DateTime @default(now())
+
+  @@index([ticketId, timestamp])
+}
+
+model Evaluation {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String?
+  ticketId  String   @unique
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model KnowledgeArticle {
+  id             String       @id @default(cuid())
+  title          String
+  content        String
+  slug           String
+  status         String       @default("DRAFT")
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  categoryId     String?
+  category       Category?    @relation(fields: [categoryId], references: [id])
+  viewCount      Int          @default(0)
+  helpfulCount   Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([slug, organizationId])
+  @@index([organizationId, status])
+  @@index([organizationId, categoryId])
+}
+
+model SubscriptionPlan {
+  id            String   @id @default(cuid())
+  name          String   @unique
+  slug          String   @unique
+  price         Int
+  currency      String   @default("PEN")
+  ticketLimit   Int?
+  features      String
+  isPopular     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id              String           @id @default(cuid())
+  status          String           @default("ACTIVE")
+  startDate       DateTime         @default(now())
+  nextBillingDate DateTime?
+  organizationId  String           @unique
+  organization    Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  planId          String
+  plan            SubscriptionPlan @relation(fields: [planId], references: [id])
+  payments        Payment[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model Payment {
+  id             String       @id @default(cuid())
+  amount         Int
+  currency       String       @default("PEN")
+  status         String       @default("SUCCESS")
+  reference      String?
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+}
+
+model EmailLog {
+  id             String       @id @default(cuid())
+  to             String
+  subject        String
+  body           String
+  type           String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  ticketId       String?
+  sentAt         DateTime     @default(now())
 }
