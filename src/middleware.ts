@@ -6,6 +6,28 @@ function getJwtSecret(): Uint8Array {
   return new TextEncoder().encode(secret);
 }
 
+const roleRouteRestrictions: Record<string, string[]> = {
+  "/users": ["SUPER_ADMIN", "ADMIN"],
+  "/categories": ["SUPER_ADMIN", "ADMIN"],
+  "/analytics": ["SUPER_ADMIN", "ADMIN"],
+  "/emails": ["SUPER_ADMIN", "ADMIN"],
+  "/settings": ["SUPER_ADMIN", "ADMIN"],
+  "/subscriptions": ["SUPER_ADMIN", "ADMIN"],
+  "/tickets/kanban": ["SUPER_ADMIN", "ADMIN", "TECHNICIAN"],
+  "/tickets/new": ["SUPER_ADMIN", "ADMIN", "END_USER"],
+  "/super-admin": ["SUPER_ADMIN"],
+};
+
+function getRequiredRoles(pathname: string): string[] | null {
+  const sortedKeys = Object.keys(roleRouteRestrictions).sort((a, b) => b.length - a.length);
+  for (const prefix of sortedKeys) {
+    if (pathname === prefix || pathname.startsWith(prefix + "/") || pathname.startsWith(prefix + "?")) {
+      return roleRouteRestrictions[prefix];
+    }
+  }
+  return null;
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -34,11 +56,24 @@ export async function middleware(request: NextRequest) {
 
   try {
     const { payload } = await jwtVerify(token, getJwtSecret());
+    const role = payload.role as string;
+
+    const requiredRoles = getRequiredRoles(pathname);
+    if (requiredRoles && !requiredRoles.includes(role)) {
+      if (pathname.startsWith("/api/")) {
+        return NextResponse.json(
+          { error: "forbidden", message: "No tienes permiso para acceder a este recurso" },
+          { status: 403 }
+        );
+      }
+      const dashboardUrl = new URL(role === "SUPER_ADMIN" ? "/super-admin" : "/dashboard", request.url);
+      return NextResponse.redirect(dashboardUrl);
+    }
 
     const response = NextResponse.next();
     response.headers.set("x-user-id", payload.sub as string);
-    response.headers.set("x-user-role", payload.role as string);
-    response.headers.set("x-org-id", payload.orgId as string);
+    response.headers.set("x-user-role", role);
+    response.headers.set("x-org-id", (payload.orgId as string) || "");
     return response;
   } catch {
     if (pathname.startsWith("/api/")) {
@@ -67,6 +102,7 @@ export const config = {
     "/settings/:path*",
     "/profile/:path*",
     "/notifications/:path*",
+    "/super-admin/:path*",
     "/api/:path*",
   ],
 };

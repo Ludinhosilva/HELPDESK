@@ -6,12 +6,14 @@ export function getJwtSecret(): Uint8Array {
   return new TextEncoder().encode(secret);
 }
 
-export async function generateToken(payload: {
+export interface TokenPayload {
   sub: string;
   email: string;
   role: string;
   orgId: string;
-}): Promise<string> {
+}
+
+export async function generateToken(payload: TokenPayload): Promise<string> {
   return new SignJWT({ ...payload })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -19,17 +21,10 @@ export async function generateToken(payload: {
     .sign(getJwtSecret());
 }
 
-export async function verifyToken(
-  token: string
-): Promise<{ sub: string; email: string; role: string; orgId: string } | null> {
+export async function verifyToken(token: string): Promise<TokenPayload | null> {
   try {
     const { payload } = await jwtVerify(token, getJwtSecret());
-    return payload as unknown as {
-      sub: string;
-      email: string;
-      role: string;
-      orgId: string;
-    };
+    return payload as unknown as TokenPayload;
   } catch {
     return null;
   }

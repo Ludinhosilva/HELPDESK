@@ -4,6 +4,7 @@ import {
   UpdateTicketSchema,
   VALID_STATUS_TRANSITIONS,
 } from "@/modules/tickets/types/ticket.types";
+import { getAuthFromHeaders } from "@/lib/auth-helpers";
 
 export async function GET(
   request: NextRequest,
@@ -11,17 +12,21 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const orgId = request.headers.get("x-org-id");
-
-    if (!orgId) {
+    const auth = getAuthFromHeaders(request);
+    if (!auth) {
       return NextResponse.json(
-        { error: "unauthorized", message: "Organization not found" },
+        { error: "unauthorized", message: "No autorizado" },
         { status: 401 }
       );
     }
 
+    const where: Record<string, unknown> = { id };
+    if (auth.role !== "SUPER_ADMIN") {
+      where.organizationId = auth.orgId;
+    }
+
     const ticket = await prisma.ticket.findFirst({
-      where: { id, organizationId: orgId },
+      where,
       include: {
         category: { select: { id: true, name: true, slug: true } },
         createdBy: { select: { id: true, name: true, email: true } },
@@ -57,10 +62,8 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const orgId = request.headers.get("x-org-id");
-    const userId = request.headers.get("x-user-id");
-
-    if (!orgId || !userId) {
+    const auth = getAuthFromHeaders(request);
+    if (!auth) {
       return NextResponse.json(
         { error: "unauthorized", message: "Authentication required" },
         { status: 401 }
@@ -80,9 +83,12 @@ export async function PATCH(
       );
     }
 
-    const existing = await prisma.ticket.findFirst({
-      where: { id, organizationId: orgId },
-    });
+    const where: Record<string, unknown> = { id };
+    if (auth.role !== "SUPER_ADMIN") {
+      where.organizationId = auth.orgId;
+    }
+
+    const existing = await prisma.ticket.findFirst({ where });
 
     if (!existing) {
       return NextResponse.json(
@@ -111,7 +117,7 @@ export async function PATCH(
       historyEntries.push({
         action: "STATUS_CHANGE",
         description: `Status changed from ${existing.status} to ${data.status}`,
-        userId,
+        userId: auth.userId,
       });
 
       if (data.status === "RESOLVED") {
@@ -133,13 +139,13 @@ export async function PATCH(
         historyEntries.push({
           action: "ASSIGNMENT",
           description: `Assigned to ${assignee?.name || "unknown"}`,
-          userId,
+          userId: auth.userId,
         });
       } else {
         historyEntries.push({
           action: "UNASSIGNMENT",
           description: "Ticket unassigned",
-          userId,
+          userId: auth.userId,
         });
       }
     }
@@ -149,7 +155,7 @@ export async function PATCH(
       historyEntries.push({
         action: "CATEGORY_CHANGE",
         description: "Category updated",
-        userId,
+        userId: auth.userId,
       });
     }
 
@@ -158,7 +164,7 @@ export async function PATCH(
       historyEntries.push({
         action: "PRIORITY_CHANGE",
         description: `Priority changed to ${data.priority}`,
-        userId,
+        userId: auth.userId,
       });
     }
 
@@ -172,7 +178,7 @@ export async function PATCH(
         historyEntries.push({
           action: "PAYMENT_APPROVED",
           description: `Pago aprobado${data.paymentAmount ? ` - S/${(data.paymentAmount / 100).toFixed(2)}` : ""}`,
-          userId,
+          userId: auth.userId,
         });
       }
     }

@@ -48,7 +48,7 @@ export async function POST(request: Request) {
       sub: user.id,
       email: user.email,
       role: user.role,
-      orgId: user.organizationId,
+      orgId: user.organizationId || "",
     });
 
     const response = NextResponse.json(

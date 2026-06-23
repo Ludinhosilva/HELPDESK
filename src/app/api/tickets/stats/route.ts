@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/core/prisma";
-import { getAuthFromHeaders } from "@/lib/auth-helpers";
+import { getAuthFromHeaders, getOrgFilter } from "@/lib/auth-helpers";
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,16 +12,16 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const orgId = auth.orgId;
+    const orgFilter = getOrgFilter(auth);
 
     const byCategory = await prisma.ticket.groupBy({
       by: ["categoryId"],
-      where: { organizationId: orgId },
+      where: { ...orgFilter },
       _count: true,
     });
 
     const categories = await prisma.category.findMany({
-      where: { organizationId: orgId },
+      where: { ...orgFilter },
       select: { id: true, name: true },
     });
 
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 
     const byStatus = await prisma.ticket.groupBy({
       by: ["status"],
-      where: { organizationId: orgId },
+      where: { ...orgFilter },
       _count: true,
     });
 
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
 
     const ticketsByDay = await prisma.ticket.findMany({
       where: {
-        organizationId: orgId,
+        ...orgFilter,
         createdAt: { gte: thirtyDaysAgo },
       },
       select: { createdAt: true },

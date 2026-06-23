@@ -5,19 +5,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
-  Ticket,
-  BookOpen,
-  User,
-  Users,
-  Tags,
-  BarChart3,
-  CreditCard,
-  Mail,
-  Settings,
+  Building2,
   Menu,
   LogOut,
-  Wrench,
-  Columns3,
+  Shield,
+  ArrowLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -37,30 +29,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DarkModeToggle } from "@/components/ui/dark-mode-toggle";
-import { NotificationsBell } from "@/components/notifications";
 
 interface UserPayload {
   id: string;
   name: string;
   email: string;
   role: string;
-  organizationId: string | null;
-  organization: { name: string } | null;
 }
 
-const allNavItems = [
-  { label: "Panel Principal", href: "/dashboard", icon: LayoutDashboard, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
-  { label: "Tickets", href: "/tickets", icon: Ticket, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
-  { label: "Tablero Kanban", href: "/tickets/kanban", icon: Columns3, roles: ["ADMIN", "TECHNICIAN"] },
-  { label: "Base de Conocimiento", href: "/knowledge", icon: BookOpen, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
-  { label: "Perfil", href: "/profile", icon: User, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
-  { label: "Usuarios", href: "/users", icon: Users, roles: ["ADMIN"] },
-  { label: "Categorías", href: "/categories", icon: Tags, roles: ["ADMIN"] },
-  { label: "Analíticas", href: "/analytics", icon: BarChart3, roles: ["ADMIN"] },
-  { label: "Suscripciones", href: "/subscriptions", icon: CreditCard, roles: ["ADMIN"] },
-  { label: "Logs de Email", href: "/emails", icon: Mail, roles: ["ADMIN"] },
-  { label: "Configuración", href: "/settings", icon: Settings, roles: ["ADMIN"] },
+const navItems = [
+  { label: "Panel Global", href: "/super-admin", icon: LayoutDashboard },
+  { label: "Organizaciones", href: "/super-admin/organizations", icon: Building2 },
 ];
 
 function getInitials(name: string) {
@@ -72,7 +51,7 @@ function getInitials(name: string) {
     .slice(0, 2);
 }
 
-export default function DashboardShell({
+export default function SuperAdminShell({
   children,
   user,
 }: {
@@ -82,8 +61,6 @@ export default function DashboardShell({
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-
-  const navItems = allNavItems.filter((item) => item.roles.includes(user.role));
 
   function handleLogout() {
     document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
@@ -95,8 +72,8 @@ export default function DashboardShell({
       <nav className="flex flex-col gap-1 flex-1 overflow-y-auto py-4 px-3">
         {navItems.map((item) => {
           const isActive =
-            item.href === "/dashboard"
-              ? pathname === "/dashboard"
+            item.href === "/super-admin"
+              ? pathname === "/super-admin"
               : pathname.startsWith(item.href);
           return (
             <Link
@@ -123,47 +100,50 @@ export default function DashboardShell({
     <div className="flex h-screen overflow-hidden bg-background">
       <aside className="hidden lg:flex lg:flex-col w-[260px] border-r border-border bg-card/80 backdrop-blur-xl">
         <div className="flex items-center gap-2 px-5 h-16 border-b border-border shrink-0">
-          <Wrench className="h-5 w-5 text-primary" />
-          <span className="font-bold text-lg">ServiDesk</span>
+          <Shield className="h-5 w-5 text-purple-500" />
+          <span className="font-bold text-lg">ServiDesk Admin</span>
         </div>
         <SidebarNav />
         <div className="p-3 border-t border-border shrink-0">
           <p className="text-xs text-muted-foreground px-3 truncate">
-            {user.organization?.name || ""}
+            Super Administrador
           </p>
         </div>
       </aside>
 
       <div className="flex flex-col flex-1 overflow-hidden">
-        <header className="flex items-center h-16 border-b border-border px-4 lg:px-6 shrink-0 bg-card/80 backdrop-blur-xl sticky top-0 z-40">
-          <div className="lg:hidden mr-2">
-            <Sheet open={open} onOpenChange={setOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="shrink-0">
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">Abrir menú</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-[260px] p-0">
-                <SheetHeader className="px-5 h-16 border-b border-border flex flex-row items-center">
-                  <Wrench className="h-5 w-5 text-primary mr-2" />
-                  <SheetTitle>ServiDesk</SheetTitle>
-                </SheetHeader>
-                <SidebarNav onNavigate={() => setOpen(false)} />
-              </SheetContent>
-            </Sheet>
-          </div>
-
-          <div className="flex items-center gap-1">
-            <DarkModeToggle />
-            <NotificationsBell />
+        <header className="flex items-center justify-between h-16 border-b border-border px-4 lg:px-6 shrink-0 bg-card/80 backdrop-blur-xl sticky top-0 z-40">
+          <div className="flex items-center gap-2">
+            <div className="lg:hidden mr-2">
+              <Sheet open={open} onOpenChange={setOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="shrink-0">
+                    <Menu className="h-5 w-5" />
+                    <span className="sr-only">Abrir menú</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-[260px] p-0">
+                  <SheetHeader className="px-5 h-16 border-b border-border flex flex-row items-center">
+                    <Shield className="h-5 w-5 text-purple-500 mr-2" />
+                    <SheetTitle>ServiDesk Admin</SheetTitle>
+                  </SheetHeader>
+                  <SidebarNav onNavigate={() => setOpen(false)} />
+                </SheetContent>
+              </Sheet>
+            </div>
+            {pathname !== "/super-admin" && (
+              <Button variant="ghost" size="sm" onClick={() => router.back()}>
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Volver
+              </Button>
+            )}
           </div>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-9 gap-2 px-2">
                 <Avatar className="h-7 w-7">
-                  <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                  <AvatarFallback className="text-xs bg-purple-500/10 text-purple-600">
                     {getInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
@@ -178,21 +158,15 @@ export default function DashboardShell({
                   <p className="text-sm font-medium">{user.name}</p>
                   <p className="text-xs text-muted-foreground">{user.email}</p>
                   <p className="text-xs text-muted-foreground capitalize">
-                    {user.role.replace("_", " ").toLowerCase()}
+                    Super Administrador
                   </p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push("/profile")}>
-                <User className="mr-2 h-4 w-4" />
-                Perfil
+              <DropdownMenuItem onClick={() => router.push("/dashboard")}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Ir al Dashboard
               </DropdownMenuItem>
-              {user.role === "ADMIN" && (
-                <DropdownMenuItem onClick={() => router.push("/settings")}>
-                  <Settings className="mr-2 h-4 w-4" />
-                  Configuración
-                </DropdownMenuItem>
-              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout} className="text-red-500">
                 <LogOut className="mr-2 h-4 w-4" />

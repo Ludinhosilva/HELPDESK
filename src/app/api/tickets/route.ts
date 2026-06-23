@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/core/prisma";
 import { CreateTicketSchema } from "@/modules/tickets/types/ticket.types";
+import { getAuthFromHeaders } from "@/lib/auth-helpers";
 
 export async function GET(request: NextRequest) {
   try {
-    const orgId = request.headers.get("x-org-id");
-    if (!orgId) {
+    const auth = getAuthFromHeaders(request);
+    if (!auth) {
       return NextResponse.json(
-        { error: "unauthorized", message: "Organization not found" },
+        { error: "unauthorized", message: "No autorizado" },
         { status: 401 }
       );
     }
@@ -18,8 +19,23 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status") || undefined;
     const priority = searchParams.get("priority") || undefined;
     const search = searchParams.get("search") || undefined;
+    const filterOrgId = searchParams.get("organizationId") || undefined;
 
-    const where: Record<string, unknown> = { organizationId: orgId };
+    const where: Record<string, unknown> = {};
+    if (auth.role !== "SUPER_ADMIN") {
+      where.organizationId = auth.orgId;
+    } else if (filterOrgId) {
+      where.organizationId = filterOrgId;
+    }
+    if (status) where.status = status;
+    if (priority) where.priority = priority;
+    if (search) {
+      where.OR = [
+        { title: { contains: search } },
+        { description: { contains: search } },
+        { ticketNumber: { equals: parseInt(search) || -1 } },
+      ];
+    }
     if (status) where.status = status;
     if (priority) where.priority = priority;
     if (search) {
@@ -63,10 +79,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const orgId = request.headers.get("x-org-id");
-    const userId = request.headers.get("x-user-id");
-
-    if (!orgId || !userId) {
+    const auth = getAuthFromHeaders(request);
+    if (!auth) {
       return NextResponse.json(
         { error: "unauthorized", message: "Authentication required" },
         { status: 401 }
@@ -86,8 +100,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const targetOrgId = body.organizationId || auth.orgId;
+    if (!targetOrgId) {
+      return NextResponse.json(
+        { error: "validation_error", message: "Se requiere una organizacion" },
+        { status: 400 }
+      );
+    }
+
     const lastTicket = await prisma.ticket.findFirst({
-      where: { organizationId: orgId },
+      where: { organizationId: targetOrgId },
       orderBy: { ticketNumber: "desc" },
       select: { ticketNumber: true },
     });
@@ -101,13 +123,13 @@ export async function POST(request: NextRequest) {
         description: parsed.data.description,
         priority: parsed.data.priority,
         categoryId: parsed.data.categoryId || null,
-        createdById: userId,
-        organizationId: orgId,
+        createdById: auth.userId,
+        organizationId: targetOrgId,
         history: {
           create: {
             action: "CREATED",
             description: `Ticket TK-${ticketNumber} created`,
-            userId,
+            userId: auth.userId,
           },
         },
       },

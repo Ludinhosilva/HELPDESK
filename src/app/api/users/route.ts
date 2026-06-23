@@ -7,7 +7,7 @@ import { hashPassword } from "@/lib/auth";
 const inviteUserSchema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
   email: z.string().email("Email invalido"),
-  role: z.enum(["ADMIN", "TECHNICIAN", "END_USER"]).default("END_USER"),
+  role: z.enum(["SUPER_ADMIN", "ADMIN", "TECHNICIAN", "END_USER"]).default("END_USER"),
   password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
 });
 
@@ -21,8 +21,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const where = auth.role === "SUPER_ADMIN"
+      ? { role: { not: "SUPER_ADMIN" } }
+      : { organizationId: auth.orgId };
+
     const users = await prisma.user.findMany({
-      where: { organizationId: auth.orgId },
+      where,
       select: {
         id: true,
         name: true,
@@ -46,7 +50,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const auth = getAuthFromHeaders(request);
-    if (!auth || auth.role !== "ADMIN") {
+    if (!auth || (auth.role !== "ADMIN" && auth.role !== "SUPER_ADMIN")) {
       return NextResponse.json(
         { error: "forbidden", message: "Solo administradores pueden invitar usuarios" },
         { status: 403 }
@@ -65,8 +69,16 @@ export async function POST(request: NextRequest) {
 
     const { name, email, role, password } = parsed.data;
 
+    const targetOrgId = body.organizationId || auth.orgId;
+    if (!targetOrgId) {
+      return NextResponse.json(
+        { error: "validation_error", message: "Se requiere una organizacion" },
+        { status: 400 }
+      );
+    }
+
     const existing = await prisma.user.findFirst({
-      where: { email, organizationId: auth.orgId },
+      where: { email, organizationId: targetOrgId },
     });
 
     if (existing) {
@@ -84,7 +96,7 @@ export async function POST(request: NextRequest) {
         email,
         role,
         password: hashedPassword,
-        organizationId: auth.orgId,
+        organizationId: body.organizationId || auth.orgId,
       },
       select: { id: true, name: true, email: true, role: true, isActive: true },
     });

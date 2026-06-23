@@ -32,7 +32,11 @@ export default function LoginPage() {
         setError(data.message || "Error al iniciar sesion");
         return;
       }
-      router.push("/dashboard");
+      if (data.user.role === "SUPER_ADMIN") {
+        router.push("/super-admin");
+      } else {
+        router.push("/dashboard");
+      }
     } catch {
       setError("Error de conexion");
     } finally {

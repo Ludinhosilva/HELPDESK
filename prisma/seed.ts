@@ -43,6 +43,11 @@ async function main() {
     },
   });
 
+  console.log("Creando super administrador global...");
+  const superAdmin = await prisma.user.create({
+    data: { email: "super@servidesk.com", password: hashedPassword, name: "Super Administrador", role: "SUPER_ADMIN" },
+  });
+
   console.log("Creando organizacion 1: TechCorp...");
   const org1 = await prisma.organization.create({
     data: { name: "TechCorp S.A.C.", slug: "techcorp" },
@@ -272,6 +277,7 @@ async function main() {
   console.log("  2 evaluaciones");
   console.log("---");
   console.log("Credenciales:");
+  console.log("  super@servidesk.com / admin123 (SUPER_ADMIN - Global)");
   console.log("  admin@techcorp.com / admin123 (ADMIN - TechCorp)");
   console.log("  ludwing@techcorp.com / admin123 (TECHNICIAN - TechCorp)");
   console.log("  jhor@techcorp.com / admin123 (TECHNICIAN - TechCorp)");
