@@ -5,6 +5,7 @@ import {
   VALID_STATUS_TRANSITIONS,
 } from "@/modules/tickets/types/ticket.types";
 import { getAuthFromHeaders } from "@/lib/auth-helpers";
+import { notifyTicketAssignment, notifyTicketUpdate } from "@/lib/notifications";
 
 export async function GET(
   request: NextRequest,
@@ -42,7 +43,7 @@ export async function GET(
 
     if (!ticket) {
       return NextResponse.json(
-        { error: "not_found", message: "Ticket not found" },
+        { error: "not_found", message: "Ticket no encontrado" },
         { status: 404 }
       );
     }
@@ -50,7 +51,7 @@ export async function GET(
     return NextResponse.json(ticket);
   } catch {
     return NextResponse.json(
-      { error: "server_error", message: "Error fetching ticket" },
+      { error: "server_error", message: "Error al obtener ticket" },
       { status: 500 }
     );
   }
@@ -65,7 +66,7 @@ export async function PATCH(
     const auth = getAuthFromHeaders(request);
     if (!auth) {
       return NextResponse.json(
-        { error: "unauthorized", message: "Authentication required" },
+        { error: "unauthorized", message: "Autenticacion requerida" },
         { status: 401 }
       );
     }
@@ -77,7 +78,7 @@ export async function PATCH(
       return NextResponse.json(
         {
           error: "validation_error",
-          message: parsed.error.errors[0]?.message || "Invalid data",
+          message: parsed.error.errors[0]?.message || "Datos invalidos",
         },
         { status: 400 }
       );
@@ -107,7 +108,7 @@ export async function PATCH(
         return NextResponse.json(
           {
             error: "invalid_transition",
-            message: `Cannot transition from ${existing.status} to ${data.status}`,
+            message: `No se puede cambiar de ${existing.status} a ${data.status}`,
           },
           { status: 400 }
         );
@@ -116,7 +117,7 @@ export async function PATCH(
       updateData.status = data.status;
       historyEntries.push({
         action: "STATUS_CHANGE",
-        description: `Status changed from ${existing.status} to ${data.status}`,
+        description: `Estado cambiado de ${existing.status} a ${data.status}`,
         userId: auth.userId,
       });
 
@@ -138,13 +139,13 @@ export async function PATCH(
         });
         historyEntries.push({
           action: "ASSIGNMENT",
-          description: `Assigned to ${assignee?.name || "unknown"}`,
+          description: `Asignado a ${assignee?.name || "desconocido"}`,
           userId: auth.userId,
         });
       } else {
         historyEntries.push({
           action: "UNASSIGNMENT",
-          description: "Ticket unassigned",
+          description: "Ticket desasignado",
           userId: auth.userId,
         });
       }
@@ -154,7 +155,7 @@ export async function PATCH(
       updateData.categoryId = data.categoryId || null;
       historyEntries.push({
         action: "CATEGORY_CHANGE",
-        description: "Category updated",
+        description: "Categoria actualizada",
         userId: auth.userId,
       });
     }
@@ -163,7 +164,7 @@ export async function PATCH(
       updateData.priority = data.priority;
       historyEntries.push({
         action: "PRIORITY_CHANGE",
-        description: `Priority changed to ${data.priority}`,
+        description: `Prioridad cambiada a ${data.priority}`,
         userId: auth.userId,
       });
     }
@@ -182,6 +183,9 @@ export async function PATCH(
         });
       }
     }
+
+    const isStatusChange = data.status && data.status !== existing.status;
+    const isAssignmentChange = data.assignedToId !== undefined && data.assignedToId !== existing.assignedToId;
 
     const ticket = await prisma.ticket.update({
       where: { id },
@@ -204,10 +208,20 @@ export async function PATCH(
       },
     });
 
+    if (isStatusChange) {
+      notifyTicketUpdate(id, existing.ticketNumber, existing.title, "STATUS_CHANGE", existing.organizationId, existing.createdById);
+    }
+    if (isAssignmentChange) {
+      if (data.assignedToId) {
+        notifyTicketAssignment(id, existing.ticketNumber, existing.title, data.assignedToId, existing.organizationId);
+      }
+      notifyTicketUpdate(id, existing.ticketNumber, existing.title, "ASSIGNMENT", existing.organizationId, existing.createdById);
+    }
+
     return NextResponse.json(ticket);
   } catch {
     return NextResponse.json(
-      { error: "server_error", message: "Error updating ticket" },
+      { error: "server_error", message: "Error al actualizar ticket" },
       { status: 500 }
     );
   }

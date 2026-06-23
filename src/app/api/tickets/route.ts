@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
     });
   } catch {
     return NextResponse.json(
-      { error: "server_error", message: "Error fetching tickets" },
+      { error: "server_error", message: "Error al obtener tickets" },
       { status: 500 }
     );
   }
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     const auth = getAuthFromHeaders(request);
     if (!auth) {
       return NextResponse.json(
-        { error: "unauthorized", message: "Authentication required" },
+        { error: "unauthorized", message: "Autenticacion requerida" },
         { status: 401 }
       );
     }
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: "validation_error",
-          message: parsed.error.errors[0]?.message || "Invalid data",
+          message: parsed.error.errors[0]?.message || "Datos invalidos",
         },
         { status: 400 }
       );
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
         history: {
           create: {
             action: "CREATED",
-            description: `Ticket TK-${ticketNumber} created`,
+            description: `Ticket TK-${ticketNumber} creado`,
             userId: auth.userId,
           },
         },
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(ticket, { status: 201 });
   } catch {
     return NextResponse.json(
-      { error: "server_error", message: "Error creating ticket" },
+      { error: "server_error", message: "Error al crear ticket" },
       { status: 500 }
     );
   }

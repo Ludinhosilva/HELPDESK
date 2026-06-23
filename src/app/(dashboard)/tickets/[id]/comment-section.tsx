@@ -70,7 +70,7 @@ export default function CommentSection({
           {
             id: newComment.id,
             content: newComment.content,
-            authorName: newComment.author?.name || "You",
+            authorName: newComment.author?.name || "Tú",
             authorId: currentUserId,
             createdAt: newComment.createdAt || new Date().toISOString(),
             isOwn: true,

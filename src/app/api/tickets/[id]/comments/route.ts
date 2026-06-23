@@ -13,7 +13,7 @@ export async function POST(
 
     if (!orgId || !userId) {
       return NextResponse.json(
-        { error: "unauthorized", message: "Authentication required" },
+        { error: "unauthorized", message: "Autenticacion requerida" },
         { status: 401 }
       );
     }
@@ -25,7 +25,7 @@ export async function POST(
 
     if (!ticket) {
       return NextResponse.json(
-        { error: "not_found", message: "Ticket not found" },
+        { error: "not_found", message: "Ticket no encontrado" },
         { status: 404 }
       );
     }
@@ -37,7 +37,7 @@ export async function POST(
       return NextResponse.json(
         {
           error: "validation_error",
-          message: parsed.error.errors[0]?.message || "Invalid data",
+          message: parsed.error.errors[0]?.message || "Datos invalidos",
         },
         { status: 400 }
       );
@@ -58,7 +58,7 @@ export async function POST(
       data: {
         ticketId: id,
         action: "COMMENT",
-        description: `Comment added on TK-${ticket.ticketNumber}`,
+        description: `Comentario agregado en TK-${ticket.ticketNumber}`,
         userId,
       },
     });
@@ -66,7 +66,7 @@ export async function POST(
     return NextResponse.json(comment, { status: 201 });
   } catch {
     return NextResponse.json(
-      { error: "server_error", message: "Error adding comment" },
+      { error: "server_error", message: "Error al agregar comentario" },
       { status: 500 }
     );
   }

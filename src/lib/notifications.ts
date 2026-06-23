@@ -32,6 +32,42 @@ declare global {
   } | undefined;
 }
 
+export function notifyTicketAssignment(ticketId: string, ticketNumber: number, title: string, assigneeId: string, orgId: string) {
+  notify(
+    "TICKET_ASSIGNED",
+    JSON.stringify({
+      id: ticketId,
+      type: "TICKET_ASSIGNED",
+      message: `Ticket TK-${ticketNumber} - "${title}" asignado a ti`,
+      ticketId,
+      timestamp: new Date().toISOString(),
+    }),
+    assigneeId,
+    orgId
+  );
+}
+
+export function notifyTicketUpdate(ticketId: string, ticketNumber: number, title: string, updateType: string, orgId: string, targetUserId?: string) {
+  const labels: Record<string, string> = {
+    STATUS_CHANGE: "cambio de estado",
+    ASSIGNMENT: "asignacion",
+    COMMENT: "nuevo comentario",
+    PRIORITY_CHANGE: "cambio de prioridad",
+  };
+  notify(
+    "TICKET_UPDATED",
+    JSON.stringify({
+      id: ticketId,
+      type: "TICKET_UPDATED",
+      message: `TK-${ticketNumber} - "${title}" - ${labels[updateType] || "actualizacion"}`,
+      ticketId,
+      timestamp: new Date().toISOString(),
+    }),
+    targetUserId,
+    orgId
+  );
+}
+
 if (!globalThis.__notificationClients) {
   globalThis.__notificationClients = { subscribe, notify };
 }

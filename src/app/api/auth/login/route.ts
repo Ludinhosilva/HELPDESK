@@ -1,64 +1,28 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
-import { prisma } from "@/core/prisma";
-import { comparePassword, generateToken } from "@/lib/auth";
-
-const LoginSchema = z.object({
-  email: z.string().email("Formato de email invalido"),
-  password: z.string().min(1, "La contrasena es requerida"),
-});
+import { loginUser } from "@/lib/auth-actions";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const parsed = LoginSchema.safeParse(body);
+    const result = await loginUser(body.email, body.password);
 
-    if (!parsed.success) {
-      const message = parsed.error.errors[0]?.message || "Datos invalidos";
+    if (result.error) {
       return NextResponse.json(
-        { error: "validation_error", message },
-        { status: 400 }
+        { error: "unauthorized", message: result.error },
+        { status: result.status || 401 }
       );
     }
 
-    const { email, password } = parsed.data;
-
-    const user = await prisma.user.findFirst({
-      where: { email },
-      include: { organization: true },
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "unauthorized", message: "Credenciales invalidas" },
-        { status: 401 }
-      );
-    }
-
-    const validPassword = await comparePassword(password, user.password);
-
-    if (!validPassword) {
-      return NextResponse.json(
-        { error: "unauthorized", message: "Credenciales invalidas" },
-        { status: 401 }
-      );
-    }
-
-    const token = await generateToken({
-      sub: user.id,
-      email: user.email,
-      role: user.role,
-      orgId: user.organizationId || "",
-    });
+    const token = result.token!;
 
     const response = NextResponse.json(
       {
         user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          orgId: user.organizationId,
+          id: result.user!.id,
+          name: result.user!.name,
+          email: result.user!.email,
+          role: result.user!.role,
+          orgId: result.user!.orgId,
         },
       },
       { status: 200 }

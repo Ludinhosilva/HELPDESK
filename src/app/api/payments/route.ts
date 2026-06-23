@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const userId = request.headers.get("x-user-id");
 
     if (!orgId || !userId) {
-      return NextResponse.json({ error: "unauthorized", message: "Authentication required" }, { status: 401 });
+      return NextResponse.json({ error: "unauthorized", message: "Autenticacion requerida" }, { status: 401 });
     }
 
     const { ticketId } = await request.json();

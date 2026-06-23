@@ -13,7 +13,7 @@ export async function POST(
 
     if (!orgId || !userId) {
       return NextResponse.json(
-        { error: "unauthorized", message: "Authentication required" },
+        { error: "unauthorized", message: "Autenticacion requerida" },
         { status: 401 }
       );
     }
@@ -25,7 +25,7 @@ export async function POST(
 
     if (!ticket) {
       return NextResponse.json(
-        { error: "not_found", message: "Ticket not found" },
+        { error: "not_found", message: "Ticket no encontrado" },
         { status: 404 }
       );
     }
@@ -34,7 +34,7 @@ export async function POST(
       return NextResponse.json(
         {
           error: "invalid_status",
-          message: "Ticket must be resolved or closed before evaluation",
+          message: "El ticket debe estar resuelto o cerrado antes de evaluar",
         },
         { status: 400 }
       );
@@ -48,7 +48,7 @@ export async function POST(
       return NextResponse.json(
         {
           error: "already_evaluated",
-          message: "You have already evaluated this ticket",
+          message: "Ya has evaluado este ticket",
         },
         { status: 409 }
       );
@@ -61,7 +61,7 @@ export async function POST(
       return NextResponse.json(
         {
           error: "validation_error",
-          message: parsed.error.errors[0]?.message || "Invalid data",
+          message: parsed.error.errors[0]?.message || "Datos invalidos",
         },
         { status: 400 }
       );
@@ -80,7 +80,7 @@ export async function POST(
       data: {
         ticketId: id,
         action: "EVALUATION",
-        description: `Ticket evaluated with rating ${parsed.data.rating}/5`,
+        description: `Ticket evaluado con puntuacion ${parsed.data.rating}/5`,
         userId,
       },
     });
@@ -88,7 +88,7 @@ export async function POST(
     return NextResponse.json(evaluation, { status: 201 });
   } catch {
     return NextResponse.json(
-      { error: "server_error", message: "Error evaluating ticket" },
+      { error: "server_error", message: "Error al evaluar ticket" },
       { status: 500 }
     );
   }

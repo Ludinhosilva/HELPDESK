@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const mockLogin = vi.fn();
 const mockRegister = vi.fn();
 
-vi.mock("@/modules/auth/actions/auth-actions", () => ({
+vi.mock("@/lib/auth-actions", () => ({
   loginUser: mockLogin,
   registerUser: mockRegister,
 }));
@@ -20,9 +20,7 @@ describe("Auth API Routes", () => {
         status: 401,
       });
 
-      const { POST } = await import(
-        "@/app/api/auth/login/route"
-      );
+      const { POST } = await import("@/app/api/auth/login/route");
 
       const request = new Request("http://localhost:3000/api/auth/login", {
         method: "POST",
@@ -40,9 +38,7 @@ describe("Auth API Routes", () => {
     it("retorna 500 si ocurre un error inesperado", async () => {
       mockLogin.mockRejectedValue(new Error("DB error"));
 
-      const { POST } = await import(
-        "@/app/api/auth/login/route"
-      );
+      const { POST } = await import("@/app/api/auth/login/route");
 
       const request = new Request("http://localhost:3000/api/auth/login", {
         method: "POST",
@@ -55,18 +51,36 @@ describe("Auth API Routes", () => {
       expect(response.status).toBe(500);
       expect(body.error).toBe("server_error");
     });
+
+    it("retorna 200 con token si login exitoso", async () => {
+      mockLogin.mockResolvedValue({
+        user: { id: "u1", name: "Test", email: "test@test.com", role: "ADMIN", orgId: "org-1" },
+        token: "mocked-jwt-token",
+      });
+
+      const { POST } = await import("@/app/api/auth/login/route");
+
+      const request = new Request("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email: "test@test.com", password: "correct" }),
+      });
+
+      const response = await POST(request);
+      const body = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(body.user.role).toBe("ADMIN");
+    });
   });
 
   describe("POST /api/auth/register", () => {
     it("retorna 400 si validacion falla", async () => {
       mockRegister.mockResolvedValue({
-        error: "El email es requerido",
+        error: "El nombre de la organizacion es requerido",
         status: 400,
       });
 
-      const { POST } = await import(
-        "@/app/api/auth/register/route"
-      );
+      const { POST } = await import("@/app/api/auth/register/route");
 
       const request = new Request("http://localhost:3000/api/auth/register", {
         method: "POST",
@@ -77,7 +91,32 @@ describe("Auth API Routes", () => {
       const body = await response.json();
 
       expect(response.status).toBe(400);
-      expect(body.error).toBe("validation_error");
+      expect(body.error).toBe("conflict");
+    });
+
+    it("retorna 201 si registro exitoso", async () => {
+      mockRegister.mockResolvedValue({
+        message: "Organizacion y usuario administrador creados correctamente",
+        status: 201,
+      });
+
+      const { POST } = await import("@/app/api/auth/register/route");
+
+      const request = new Request("http://localhost:3000/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify({
+          orgName: "Test Corp",
+          name: "Test User",
+          email: "test@test.com",
+          password: "password123",
+        }),
+      });
+
+      const response = await POST(request);
+      const body = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(body.message).toBeDefined();
     });
   });
 });
