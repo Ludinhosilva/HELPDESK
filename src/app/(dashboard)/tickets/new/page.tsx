@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,9 +14,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ArrowLeft, Bot, Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Bot, Loader2, Lightbulb, AlertTriangle, Search } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/components/ui/toast";
+import { classifyTicket } from "@/lib/ai";
 
 export default function NewTicketPage() {
   const router = useRouter();
@@ -25,6 +27,9 @@ export default function NewTicketPage() {
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const [aiSuggestion, setAiSuggestion] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
+  const [similarTickets, setSimilarTickets] = useState<{ id: string; title: string; similarity: number; category: string }[]>([]);
+  const [sentimentAlert, setSentimentAlert] = useState<string | null>(null);
+  const searchTimer = useRef<ReturnType<typeof setTimeout>>();
 
   const [form, setForm] = useState({
     title: "",
@@ -40,29 +45,72 @@ export default function NewTicketPage() {
       .catch(() => {});
   }, []);
 
-  useEffect(() => {
-    if (!form.title || form.title.length < 5 || !form.description || form.description.length < 10) {
+  const doAIAnalysis = useCallback(async (title: string, description: string) => {
+    if (!title || title.length < 5 || !description || description.length < 10) {
       setAiSuggestion(null);
+      setSimilarTickets([]);
+      setSentimentAlert(null);
       return;
     }
 
-    const timer = setTimeout(() => {
-      setAiLoading(true);
-      fetch("/api/ai/suggest-category", {
+    setAiLoading(true);
+
+    // Category suggestion (client-side)
+    const category = classifyTicket(title, description);
+    const catMap: Record<string, string> = {
+      hardware: "Hardware", software: "Software", red: "Red", accesos: "Accesos", otros: "Otros",
+    };
+    setAiSuggestion(catMap[category] || category);
+
+    // Sentiment analysis
+    try {
+      const sentRes = await fetch("/api/ai/sentiment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: form.title, description: form.description }),
-      })
-        .then((r) => r.json())
-        .then((data) => {
-          if (data.category) setAiSuggestion(data.category);
-        })
-        .catch(() => {})
-        .finally(() => setAiLoading(false));
-    }, 1000);
+        body: JSON.stringify({ title, description }),
+      });
+      const sentData = await sentRes.json();
+      if (sentData.sentiment && sentData.sentiment.level !== "CALM") {
+        const labels: Record<string, string> = {
+          FRUSTRATED: "Detectamos frustracion en tu solicitud. La prioridad sera ajustada.",
+          CRITICAL: "Situacion critica detectada. La prioridad se cambiara a URGENTE.",
+        };
+        setSentimentAlert(sentData.sentiment.level ? labels[sentData.sentiment.level] : null);
+        if (sentData.priorityOverride) {
+          setForm((prev) => ({ ...prev, priority: sentData.priorityOverride }));
+        }
+      } else {
+        setSentimentAlert(null);
+      }
+    } catch {
+      // ignore
+    }
 
-    return () => clearTimeout(timer);
-  }, [form.title, form.description]);
+    // Search similar tickets
+    try {
+      const simRes = await fetch("/api/ai/search-similar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, description }),
+      });
+      if (simRes.ok) {
+        const simData = await simRes.json();
+        setSimilarTickets(simData.results || []);
+      }
+    } catch {
+      // ignore
+    }
+
+    setAiLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => {
+      doAIAnalysis(form.title, form.description);
+    }, 800);
+    return () => { if (searchTimer.current) clearTimeout(searchTimer.current); };
+  }, [form.title, form.description, doAIAnalysis]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -167,6 +215,40 @@ export default function NewTicketPage() {
                 >
                   Aplicar
                 </Button>
+              </div>
+            )}
+
+            {sentimentAlert && (
+              <div className="flex items-start gap-2 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 p-3">
+                <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                <p className="text-sm text-red-700 dark:text-red-400">{sentimentAlert}</p>
+              </div>
+            )}
+
+            {similarTickets.length > 0 && (
+              <div className="rounded-lg border bg-card">
+                <div className="flex items-center gap-2 p-3 border-b">
+                  <Search className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Tickets similares resueltos</span>
+                </div>
+                <div className="divide-y">
+                  {similarTickets.slice(0, 3).map((st) => (
+                    <div key={st.id} className="flex items-center justify-between p-3 text-sm hover:bg-muted/50 transition-colors">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <Lightbulb className="h-3 w-3 text-yellow-500 shrink-0" />
+                        <span className="truncate">{st.title}</span>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                          {st.category}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">
+                          {Math.round(st.similarity * 100)}%
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 

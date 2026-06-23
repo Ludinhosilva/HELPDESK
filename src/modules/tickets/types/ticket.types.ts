@@ -20,6 +20,10 @@ export const UpdateTicketSchema = z.object({
   assignedToId: z.string().nullable().optional(),
   categoryId: z.string().nullable().optional(),
   priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]).optional(),
+  paymentStatus: z.enum(["NONE", "PENDING", "PROCESSING", "APPROVED", "FAILED"]).optional(),
+  paymentAmount: z.number().int().optional(),
+  paymentReference: z.string().optional(),
+  slaExpiresAt: z.string().optional(),
 });
 
 export const CreateCommentSchema = z.object({

@@ -10,6 +10,7 @@ import TicketDetailClient from "./ticket-detail-client";
 import CommentSection from "./comment-section";
 import { ArrowLeft, User, Tag, Calendar, Clock } from "lucide-react";
 import Link from "next/link";
+import { SLASection } from "./sla-section";
 
 export const dynamic = "force-dynamic";
 
@@ -206,6 +207,13 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
             technicians={technicians}
             currentCategoryId={ticket.categoryId}
             aiSuggestion={ticket.aiCategorySuggested}
+          />
+
+          <SLASection
+            ticketId={ticket.id}
+            ticketNumber={ticket.ticketNumber}
+            paymentStatus={ticket.paymentStatus}
+            slaExpiresAt={ticket.slaExpiresAt?.toISOString() ?? null}
           />
 
           <Card>

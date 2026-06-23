@@ -65,6 +65,11 @@ model Ticket {
   status              String         @default("OPEN")
   priority            String         @default("MEDIUM")
   aiCategorySuggested String?
+  aiSentiment         String?
+  slaExpiresAt        DateTime?
+  paymentStatus       String         @default("NONE")
+  paymentAmount       Int?
+  paymentReference    String?
   resolvedAt          DateTime?
   closedAt            DateTime?
   organizationId      String

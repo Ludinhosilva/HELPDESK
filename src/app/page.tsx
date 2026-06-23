@@ -4,19 +4,19 @@ import { Wrench, ClipboardList, BarChart3, Brain, Check, ArrowRight } from "luci
 export default function HomePage() {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b glass sticky top-0 z-50">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-lg">
               <Wrench className="h-4 w-4" />
             </div>
-            <span className="text-xl font-bold">ServiDesk</span>
+            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">ServiDesk</span>
           </div>
           <div className="flex items-center gap-4">
             <Link href="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Iniciar sesi&oacute;n
             </Link>
-            <Link href="/register" className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors">
+            <Link href="/register" className="rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-2 text-sm font-medium text-white hover:from-blue-700 hover:to-blue-600 transition-all shadow-md hover:shadow-lg">
               Crear cuenta gratis
             </Link>
           </div>
@@ -24,25 +24,28 @@ export default function HomePage() {
       </header>
 
       <main className="flex-1">
-        <section className="container mx-auto px-4 py-24 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
-            <Wrench className="h-8 w-8" />
-          </div>
-          <h1 className="mb-6 text-5xl font-bold tracking-tight">
-            Soporte TI <span className="text-blue-600">simplificado</span>
-          </h1>
-          <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground">
-            Plataforma de gesti&oacute;n de soporte t&eacute;cnico para empresas medianas.
-            Tickets, anal&iacute;ticas, base de conocimiento e inteligencia artificial.
-          </p>
-          <div className="flex justify-center gap-4">
-            <Link href="/register" className="rounded-lg bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200">
-              Empezar gratis
-              <ArrowRight className="inline ml-2 h-4 w-4" />
-            </Link>
-            <Link href="/login" className="rounded-lg border border-border px-8 py-3 text-base font-medium text-foreground hover:bg-muted transition-colors">
-              Ya tengo cuenta
-            </Link>
+        <section className="relative container mx-auto px-4 py-24 text-center">
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-transparent dark:from-blue-950/20 pointer-events-none" />
+          <div className="relative animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900/50 dark:to-blue-800/30 text-blue-600 dark:text-blue-400 shadow-lg animate-pulse-soft">
+              <Wrench className="h-8 w-8" />
+            </div>
+            <h1 className="mb-6 text-5xl font-bold tracking-tight">
+              Soporte TI <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">predictivo</span>
+            </h1>
+            <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground">
+              Plataforma de gesti&oacute;n de soporte t&eacute;cnico con IA predictiva.
+              Tickets, anal&iacute;ticas, SLA premium, base de conocimiento e inteligencia artificial.
+            </p>
+            <div className="flex justify-center gap-4">
+              <Link href="/register" className="rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 px-8 py-3 text-base font-medium text-white hover:from-blue-700 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+                Empezar gratis
+                <ArrowRight className="inline ml-2 h-4 w-4" />
+              </Link>
+              <Link href="/login" className="rounded-lg glass-card px-8 py-3 text-base font-medium text-foreground hover:bg-accent transition-all">
+                Ya tengo cuenta
+              </Link>
+            </div>
           </div>
         </section>
 

@@ -162,6 +162,21 @@ export async function PATCH(
       });
     }
 
+    if (data.paymentStatus !== undefined) {
+      updateData.paymentStatus = data.paymentStatus;
+      if (data.paymentAmount !== undefined) updateData.paymentAmount = data.paymentAmount;
+      if (data.paymentReference !== undefined) updateData.paymentReference = data.paymentReference;
+      if (data.slaExpiresAt !== undefined) updateData.slaExpiresAt = new Date(data.slaExpiresAt);
+
+      if (data.paymentStatus === "APPROVED") {
+        historyEntries.push({
+          action: "PAYMENT_APPROVED",
+          description: `Pago aprobado${data.paymentAmount ? ` - S/${(data.paymentAmount / 100).toFixed(2)}` : ""}`,
+          userId,
+        });
+      }
+    }
+
     const ticket = await prisma.ticket.update({
       where: { id },
       data: {
@@ -191,3 +206,5 @@ export async function PATCH(
     );
   }
 }
+
+export const PUT = PATCH;

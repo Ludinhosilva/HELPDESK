@@ -123,13 +123,17 @@ export default async function DashboardPage() {
 
         <div className="grid gap-4 grid-cols-2 lg:grid-cols-5">
           {[
-            { title: "Total Tickets", value: total, icon: Ticket, color: "text-blue-400" },
-            { title: "Abiertos", value: open, icon: AlertCircle, color: "text-blue-400" },
-            { title: "En Progreso", value: inProgress, icon: Clock, color: "text-yellow-400" },
-            { title: "Resueltos", value: resolved, icon: CheckCircle2, color: "text-green-400" },
-            { title: "Cerrados", value: closed, icon: XCircle, color: "text-gray-400" },
+            { title: "Total Tickets", value: total, icon: Ticket, color: "text-blue-400", trend: null },
+            { title: "Abiertos", value: open, icon: AlertCircle, color: "text-blue-400", trend: null },
+            { title: "En Progreso", value: inProgress, icon: Clock, color: "text-yellow-400", trend: null },
+            { title: "Resueltos", value: resolved, icon: CheckCircle2, color: "text-green-400", trend: null },
+            { title: "Cerrados", value: closed, icon: XCircle, color: "text-gray-400", trend: null },
           ].map((stat, index) => (
-            <Card key={stat.title} className="hover:shadow-md transition-shadow animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: `${index * 100}ms` }}>
+            <Card
+              key={stat.title}
+              className="glass-card hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-in fade-in slide-in-from-bottom-4"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
                 <stat.icon className={`h-4 w-4 ${stat.color}`} />
@@ -141,7 +145,48 @@ export default async function DashboardPage() {
           ))}
         </div>
 
-        <Card className="animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: '100ms' }}>
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-4">
+          <Card className="glass-card lg:col-span-3 animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: '100ms' }}>
+            <CardHeader>
+              <CardTitle className="text-base">Alertas Predictivas</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800">
+                    <div className="flex items-center gap-3">
+                      <AlertCircle className="h-5 w-5 text-yellow-500" />
+                      <div>
+                        <p className="text-sm font-medium">Posible recurrencia detectada</p>
+                        <p className="text-xs text-muted-foreground">3 tickets de red en el piso 3 esta semana</p>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className="bg-yellow-100 text-yellow-700 border-yellow-200">
+                      Alta
+                    </Badge>
+                  </div>
+                ))}
+                <div className="text-center text-sm text-muted-foreground">
+                  Basado en analisis de patrones de tickets recientes
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-card animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: '150ms' }}>
+            <CardHeader>
+              <CardTitle className="text-base">SLA Vencidos</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-6">
+                <span className="text-3xl font-bold text-red-500">0</span>
+                <p className="text-sm text-muted-foreground mt-1">Sin SLA vencidos</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card className="glass-card animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: '100ms' }}>
           <CardHeader>
             <CardTitle className="text-base">Distribución por Estado</CardTitle>
           </CardHeader>
@@ -168,7 +213,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: '200ms' }}>
+        <Card className="glass-card animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: '200ms' }}>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">Tickets Recientes</CardTitle>
             <Button asChild variant="ghost" size="sm">

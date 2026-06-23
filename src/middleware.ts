@@ -66,6 +66,7 @@ export const config = {
     "/emails/:path*",
     "/settings/:path*",
     "/profile/:path*",
+    "/notifications/:path*",
     "/api/:path*",
   ],
 };

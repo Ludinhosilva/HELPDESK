@@ -17,6 +17,7 @@ import {
   Menu,
   LogOut,
   Wrench,
+  Columns3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { DarkModeToggle } from "@/components/ui/dark-mode-toggle";
+import { NotificationsBell } from "@/components/notifications";
 
 interface UserPayload {
   id: string;
@@ -49,6 +52,7 @@ interface UserPayload {
 const allNavItems = [
   { label: "Panel Principal", href: "/dashboard", icon: LayoutDashboard, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
   { label: "Tickets", href: "/tickets", icon: Ticket, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
+  { label: "Tablero Kanban", href: "/tickets/kanban", icon: Columns3, roles: ["ADMIN", "TECHNICIAN"] },
   { label: "Base de Conocimiento", href: "/knowledge", icon: BookOpen, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
   { label: "Perfil", href: "/profile", icon: User, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
   { label: "Usuarios", href: "/users", icon: Users, roles: ["ADMIN"] },
@@ -117,7 +121,7 @@ export default function DashboardShell({
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <aside className="hidden lg:flex lg:flex-col w-[260px] border-r border-border bg-card">
+      <aside className="hidden lg:flex lg:flex-col w-[260px] border-r border-border bg-card/80 backdrop-blur-xl">
         <div className="flex items-center gap-2 px-5 h-16 border-b border-border shrink-0">
           <Wrench className="h-5 w-5 text-primary" />
           <span className="font-bold text-lg">ServiDesk</span>
@@ -131,7 +135,7 @@ export default function DashboardShell({
       </aside>
 
       <div className="flex flex-col flex-1 overflow-hidden">
-        <header className="flex items-center h-16 border-b border-border px-4 lg:px-6 shrink-0 bg-card">
+        <header className="flex items-center h-16 border-b border-border px-4 lg:px-6 shrink-0 bg-card/80 backdrop-blur-xl sticky top-0 z-40">
           <div className="lg:hidden mr-2">
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
@@ -150,7 +154,10 @@ export default function DashboardShell({
             </Sheet>
           </div>
 
-          <div className="flex-1" />
+          <div className="flex items-center gap-1">
+            <DarkModeToggle />
+            <NotificationsBell />
+          </div>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
