@@ -1,268 +1,348 @@
 <div align="center">
 
-# ⚡ Flix Support
-
-### Plataforma de HelpDesk con IA Predictiva
-
-**Sistema moderno de gestión de tickets de soporte técnico con inteligencia artificial, base de conocimiento, y pagos integrados para tickets exprés.**
-
-![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
-![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react)
-![Prisma](https://img.shields.io/badge/Prisma-5-2D3748?style=for-the-badge&logo=prisma)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?style=for-the-badge&logo=tailwindcss)
-![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel)
+<img src="https://img.shields.io/badge/Flix-Support-6366f1?style=for-the-badge&logo=zap&logoColor=white" alt="Flix Support"/>
 
 <br>
 
-[**🚀 Ver Demo en Vivo**](https://helpdesklu-five.vercel.app) · [**📋 Documentación API**](#-api-endpoints) · [**📐 Esquema de BD**](#-base-de-datos)
+# <img src="https://img.shields.io/badge/⚡-Flix%20Support-6366f1?style=flat-square" alt="Logo"/>
+
+### Sistema Inteligente de Soporte Técnico
+
+![Next.js](https://img.shields.io/badge/Next.js-14-000?style=for-the-badge&logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61dafb?style=for-the-badge&logo=react&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-5-2d3748?style=for-the-badge&logo=prisma&logoColor=white)
+![Tailwind](https://img.shields.io/badge/Tailwind-3-06b6d4?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-4169e1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-Deployed-000?style=for-the-badge&logo=vercel&logoColor=white)
+
+<br>
+
+![License](https://img.shields.io/badge/Licencia-Académica-blue?style=flat-square)
+![Version](https://img.shields.io/badge/Version-1.0.0-green?style=flat-square)
+![Tests](https://img.shields.io/badge/Tests-125%20Passed-brightgreen?style=flat-square)
+![API](https://img.shields.io/badge/API-37%20Endpoints-orange?style=flat-square)
+
+<br>
+
+<a href="https://helpdesklu-five.vercel.app" target="_blank">
+  <img src="https://img.shields.io/badge/🚀_Ver_Demo-6366f1?style=for-the-badge&logo=vercel&logoColor=white" alt="Demo"/>
+</a>
+<a href="#-instalación">
+  <img src="https://img.shields.io/badge/📦_Instalar-10b981?style=for-the-badge&logo=npm&logoColor=white" alt="Install"/>
+</a>
+<a href="#-api-endpoints">
+  <img src="https://img.shields.io/badge/📡_API_Docs-f59e0b?style=for-the-badge&logo=openapi-initiative&logoColor=white" alt="API"/>
+</a>
 
 </div>
 
 ---
 
-## 📋 Tabla de Contenidos
+## 📌 ¿Qué es Flix Support?
 
-- [Características](#-características)
-- [Arquitectura](#-arquitectura)
-- [Stack Tecnológico](#-stack-tecnológico)
-- [Base de Datos](#-base-de-datos)
-- [API Endpoints](#-api-endpoints)
-- [Roles y Permisos](#-roles-y-permisos)
-- [Planes de Suscripción](#-planes-de-suscripción)
-- [Instalación](#-instalación)
-- [Variables de Entorno](#-variables-de-entorno)
-- [Estructura del Proyecto](#-estructura-del-proyecto)
+<table>
+<tr>
+<td width="100%">
 
----
+**Flix Support** es una plataforma completa de **gestión de soporte técnico** construida con las últimas tecnologías web. Incluye:
 
-## ✨ Características
+| Característica | Descripción |
+|----------------|-------------|
+| 🎫 **Sistema de Tickets** | Creación, asignación, seguimiento y resolución con flujo completo |
+| 🤖 **IA Predictiva** | Clasificación automática, análisis de sentimiento y sugerencia de soluciones |
+| 📚 **Base de Conocimiento** | Artículos, guías y documentación searchable |
+| 💳 **Ticket Exprés** | Compra de prioridad urgente con pago integrado |
+| 📊 **Analytics** | Dashboard con gráficos en tiempo real y predicciones |
+| 🔐 **Multi-tenant** | Aislamiento completo por organización con 4 roles |
+| 📧 **Notificaciones** | SSE en tiempo real + logs de email |
+| 🎨 **UI Moderna** | Glassmorphism, animaciones, modo oscuro, 100% responsive |
 
-### 🎫 Gestión de Tickets
-- Creación, asignación y seguimiento de tickets con numeración automática
-- Estados: `OPEN → IN_PROGRESS → RESOLVED → CLOSED` + flujo de reparación
-- Prioridades: Baja, Media, Alta, Urgente
-- Vista Kanban con drag & drop para gestión visual
-- Comentarios y historial de auditoría por ticket
-- Evaluación post-resolución con sistema de estrellas (1-5)
-
-### 🤖 IA Predictiva
-- **Triaje Automático**: Clasifica tickets por categoría automáticamente
-- **Análisis de Sentimiento**: Detecta urgencia y tono del usuario
-- **Sugerencia de Soluciones**: Copilot que recomienda soluciones basadas en tickets similares
-- **Búsqueda de Similares**: Encuentra tickets resueltos con problemas similares
-- **Predicción de Volumen**: Pronóstico de tendencias a 7 días basado en datos de 90 días
-
-### 📚 Base de Conocimiento
-- Artículos y guías con categorías
-- Estados: Borrador / Publicado
-- Contador de vistas y votos útiles
-- Búsqueda por texto y categoría
-
-### 💳 Ticket Exprés
-- Prioridad urgente con garantía de respuesta en < 2 horas
-- Sistema de pago integrado (simulación Culqi)
-- Historial de compras y pagos
-
-### 📊 Analíticas en Tiempo Real
-- Dashboard con métricas clave
-- Gráficos de tickets por categoría, estado y tendencia diaria
-- Rendimiento de técnicos
-- Predicción de volumen de tickets
-
-### 🔐 Seguridad y Multi-tenancy
-- JWT con httpOnly cookies
-- Aislamiento completo por organización
-- 4 roles: `SUPER_ADMIN`, `ADMIN`, `TECHNICIAN`, `END_USER`
-- Registro de super-admin con clave secreta
-
-### 📧 Notificaciones
-- Sistema de notificaciones en tiempo real vía Server-Sent Events (SSE)
-- Registro de emails enviados
-- Toast notifications con Sonner
+</td>
+</tr>
+</table>
 
 ---
 
-## 🏗 Arquitectura
+## 🎯 Lo Que Contiene El Proyecto
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 🖥️ Frontend (15 páginas)
+
+| Ruta | Descripción |
+|------|-------------|
+| `/` | Landing page profesional con pricing |
+| `/login` | Login con glassmorphism |
+| `/register` | Registro de organización |
+| `/dashboard` | Panel principal con métricas |
+| `/tickets` | Lista de tickets con filtros |
+| `/tickets/new` | Crear ticket con IA |
+| `/tickets/[id]` | Detalle completo del ticket |
+| `/tickets/kanban` | Vista Kanban drag & drop |
+| `/tickets/compras` | Compras Ticket Exprés |
+| `/knowledge` | Base de conocimiento |
+| `/knowledge/[id]` | Artículo de conocimiento |
+| `/analytics` | Gráficos y predicciones |
+| `/users` | Gestión de usuarios |
+| `/subscriptions` | Planes y pagos |
+| `/profile` | Perfil de usuario |
+
+</td>
+<td width="50%" valign="top">
+
+### ⚙️ Backend (37 endpoints API)
+
+| Módulo | Endpoints |
+|--------|-----------|
+| **Auth** | Login, Register, Logout, Super Admin |
+| **Tickets** | CRUD, Comentarios, Evaluación, Stats, Predicción |
+| **AI** | Triage, Copilot, Sentiment, Similar |
+| **Knowledge** | CRUD Artículos |
+| **Users** | CRUD Usuarios |
+| **Categories** | CRUD Categorías |
+| **Payments** | Pago Ticket Exprés |
+| **Subscriptions** | Planes y Suscripciones |
+| **Notifications** | SSE Tiempo Real |
+| **Admin** | Stats Globales, Organizaciones |
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🏗️ Arquitectura del Sistema
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                     FRONTEND                            │
-│  Next.js 14 App Router + React 18 + Tailwind CSS        │
-│  ┌─────────────┐ ┌──────────────┐ ┌──────────────────┐  │
-│  │   Landing    │ │   Dashboard  │ │   Super Admin    │  │
-│  │   Page       │ │   (Auth)     │ │   (Protected)    │  │
-│  └─────────────┘ └──────────────┘ └──────────────────┘  │
-└─────────────────────┬───────────────────────────────────┘
-                      │ API Routes
-┌─────────────────────▼───────────────────────────────────┐
-│                     BACKEND                             │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────────┐  │
-│  │   Auth   │ │  Tickets │ │    AI    │ │   Admin    │  │
-│  │  (JWT)   │ │   CRUD   │ │  Engine  │ │  Panel     │  │
-│  └──────────┘ └──────────┘ └──────────┘ └────────────┘  │
-└─────────────────────┬───────────────────────────────────┘
-                      │ Prisma ORM
-┌─────────────────────▼───────────────────────────────────┐
-│                    DATABASE                             │
-│              PostgreSQL (Neon Serverless)                │
-│  ┌─────────────┐ ┌──────────┐ ┌──────────────────────┐  │
-│  │ Organizations│ │  Tickets │ │ Knowledge Articles   │  │
-│  │    Users     │ │ Comments │ │ Subscriptions        │  │
-│  └─────────────┘ └──────────┘ └──────────────────────┘  │
-└─────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────┐
+│                           🌐 FRONTEND                                   │
+│                                                                        │
+│   ┌─────────────┐    ┌──────────────┐    ┌────────────────────────┐    │
+│   │   Landing    │    │   Dashboard  │    │     Super Admin        │    │
+│   │   ────────   │    │   ────────   │    │     ────────────       │    │
+│   │ • Hero       │    │ • Métricas   │    │ • Gestión Orgs         │    │
+│   │ • Features   │    │ • Tickets    │    │ • Estadísticas         │    │
+│   │ • Pricing    │    │ • Charts     │    │ • Control Total        │    │
+│   │ • CTA        │    │ • IA Chat    │    │                        │    │
+│   └─────────────┘    └──────────────┘    └────────────────────────┘    │
+│                                                                        │
+│   Stack: Next.js 14 + React 18 + TypeScript + Tailwind CSS             │
+│   UI: Radix UI + shadcn/ui + Framer Motion + Recharts                  │
+└────────────────────────────────┬───────────────────────────────────────┘
+                                 │
+                                 ▼
+┌──────────────────────────────────────────────────────────────────────────┐
+│                           ⚡ API ROUTES                                  │
+│                                                                        │
+│   ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
+│   │   Auth   │  │  Tickets │  │    AI    │  │  Admin   │              │
+│   │  ──────  │  │  ──────  │  │  ──────  │  │  ──────  │              │
+│   │ • JWT    │  │ • CRUD   │  │ • Triage │  │ • Stats  │              │
+│   │ • Roles  │  │ • Search │  │ • NLP    │  │ • Orgs   │              │
+│   │ • Guard  │  │ • Stats  │  │ • ML     │  │ • Control│              │
+│   └──────────┘  └──────────┘  └──────────┘  └──────────┘              │
+│                                                                        │
+│   Middleware: Auth + Role Validation + Rate Limiting                    │
+└────────────────────────────────┬───────────────────────────────────────┘
+                                 │
+                                 ▼
+┌──────────────────────────────────────────────────────────────────────────┐
+│                           🗄️ DATABASE                                   │
+│                                                                        │
+│   PostgreSQL (Neon Serverless) + Prisma ORM                             │
+│                                                                        │
+│   ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                   │
+│   │ Organization│──│    User     │──│   Ticket    │                   │
+│   │    (Org)    │  │   (4 Roles) │  │  (10 States)│                   │
+│   └─────────────┘  └─────────────┘  └──────┬──────┘                   │
+│                                            │                           │
+│                        ┌───────────────────┼───────────────────┐       │
+│                        │                   │                   │       │
+│                   ┌────▼────┐         ┌────▼────┐         ┌───▼───┐   │
+│                   │ Comment │         │ History │         │ Eval  │   │
+│                   └─────────┘         └─────────┘         └───────┘   │
+│                                                                        │
+│   + Category + KnowledgeArticle + SubscriptionPlan + Payment          │
+└──────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🛠 Stack Tecnológico
+## 🛠️ Stack Tecnológico Completo
 
-| Capa | Tecnología | Versión |
-|------|-----------|---------|
-| **Framework** | Next.js (App Router) | 14.2.35 |
-| **Lenguaje** | TypeScript | 5.x |
-| **UI Library** | React | 18 |
-| **Estilos** | Tailwind CSS | 3.4 |
-| **Componentes** | Radix UI + shadcn/ui | - |
-| **ORM** | Prisma | 5.14 |
-| **Base de Datos** | PostgreSQL (Neon) | - |
-| **Autenticación** | JWT (jose) + bcryptjs | - |
-| **Gráficos** | Recharts | 3.8 |
-| **Animaciones** | Framer Motion | 11 |
-| **Drag & Drop** | @dnd-kit | 6.3 |
-| **Formularios** | Zod | 3.23 |
-| **PDF** | jsPDF | 4.2 |
-| **Toast** | Sonner | 2.0 |
-| **Deploy** | Vercel | - |
+<table>
+<tr>
+<td width="33%" valign="top">
+
+**Frontend**
+| Tecnología | Uso |
+|-----------|-----|
+| Next.js 14 | Framework principal |
+| React 18 | UI Library |
+| TypeScript 5 | Tipado estático |
+| Tailwind CSS 3 | Estilos utility-first |
+| Framer Motion 11 | Animaciones fluidas |
+| Recharts 3.8 | Gráficos interactivos |
+| @dnd-kit | Drag & Drop Kanban |
+| Sonner | Toast notifications |
+
+</td>
+<td width="33%" valign="top">
+
+**Backend**
+| Tecnología | Uso |
+|-----------|-----|
+| API Routes | REST API endpoints |
+| Prisma 5 | ORM + Migrations |
+| jose 5 | JWT tokens |
+| bcryptjs | Hash de contraseñas |
+| Zod 3.23 | Validación de datos |
+| jsPDF 4.2 | Generación de PDFs |
+| SSE | Notificaciones real-time |
+| date-fns 4 | Manejo de fechas |
+
+</td>
+<td width="33%" valign="top">
+
+**UI Components**
+| Componente | Origen |
+|-----------|--------|
+| Button, Input | shadcn/ui |
+| Dialog, Sheet | Radix UI |
+| Select, Tabs | Radix UI |
+| Dropdown, Popover | Radix UI |
+| Toast, Tooltip | Radix UI |
+| Switch, Avatar | Radix UI |
+| Progress, Label | Radix UI |
+| Command (cmdk) | Paleta comandos |
+
+</td>
+</tr>
+</table>
 
 ---
 
-## 🗄 Base de Datos
+## 🗃️ Base de Datos - Modelos
+
+<table>
+<tr>
+<td width="50%">
 
 ### Modelos Principales
 
 ```
-┌─────────────────┐     ┌─────────────────┐
-│  Organization   │────<│      User       │
-│─────────────────│     │─────────────────│
-│ id              │     │ id              │
-│ name            │     │ email           │
-│ slug            │     │ name            │
-│ planStatus      │     │ role            │
-│ aiUsageCount    │     │ isActive        │
-└────────┬────────┘     └─────────────────┘
-         │
-         ├─────────────────────────────────────┐
-         │                                     │
-┌────────▼────────┐     ┌─────────────────────▼───┐
-│    Category     │────<│       Ticket            │
-│─────────────────│     │─────────────────────────│
-│ id              │     │ id                      │
-│ name            │     │ ticketNumber (auto)     │
-│ slug            │     │ title                   │
-└─────────────────┘     │ status                  │
-                        │ priority                │
-                        │ aiCategorySuggested     │
-                        │ aiSentiment             │
-                        │ slaExpiresAt            │
-                        │ paymentStatus           │
-                        └────────────┬────────────┘
-                                     │
-                    ┌────────────────┼────────────────┐
-                    │                │                │
-          ┌────────▼──────┐ ┌───────▼───────┐ ┌─────▼──────────┐
-          │    Comment    │ │TicketHistory  │ │  Evaluation    │
-          │───────────────│ │───────────────│ │────────────────│
-          │ content       │ │ action        │ │ rating (1-5)   │
-          │ ticketId      │ │ description   │ │ comment        │
-          │ authorId      │ │ userId        │ │ userId         │
-          └───────────────┘ └───────────────┘ └────────────────┘
-
-┌──────────────────┐     ┌──────────────────┐
-│KnowledgeArticle  │     │ SubscriptionPlan │
-│──────────────────│     │──────────────────│
-│ title            │     │ name             │
-│ content          │     │ price            │
-│ status           │     │ features         │
-│ viewCount        │     │ isPopular        │
-│ helpfulCount     │     └──────────────────┘
-└──────────────────┘
+Organization ──< User
+     │
+     ├──< Category ──< Ticket
+     │                  │
+     │         ┌────────┼────────┐
+     │         │        │        │
+     │    Comment  History  Evaluation
+     │
+     ├──< KnowledgeArticle
+     ├──< Subscription ──< Payment
+     └──< EmailLog
 ```
 
-### Estados de Ticket
+</td>
+<td width="50%">
 
-| Estado | Descripción |
-|--------|------------|
-| `OPEN` | Ticket creado, esperando asignación |
-| `IN_PROGRESS` | En progreso por un técnico |
-| `RECEIVED` | Recibido en taller |
-| `DIAGNOSING` | En diagnóstico |
-| `REPAIRING` | En reparación |
-| `WAITING_PARTS` | Esperando repuestos |
-| `READY` | Listo para entregar |
-| `DELIVERED` | Entregado al cliente |
-| `RESOLVED` | Resuelto |
-| `CLOSECerrado` | Cerrado definitivamente |
+### Estados de Ticket (10)
+
+| Icono | Estado | Descripción |
+|-------|--------|-------------|
+| 🟢 | `OPEN` | Creado, esperando |
+| 🔵 | `IN_PROGRESS` | En progreso |
+| 📥 | `RECEIVED` | Recibido en taller |
+| 🔍 | `DIAGNOSING` | Diagnosticando |
+| 🔧 | `REPAIRING` | Reparando |
+| ⏳ | `WAITING_PARTS` | Sin repuestos |
+| ✅ | `READY` | Listo para entregar |
+| 📦 | `DELIVERED` | Entregado |
+| ✔️ | `RESOLVED` | Resuelto |
+| ❌ | `CLOSED` | Cerrado |
+
+</td>
+</tr>
+</table>
+
+### Roles de Usuario (4)
+
+| Rol | Icono | Permisos |
+|-----|-------|----------|
+| `SUPER_ADMIN` | 👑 | Acceso total a todas las organizaciones |
+| `ADMIN` | ⚙️ | Gestionar usuarios, categorías, suscripciones |
+| `TECHNICIAN` | 🔧 | Ver tickets asignados, actualizar estados |
+| `END_USER` | 👤 | Crear tickets, ver los propios |
 
 ---
 
-## 📡 API Endpoints
+## 📡 API Endpoints - Documentación Completa
 
-### Autenticación
+<details>
+<summary><b>🔑 Autenticación (4 endpoints)</b></summary>
 
 | Método | Ruta | Descripción |
 |--------|------|-------------|
-| `POST` | `/api/auth/login` | Iniciar sesión |
+| `POST` | `/api/auth/login` | Iniciar sesión con email/password |
 | `POST` | `/api/auth/register` | Registrar usuario + organización |
-| `POST` | `/api/auth/logout` | Cerrar sesión |
-| `POST` | `/api/auth/register-super-admin` | Registrar super admin |
+| `POST` | `/api/auth/logout` | Cerrar sesión (limpiar cookie) |
+| `POST` | `/api/auth/register-super-admin` | Registrar super admin (requiere clave) |
 
-### Tickets
+</details>
+
+<details>
+<summary><b>🎫 Tickets (8 endpoints)</b></summary>
 
 | Método | Ruta | Descripción |
 |--------|------|-------------|
 | `GET` | `/api/tickets` | Listar tickets (paginado, filtrable) |
-| `POST` | `/api/tickets` | Crear ticket |
-| `GET` | `/api/tickets/[id]` | Detalle de ticket |
-| `PATCH` | `/api/tickets/[id]` | Actualizar ticket |
+| `POST` | `/api/tickets` | Crear ticket (numeración automática) |
+| `GET` | `/api/tickets/[id]` | Detalle completo con comentarios |
+| `PATCH` | `/api/tickets/[id]` | Actualizar estado/asignación |
 | `POST` | `/api/tickets/[id]/comments` | Agregar comentario |
-| `POST` | `/api/tickets/[id]/evaluate` | Evaluar ticket |
-| `GET` | `/api/tickets/stats` | Estadísticas |
-| `GET` | `/api/tickets/predict` | Predicción de volumen |
+| `POST` | `/api/tickets/[id]/evaluate` | Evaluar resolución (1-5 estrellas) |
+| `GET` | `/api/tickets/stats` | Estadísticas por categoría/estado |
+| `GET` | `/api/tickets/predict` | Predicción de volumen a 7 días |
 
-### Inteligencia Artificial
+</details>
+
+<details>
+<summary><b>🤖 Inteligencia Artificial (4 endpoints)</b></summary>
 
 | Método | Ruta | Descripción |
 |--------|------|-------------|
-| `POST` | `/api/ai/triage` | Triaje automático de tickets |
+| `POST` | `/api/ai/triage` | Clasificación automática de tickets |
 | `POST` | `/api/ai/copilot` | Sugerencia de soluciones |
 | `POST` | `/api/ai/sentiment` | Análisis de sentimiento |
-| `POST` | `/api/ai/search-similar` | Buscar tickets similares |
+| `POST` | `/api/ai/search-similar` | Buscar tickets similares resueltos |
 
-### Conocimiento
+</details>
+
+<details>
+<summary><b>📚 Base de Conocimiento (5 endpoints)</b></summary>
 
 | Método | Ruta | Descripción |
 |--------|------|-------------|
-| `GET` | `/api/knowledge` | Listar artículos |
-| `POST` | `/api/knowledge` | Crear artículo |
-| `GET` | `/api/knowledge/[id]` | Detalle de artículo |
+| `GET` | `/api/knowledge` | Listar artículos (searchable) |
+| `POST` | `/api/knowledge` | Crear artículo (solo admin) |
+| `GET` | `/api/knowledge/[id]` | Detalle (incrementa vistas) |
 | `PATCH` | `/api/knowledge/[id]` | Actualizar artículo |
 | `DELETE` | `/api/knowledge/[id]` | Eliminar artículo |
 
-### Usuarios
+</details>
+
+<details>
+<summary><b>👥 Usuarios y Otros (16 endpoints)</b></summary>
 
 | Método | Ruta | Descripción |
 |--------|------|-------------|
-| `GET` | `/api/users` | Listar usuarios |
-| `POST` | `/api/users` | Invitar usuario |
+| `GET/POST` | `/api/users` | Listar/Invitar usuarios |
 | `PATCH` | `/api/users/[id]` | Actualizar usuario |
-
-### Otros
-
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| `GET` | `/api/categories` | Categorías |
-| `POST` | `/api/categories` | Crear categoría |
+| `GET/POST` | `/api/categories` | CRUD Categorías |
 | `GET` | `/api/emails` | Logs de email |
 | `GET` | `/api/notifications` | SSE notificaciones |
 | `GET/PATCH` | `/api/profile` | Perfil de usuario |
@@ -270,178 +350,261 @@
 | `GET/POST` | `/api/subscriptions` | Suscripciones |
 | `GET` | `/api/subscription-plans` | Planes disponibles |
 | `GET` | `/api/admin/stats` | Estadísticas globales |
-| `GET` | `/api/admin/organizations` | Organizaciones |
+| `GET` | `/api/admin/organizations` | Todas las organizaciones |
 
----
-
-## 👥 Roles y Permisos
-
-| Rol | Permisos |
-|-----|----------|
-| **SUPER_ADMIN** | Acceso total a todas las organizaciones, estadísticas globales |
-| **ADMIN** | Gestionar usuarios, categorías, suscripciones, ver analíticas |
-| **TECHNICIAN** | Ver tickets asignados, actualizar estados, agregar comentarios |
-| **END_USER** | Crear tickets, ver tickets propios, evaluar resoluciones |
+</details>
 
 ---
 
 ## 💰 Planes de Suscripción
 
-| Plan | Precio | Tickets/mes | IA | Características |
-|------|--------|-------------|-----|-----------------|
-| **Gratis** | S/0 | 50 | 1 chat gratis | Dashboard básico, Knowledge Base |
-| **Básico** | S/29 | Ilimitado | Ilimitado | Analytics, Email notifications |
-| **Pro** | S/79 | Ilimitado | Ilimitado | IA auto-clasificación, Soporte prioritario |
+<table>
+<tr>
+<td width="33%" align="center">
+
+**🟢 Gratis**
+# S/ 0
+/mes
+
+| Feature | Límite |
+|---------|--------|
+| Tickets | 50/mes |
+| IA | 1 chat gratis |
+| Dashboard | ✅ Básico |
+| Knowledge | ✅ |
+| Analytics | ❌ |
+| Email | ❌ |
+
+</td>
+<td width="33%" align="center" style="border: 2px solid #6366f1; border-radius: 12px;">
+
+**⭐ Básico** (Popular)
+# S/ 29
+/mes
+
+| Feature | Límite |
+|---------|--------|
+| Tickets | ♾️ Ilimitado |
+| IA | ♾️ Ilimitado |
+| Dashboard | ✅ |
+| Knowledge | ✅ |
+| Analytics | ✅ Básico |
+| Email | ✅ |
+
+</td>
+<td width="33%" align="center">
+
+**💎 Pro**
+# S/ 79
+/mes
+
+| Feature | Límite |
+|---------|--------|
+| Tickets | ♾️ Ilimitado |
+| IA | ♾️ Ilimitado |
+| Dashboard | ✅ |
+| Knowledge | ✅ |
+| Analytics | ✅ Avanzado |
+| Soporte | ✅ Prioritario |
+
+</td>
+</tr>
+</table>
 
 ---
 
-## 🚀 Instalación
+## 🚀 Instalación Rápida
 
-### Prerequisitos
-
-- Node.js 18+
-- npm o yarn
-- PostgreSQL (o usar Neon Serverless)
+### Prerrequisitos
+- **Node.js** 18+ 
+- **npm** o yarn
+- **PostgreSQL** (recomendado: Neon Serverless)
 
 ### Pasos
 
 ```bash
-# 1. Clonar el repositorio
-git clone https://github.com/TU_USUARIO/flix-support.git
-cd flix-support
+# 1️⃣ Clonar repositorio
+git clone https://github.com/Ludinhosilva/HELPDESK.git
+cd HELPDESK
 
-# 2. Instalar dependencias
+# 2️⃣ Instalar dependencias
 npm install
 
-# 3. Configurar variables de entorno
+# 3️⃣ Configurar entorno
 cp .env.example .env
-# Editar .env con tus credenciales de base de datos
+# Editar .env con tus variables
 
-# 4. Generar cliente de Prisma
+# 4️⃣ Preparar base de datos
 npx prisma generate
-
-# 5. Ejecutar migraciones
 npx prisma migrate deploy
-
-# 6. Sembrar datos iniciales
 npx tsx prisma/seed.ts
 
-# 7. Iniciar servidor de desarrollo
+# 5️⃣ Iniciar desarrollo
 npm run dev
 ```
 
-Abrir [http://localhost:3000](http://localhost:3000)
-
-### Credenciales por Defecto (tras seed)
+### 🔑 Credenciales por Defecto
 
 | Rol | Email | Contraseña |
 |-----|-------|------------|
-| Super Admin | `super@flixsupport.com` | `admin123` |
-| Admin | `admin@techcorp.com` | `admin123` |
-| Técnico | `tecnico@techcorp.com` | `admin123` |
-| Usuario | `usuario@techcorp.com` | `admin123` |
-
----
-
-## 🔧 Variables de Entorno
-
-```env
-# Base de datos
-DATABASE_URL="postgresql://..."
-
-# JWT
-JWT_SECRET="flix-support-secret-2026"
-
-# Super Admin
-SUPER_ADMIN_KEY="flix-super-2026"
-
-# App
-NEXT_PUBLIC_APP_URL="https://helpdesklu-five.vercel.app"
-```
+| 👑 Super Admin | `super@flixsupport.com` | `admin123` |
+| ⚙️ Admin | `admin@techcorp.com` | `admin123` |
+| 🔧 Técnico | `tecnico@techcorp.com` | `admin123` |
+| 👤 Usuario | `usuario@techcorp.com` | `admin123` |
 
 ---
 
 ## 📁 Estructura del Proyecto
 
 ```
-pc-repair-helpdesk/
-├── prisma/
-│   ├── schema.prisma          # Esquema de base de datos
-│   ├── seed.ts                # Datos iniciales
-│   └── migrations/            # Migraciones de BD
-├── src/
-│   ├── app/
-│   │   ├── (dashboard)/       # Rutas autenticadas
-│   │   │   ├── dashboard/     # Panel principal
-│   │   │   ├── tickets/       # Gestión de tickets
-│   │   │   │   ├── [id]/      # Detalle de ticket
-│   │   │   │   ├── kanban/    # Vista Kanban
-│   │   │   │   ├── new/       # Crear ticket
-│   │   │   │   └── compras/   # Ticket Exprés
-│   │   │   ├── knowledge/     # Base de conocimiento
-│   │   │   ├── analytics/     # Analíticas
-│   │   │   ├── users/         # Gestión de usuarios
-│   │   │   ├── categories/    # Categorías
-│   │   │   ├── emails/        # Logs de email
-│   │   │   ├── subscriptions/ # Suscripciones
-│   │   │   ├── settings/      # Configuración
-│   │   │   └── profile/       # Perfil
-│   │   ├── (super-admin)/     # Rutas super admin
+flix-support/
+│
+├── 📂 prisma/
+│   ├── schema.prisma        # 🗃️ Modelo de datos (11 tablas)
+│   ├── seed.ts              # 🌱 Datos iniciales
+│   └── 📂 migrations/       # 🔄 Migraciones de BD
+│
+├── 📂 src/
+│   ├── 📂 app/
+│   │   ├── 📂 (dashboard)/  # 🔐 Rutas autenticadas
+│   │   │   ├── dashboard/   # 📊 Panel principal
+│   │   │   ├── tickets/     # 🎫 Gestión de tickets
+│   │   │   │   ├── [id]/    # 👁️ Detalle ticket
+│   │   │   │   ├── kanban/  # 📋 Vista Kanban
+│   │   │   │   ├── new/     # ➕ Crear ticket
+│   │   │   │   └── compras/ # 💳 Ticket Exprés
+│   │   │   ├── knowledge/   # 📚 Base conocimiento
+│   │   │   ├── analytics/   # 📈 Analíticas
+│   │   │   ├── users/       # 👥 Usuarios
+│   │   │   ├── categories/  # 🏷️ Categorías
+│   │   │   ├── emails/      # 📧 Logs email
+│   │   │   ├── subscriptions/ # 💰 Suscripciones
+│   │   │   ├── settings/    # ⚙️ Configuración
+│   │   │   └── profile/     # 👤 Perfil
+│   │   │
+│   │   ├── 📂 (super-admin)/ # 👑 Rutas super admin
 │   │   │   └── super-admin/
-│   │   ├── api/               # API Routes
-│   │   │   ├── ai/            # Motor de IA
-│   │   │   ├── auth/          # Autenticación
-│   │   │   ├── tickets/       # CRUD tickets
-│   │   │   ├── knowledge/     # Base conocimiento
+│   │   │
+│   │   ├── 📂 api/          # ⚡ API Routes (37 endpoints)
+│   │   │   ├── ai/          # 🤖 Motor IA
+│   │   │   ├── auth/        # 🔑 Autenticación
+│   │   │   ├── tickets/     # 🎫 CRUD Tickets
+│   │   │   ├── knowledge/   # 📚 Base Conocimiento
 │   │   │   └── ...
-│   │   ├── login/             # Login
-│   │   ├── register/          # Registro
-│   │   └── page.tsx           # Landing page
-│   ├── components/
-│   │   ├── ui/                # Componentes base (shadcn/ui)
-│   │   ├── ai-triage.tsx      # Widget de IA
+│   │   │
+│   │   ├── login/           # 🚪 Login
+│   │   ├── register/        # 📝 Registro
+│   │   └── page.tsx         # 🏠 Landing page
+│   │
+│   ├── 📂 components/
+│   │   ├── 📂 ui/           # 🎨 Componentes base (shadcn/ui)
+│   │   ├── ai-triage.tsx    # 🤖 Widget IA
 │   │   ├── comment-section.tsx
 │   │   └── ...
-│   ├── lib/
-│   │   ├── auth.ts            # Helpers de autenticación
-│   │   ├── ai-usage.ts        # Control de uso de IA
-│   │   └── utils.ts           # Utilidades generales
-│   └── core/
-│       └── api-client.ts      # Cliente API
-├── public/                    # Archivos estáticos
-├── .env                       # Variables de entorno
-├── tailwind.config.ts         # Configuración Tailwind
-├── next.config.js             # Configuración Next.js
-└── package.json               # Dependencias
+│   │
+│   ├── 📂 lib/
+│   │   ├── auth.ts          # 🔐 Helpers autenticación
+│   │   ├── ai-usage.ts      # 🤖 Control uso IA
+│   │   └── utils.ts         # 🔧 Utilidades
+│   │
+│   └── 📂 core/
+│       └── api-client.ts    # 📡 Cliente API
+│
+├── 📂 public/               # 🖼️ Archivos estáticos
+├── .env                     # 🔑 Variables de entorno
+├── tailwind.config.ts       # 🎨 Configuración Tailwind
+├── next.config.js           # ⚙️ Configuración Next.js
+└── package.json             # 📦 Dependencias
 ```
 
 ---
 
 ## 🧪 Testing
 
+<table>
+<tr>
+<td align="center">
+
+**Unit Tests**
+<br>
+<img src="https://img.shields.io/badge/Vitest-125 Passed-brightgreen?style=for-the-badge" alt="Tests"/>
+
 ```bash
-# Tests unitarios
 npm run test
+```
 
-# Tests E2E con Playwright
+</td>
+<td align="center">
+
+**E2E Tests**
+<br>
+<img src="https://img.shields.io/badge/Playwright-E2E-blue?style=for-the-badge" alt="E2E"/>
+
+```bash
 npx playwright test
+```
 
-# Linting
+</td>
+<td align="center">
+
+**Linting**
+<br>
+<img src="https://img.shields.io/badge/ESLint-Passing-green?style=for-the-badge" alt="Lint"/>
+
+```bash
 npm run lint
 ```
+
+</td>
+</tr>
+</table>
 
 ---
 
 ## 📄 Licencia
 
-Proyecto académico - UNAP 2026
+<table>
+<tr>
+<td>
+
+**Proyecto Académico**
+<br>
+Universidad Nacional de la Amazonía Peruana (UNAP)
+<br>
+Ingeniería de Sistemas - 2026
+
+</td>
+<td align="right">
+
+**Autor**
+<br>
+Ludwing Silva
+<br>
+
+<a href="https://github.com/Ludinhosilva" target="_blank">
+<img src="https://img.shields.io/badge/GitHub-Ludinhosilva-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+</a>
+
+</td>
+</tr>
+</table>
 
 ---
 
 <div align="center">
 
-**Desarrollado con ❤️ por el equipo de Flix Support**
+### ⚡ Construido con las mejores tecnologías
 
-[![Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/TU_USUARIO/flix-support)
+<img src="https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js"/>
+<img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React"/>
+<img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
+<img src="https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind"/>
+<img src="https://img.shields.io/badge/Prisma-5-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma"/>
+<img src="https://img.shields.io/badge/PostgreSQL-15-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL"/>
+
+<br>
+<br>
+
+**¿Te gusta? ¡Dale una ⭐ en GitHub!**
 
 </div>
