@@ -101,16 +101,16 @@ export function PaymentModal({ open, onOpenChange, ticketId, ticketNumber }: Pay
             <DialogHeader>
               <div className="flex items-center gap-2 mb-2">
                 <Shield className="h-5 w-5 text-primary" />
-                <DialogTitle>Pago Seguro - SLA Premium</DialogTitle>
+                <DialogTitle>Pago Seguro - Ticket Exprés</DialogTitle>
               </div>
               <DialogDescription>
-                Activa SLA Premium para el ticket <span className="font-mono font-semibold">TK-{ticketNumber}</span> y recibe respuesta garantizada en menos de 2 horas.
+                Activa Ticket Exprés para el ticket <span className="font-mono font-semibold">TK-{ticketNumber}</span> y recibe respuesta garantizada en menos de 2 horas.
               </DialogDescription>
             </DialogHeader>
 
             <div className="rounded-lg bg-muted p-3 mb-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">SLA Premium - Respuesta &lt; 2h</span>
+                <span className="text-sm font-medium">Ticket Exprés - Respuesta &lt; 2h</span>
                 <span className="text-lg font-bold">S/ {(SLA_PREMIUM_PRICE / 100).toFixed(2)}</span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">Prioridad Urgente + tiempo de respuesta garantizado</p>
@@ -198,7 +198,7 @@ export function PaymentModal({ open, onOpenChange, ticketId, ticketNumber }: Pay
             </div>
             <p className="text-lg font-semibold mb-2">Pago aprobado</p>
             <p className="text-sm text-muted-foreground">
-              SLA Premium activado para TK-{ticketNumber}
+              Ticket Exprés activado para TK-{ticketNumber}
             </p>
             <p className="text-xs text-muted-foreground mt-2">
               Redirigiendo...

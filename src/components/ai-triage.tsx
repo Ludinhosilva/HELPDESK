@@ -109,7 +109,7 @@ export function AITriage({ onComplete, onBack }: AITriageProps) {
         });
         botMessages.push({
           role: "bot",
-          text: `Para problemas complejos, recomendamos activar **SLA Premium** por **S/ ${(SLA_PREMIUM_PRICE / 100).toFixed(2)}**. Obtienes:\n\n• 🚀 Respuesta garantizada en < 2 horas\n• 🔥 Prioridad URGENTE\n• 👨‍🔧 Técnico especializado asignado\n\nTambién puedes crear un ticket normal (sin prioridad).`,
+          text: `Para problemas complejos, recomendamos activar **Ticket Exprés** por **S/ ${(SLA_PREMIUM_PRICE / 100).toFixed(2)}**. Obtienes:\n\n• 🚀 Respuesta garantizada en < 2 horas\n• 🔥 Prioridad URGENTE\n• 👨‍🔧 Técnico especializado asignado\n\nTambién puedes crear un ticket normal (sin prioridad).`,
           type: "payment_required",
         });
       }
@@ -241,7 +241,7 @@ export function AITriage({ onComplete, onBack }: AITriageProps) {
               <>
                 <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white" onClick={handleContinue}>
                   <Sparkles className="mr-2 h-4 w-4" />
-                  Activar SLA Premium - S/ {(SLA_PREMIUM_PRICE / 100).toFixed(2)}
+                  Activar Ticket Exprés - S/ {(SLA_PREMIUM_PRICE / 100).toFixed(2)}
                 </Button>
                 <Button className="w-full" variant="outline" onClick={handleContinue}>
                   Crear ticket normal (sin prioridad)

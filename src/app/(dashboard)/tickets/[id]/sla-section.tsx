@@ -33,7 +33,7 @@ export function SLASection({ ticketId, ticketNumber, paymentStatus, slaExpiresAt
 
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
-    doc.text("Boleta de Pago - SLA Premium", pageWidth / 2, 28, { align: "center" });
+    doc.text("Boleta de Pago - Ticket Exprés", pageWidth / 2, 28, { align: "center" });
 
     doc.setDrawColor(200, 200, 200);
     doc.line(14, 32, pageWidth - 14, 32);
@@ -42,7 +42,7 @@ export function SLASection({ ticketId, ticketNumber, paymentStatus, slaExpiresAt
     doc.setTextColor(80, 80, 80);
     const lines = [
       { label: "Ticket:", value: `TK-${ticketNumber}` },
-      { label: "Servicio:", value: "SLA Premium - Respuesta < 2h" },
+      { label: "Servicio:", value: "Ticket Exprés - Respuesta < 2h" },
       { label: "Monto:", value: `S/ ${(SLA_PREMIUM_PRICE / 100).toFixed(2)}` },
       { label: "Estado:", value: "APROBADO" },
       { label: "Fecha:", value: new Date().toLocaleDateString("es-PE") },
@@ -63,7 +63,7 @@ export function SLASection({ ticketId, ticketNumber, paymentStatus, slaExpiresAt
     doc.setTextColor(150, 150, 150);
     doc.text("Documento generado electronicamente - Proyecto academico UNAP 2026", pageWidth / 2, y + 10, { align: "center" });
 
-    doc.save(`boleta-SLA-TK-${ticketNumber}.pdf`);
+    doc.save(`boleta-Ticket-Expres-TK-${ticketNumber}.pdf`);
   }
 
   return (
@@ -73,7 +73,7 @@ export function SLASection({ ticketId, ticketNumber, paymentStatus, slaExpiresAt
           <div className="flex items-center justify-between">
             <CardTitle className="text-base flex items-center gap-2">
               <Shield className="h-4 w-4 text-primary" />
-              SLA Premium
+              Ticket Exprés
             </CardTitle>
             {isPaid && (
               <Badge className="bg-green-100 text-green-700 border-green-200">
@@ -109,11 +109,11 @@ export function SLASection({ ticketId, ticketNumber, paymentStatus, slaExpiresAt
           ) : (
             <>
               <p className="text-sm text-muted-foreground">
-                Activa SLA Premium para recibir respuesta en menos de <strong>2 horas</strong> y prioridad <strong>Urgente</strong>.
+                Activa Ticket Exprés para recibir respuesta en menos de <strong>2 horas</strong> y prioridad <strong>Urgente</strong>.
               </p>
               <div className="rounded-lg bg-muted p-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">SLA Premium</span>
+                  <span className="text-sm font-medium">Ticket Exprés</span>
                   <span className="font-bold">S/ {(SLA_PREMIUM_PRICE / 100).toFixed(2)}</span>
                 </div>
                 <ul className="text-xs text-muted-foreground mt-2 space-y-1">
@@ -124,7 +124,7 @@ export function SLASection({ ticketId, ticketNumber, paymentStatus, slaExpiresAt
               </div>
               <Button className="w-full" onClick={() => setShowPayment(true)} disabled={paymentStatus === "PROCESSING"}>
                 <Zap className="h-4 w-4 mr-2" />
-                {paymentStatus === "PROCESSING" ? "Procesando..." : "Subir a Premium - S/ 20.00"}
+                {paymentStatus === "PROCESSING" ? "Procesando..." : "Subir a Ticket Exprés - S/ 20.00"}
               </Button>
             </>
           )}

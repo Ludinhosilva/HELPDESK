@@ -114,7 +114,7 @@ export default function NewTicketPage() {
           toast({
             type: "info",
             title: "Ticket creado",
-            description: "Activa SLA Premium para prioridad urgente.",
+            description: "Activa Ticket Exprés para prioridad urgente.",
           });
         } else {
           toast({ type: "success", title: "Ticket creado", description: "Tu ticket ha sido creado exitosamente" });
@@ -254,7 +254,7 @@ export default function NewTicketPage() {
                 <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
                 <div className="text-sm text-amber-700 dark:text-amber-400">
                   <p className="font-medium">Problema complejo detectado</p>
-                  <p>Si necesitas atención urgente, activa SLA Premium por <strong>S/ {(SLA_PREMIUM_PRICE / 100).toFixed(2)}</strong> luego de crear el ticket.</p>
+                  <p>Si necesitas atención urgente, activa Ticket Exprés por <strong>S/ {(SLA_PREMIUM_PRICE / 100).toFixed(2)}</strong> luego de crear el ticket.</p>
                 </div>
               </div>
             )}

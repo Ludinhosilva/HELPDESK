@@ -62,7 +62,7 @@ export function triage(text: string): TriageResult {
         solution: null,
         requiresPayment: true,
         reason: "Este problema requiere reparación física o intervención especializada. No podemos resolverlo automáticamente.",
-        suggestedAction: "Activar SLA Premium para obtener respuesta garantizada en menos de 2 horas.",
+        suggestedAction: "Activar Ticket Exprés para obtener respuesta garantizada en menos de 2 horas.",
         estimatedCost: 2000,
       };
     }
@@ -106,7 +106,7 @@ export function triage(text: string): TriageResult {
       solution: null,
       requiresPayment: true,
       reason: "Por la descripción, parece un problema que requiere atención especializada.",
-      suggestedAction: "Activar SLA Premium para prioridad urgente.",
+      suggestedAction: "Activar Ticket Exprés para prioridad urgente.",
       estimatedCost: 2000,
     };
   }

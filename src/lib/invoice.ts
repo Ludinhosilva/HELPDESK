@@ -19,7 +19,7 @@ Referencia: ${paymentReference}
 
 Cliente: ${userName}
 Ticket: TK-${ticketNumber}
-Concepto: SLA Premium - Respuesta garantizada < 2 horas
+Concepto: Ticket Exprés - Respuesta garantizada < 2 horas
 
 Subtotal: S/ ${((amount * 0.82) / 100).toFixed(2)}
 IGV (18%): S/ ${((amount * 0.18) / 100).toFixed(2)}

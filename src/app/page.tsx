@@ -35,7 +35,7 @@ export default function HomePage() {
             </h1>
             <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground">
               Plataforma de gesti&oacute;n de soporte t&eacute;cnico con IA predictiva.
-              Tickets, anal&iacute;ticas, SLA premium, base de conocimiento e inteligencia artificial.
+              Tickets, anal&iacute;ticas, Ticket Exprés, base de conocimiento e inteligencia artificial.
             </p>
             <div className="flex justify-center gap-4">
               <Link href="/register" className="rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 px-8 py-3 text-base font-medium text-white hover:from-blue-700 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">

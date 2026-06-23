@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (ticket.paymentStatus === "APPROVED") {
-      return NextResponse.json({ error: "already_paid", message: "Este ticket ya tiene SLA premium activo" }, { status: 400 });
+      return NextResponse.json({ error: "already_paid", message: "Este ticket ya tiene Ticket Exprés activo" }, { status: 400 });
     }
 
     await prisma.ticket.update({
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
         history: {
           create: {
             action: "PAYMENT_PROCESSING",
-            description: `Procesando pago SLA Premium - S/${(SLA_PREMIUM_PRICE / 100).toFixed(2)}`,
+            description: `Procesando pago Ticket Exprés - S/${(SLA_PREMIUM_PRICE / 100).toFixed(2)}`,
             userId,
           },
         },
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
           create: success
             ? {
                 action: "SLA_ACTIVATED",
-                description: `SLA Premium activado - Tiempo maximo de respuesta: 2 horas`,
+                description: `Ticket Exprés activado - Tiempo maximo de respuesta: 2 horas`,
                 userId,
               }
             : {
