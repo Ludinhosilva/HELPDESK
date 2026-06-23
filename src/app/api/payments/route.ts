@@ -6,9 +6,14 @@ export async function POST(request: NextRequest) {
   try {
     const orgId = request.headers.get("x-org-id");
     const userId = request.headers.get("x-user-id");
+    const userRole = request.headers.get("x-user-role");
 
     if (!orgId || !userId) {
       return NextResponse.json({ error: "unauthorized", message: "Autenticacion requerida" }, { status: 401 });
+    }
+
+    if (userRole !== "END_USER") {
+      return NextResponse.json({ error: "forbidden", message: "Solo los usuarios finales pueden comprar Ticket Exprés" }, { status: 403 });
     }
 
     const { ticketId } = await request.json();

@@ -13,9 +13,10 @@ interface SLASectionProps {
   ticketNumber: number;
   paymentStatus: string;
   slaExpiresAt: string | null;
+  userRole: string;
 }
 
-export function SLASection({ ticketId, ticketNumber, paymentStatus, slaExpiresAt }: SLASectionProps) {
+export function SLASection({ ticketId, ticketNumber, paymentStatus, slaExpiresAt, userRole }: SLASectionProps) {
   const [showPayment, setShowPayment] = useState(false);
 
   const sla = getSLAInfo(slaExpiresAt ? new Date(slaExpiresAt) : null);
@@ -108,24 +109,32 @@ export function SLASection({ ticketId, ticketNumber, paymentStatus, slaExpiresAt
             </>
           ) : (
             <>
-              <p className="text-sm text-muted-foreground">
-                Activa Ticket Exprés para recibir respuesta en menos de <strong>2 horas</strong> y prioridad <strong>Urgente</strong>.
-              </p>
-              <div className="rounded-lg bg-muted p-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Ticket Exprés</span>
-                  <span className="font-bold">S/ {(SLA_PREMIUM_PRICE / 100).toFixed(2)}</span>
-                </div>
-                <ul className="text-xs text-muted-foreground mt-2 space-y-1">
-                  <li>• Respuesta garantizada &lt; 2 horas</li>
-                  <li>• Prioridad Urgente automatica</li>
-                  <li>• Soporte prioritario</li>
-                </ul>
-              </div>
-              <Button className="w-full" onClick={() => setShowPayment(true)} disabled={paymentStatus === "PROCESSING"}>
-                <Zap className="h-4 w-4 mr-2" />
-                {paymentStatus === "PROCESSING" ? "Procesando..." : "Subir a Ticket Exprés - S/ 20.00"}
-              </Button>
+              {userRole === "END_USER" ? (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    Activa Ticket Exprés para recibir respuesta en menos de <strong>2 horas</strong> y prioridad <strong>Urgente</strong>.
+                  </p>
+                  <div className="rounded-lg bg-muted p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Ticket Exprés</span>
+                      <span className="font-bold">S/ {(SLA_PREMIUM_PRICE / 100).toFixed(2)}</span>
+                    </div>
+                    <ul className="text-xs text-muted-foreground mt-2 space-y-1">
+                      <li>• Respuesta garantizada &lt; 2 horas</li>
+                      <li>• Prioridad Urgente automatica</li>
+                      <li>• Soporte prioritario</li>
+                    </ul>
+                  </div>
+                  <Button className="w-full" onClick={() => setShowPayment(true)} disabled={paymentStatus === "PROCESSING"}>
+                    <Zap className="h-4 w-4 mr-2" />
+                    {paymentStatus === "PROCESSING" ? "Procesando..." : "Subir a Ticket Exprés - S/ 20.00"}
+                  </Button>
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground py-4 text-center">
+                  Ticket Exprés disponible solo para el usuario final.
+                </p>
+              )}
             </>
           )}
         </CardContent>

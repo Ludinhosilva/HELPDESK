@@ -14,6 +14,7 @@ const roleRouteRestrictions: Record<string, string[]> = {
   "/settings": ["SUPER_ADMIN", "ADMIN"],
   "/subscriptions": ["SUPER_ADMIN", "ADMIN"],
   "/tickets/kanban": ["SUPER_ADMIN", "ADMIN", "TECHNICIAN"],
+  "/tickets/compras": ["SUPER_ADMIN", "ADMIN"],
   "/tickets/new": ["SUPER_ADMIN", "ADMIN", "END_USER"],
   "/super-admin": ["SUPER_ADMIN"],
 };

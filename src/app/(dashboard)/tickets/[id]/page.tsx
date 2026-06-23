@@ -214,6 +214,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
             ticketNumber={ticket.ticketNumber}
             paymentStatus={ticket.paymentStatus}
             slaExpiresAt={ticket.slaExpiresAt?.toISOString() ?? null}
+            userRole={user.role}
           />
 
           <Card>

@@ -56,6 +56,7 @@ const allNavItems = [
   { label: "Base de Conocimiento", href: "/knowledge", icon: BookOpen, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
   { label: "Perfil", href: "/profile", icon: User, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
   { label: "Usuarios", href: "/users", icon: Users, roles: ["ADMIN"] },
+  { label: "Compras", href: "/tickets/compras", icon: CreditCard, roles: ["ADMIN"] },
   { label: "Categorías", href: "/categories", icon: Tags, roles: ["ADMIN"] },
   { label: "Analíticas", href: "/analytics", icon: BarChart3, roles: ["ADMIN"] },
   { label: "Suscripciones", href: "/subscriptions", icon: CreditCard, roles: ["ADMIN"] },
