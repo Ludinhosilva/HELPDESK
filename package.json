@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
@@ -21,7 +22,6 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@nextui-org/react": "^2.6.11",
     "@prisma/client": "^5.14.0",
     "@radix-ui/react-avatar": "^1.2.0",
     "@radix-ui/react-dialog": "^1.1.17",
