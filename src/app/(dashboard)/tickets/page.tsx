@@ -153,6 +153,7 @@ export default async function TicketsPage({ searchParams }: TicketsPageProps) {
 
       <Card className="animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: '100ms' }}>
         <CardContent className="pt-6">
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -210,11 +211,12 @@ export default async function TicketsPage({ searchParams }: TicketsPageProps) {
               )}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
             Página {page} de {totalPages}
           </p>

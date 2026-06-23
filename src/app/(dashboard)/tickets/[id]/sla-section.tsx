@@ -30,7 +30,7 @@ export function SLASection({ ticketId, ticketNumber, paymentStatus, slaExpiresAt
 
     doc.setFontSize(18);
     doc.setTextColor(37, 99, 235);
-    doc.text("ServiDesk", pageWidth / 2, 20, { align: "center" });
+    doc.text("Flix Support", pageWidth / 2, 20, { align: "center" });
 
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);

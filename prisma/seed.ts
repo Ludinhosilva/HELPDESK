@@ -24,14 +24,14 @@ async function main() {
   const planFree = await prisma.subscriptionPlan.create({
     data: {
       name: "Gratis", slug: "free", price: 0, ticketLimit: 50,
-      features: JSON.stringify(["50 tickets/mes", "Dashboard basico", "Base de conocimiento"]),
+      features: JSON.stringify(["50 tickets/mes", "Dashboard basico", "Base de conocimiento", "1 chat con IA gratis"]),
       isPopular: false,
     },
   });
   const planBasico = await prisma.subscriptionPlan.create({
     data: {
       name: "Basico", slug: "basico", price: 2900, ticketLimit: null,
-      features: JSON.stringify(["Tickets ilimitados", "Analytics basico", "Notificaciones por correo", "Soporte por correo"]),
+      features: JSON.stringify(["Tickets ilimitados", "IA ilimitada", "Analytics basico", "Notificaciones por correo", "Soporte por correo"]),
       isPopular: false,
     },
   });
@@ -45,7 +45,7 @@ async function main() {
 
   console.log("Creando super administrador global...");
   const superAdmin = await prisma.user.create({
-    data: { email: "super@servidesk.com", password: hashedPassword, name: "Super Administrador", role: "SUPER_ADMIN" },
+    data: { email: "super@flixsupport.com", password: hashedPassword, name: "Super Administrador", role: "SUPER_ADMIN" },
   });
 
   console.log("Creando organizacion 1: TechCorp...");
@@ -277,7 +277,7 @@ async function main() {
   console.log("  2 evaluaciones");
   console.log("---");
   console.log("Credenciales:");
-  console.log("  super@servidesk.com / admin123 (SUPER_ADMIN - Global)");
+  console.log("  super@flixsupport.com / admin123 (SUPER_ADMIN - Global)");
   console.log("  admin@techcorp.com / admin123 (ADMIN - TechCorp)");
   console.log("  ludwing@techcorp.com / admin123 (TECHNICIAN - TechCorp)");
   console.log("  jhor@techcorp.com / admin123 (TECHNICIAN - TechCorp)");

@@ -175,12 +175,12 @@ export default async function DashboardPage() {
 
           <Card className="glass-card animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: '150ms' }}>
             <CardHeader>
-              <CardTitle className="text-base">SLA Vencidos</CardTitle>
+              <CardTitle className="text-base">Ticket Exprés Vencidos</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center py-6">
                 <span className="text-3xl font-bold text-red-500">0</span>
-                <p className="text-sm text-muted-foreground mt-1">Sin SLA vencidos</p>
+                <p className="text-sm text-muted-foreground mt-1">Sin Ticket Exprés vencidos</p>
               </div>
             </CardContent>
           </Card>
@@ -223,6 +223,7 @@ export default async function DashboardPage() {
             </Button>
           </CardHeader>
           <CardContent>
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -280,6 +281,7 @@ export default async function DashboardPage() {
                 )}
               </TableBody>
             </Table>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -336,6 +338,7 @@ export default async function DashboardPage() {
             <CardTitle className="text-base">Tickets Asignados</CardTitle>
           </CardHeader>
           <CardContent>
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -389,6 +392,7 @@ export default async function DashboardPage() {
                 )}
               </TableBody>
             </Table>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -428,6 +432,7 @@ export default async function DashboardPage() {
 
       <Card className="animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: '100ms' }}>
         <CardContent className="pt-6">
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -478,10 +483,11 @@ export default async function DashboardPage() {
                   </TableCell>
                 </TableRow>
               )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+              </TableBody>
+            </Table>
+            </div>
+          </CardContent>
+        </Card>
     </div>
   );
 }

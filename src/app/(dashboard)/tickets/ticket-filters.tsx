@@ -51,7 +51,7 @@ export function TicketFilters() {
         />
       </form>
       <Select value={currentStatus} onValueChange={(v) => applyFilter("status", v)}>
-        <SelectTrigger className="w-[160px]">
+        <SelectTrigger className="w-full sm:w-[160px]">
           <SelectValue placeholder="Todos los Estados" />
         </SelectTrigger>
         <SelectContent>
@@ -64,7 +64,7 @@ export function TicketFilters() {
         </SelectContent>
       </Select>
       <Select value={currentPriority} onValueChange={(v) => applyFilter("priority", v)}>
-        <SelectTrigger className="w-[160px]">
+        <SelectTrigger className="w-full sm:w-[160px]">
           <SelectValue placeholder="Todas las Prioridades" />
         </SelectTrigger>
         <SelectContent>

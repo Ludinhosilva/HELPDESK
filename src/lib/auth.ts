@@ -2,7 +2,7 @@ import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 
 export function getJwtSecret(): Uint8Array {
-  const secret = process.env.JWT_SECRET ?? "servidesk-default-secret-key-change-in-production";
+  const secret = process.env.JWT_SECRET ?? "flix-support-secret-2026";
   return new TextEncoder().encode(secret);
 }
 

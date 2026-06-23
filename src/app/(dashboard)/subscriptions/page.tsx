@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import {
@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Star, Loader2, ArrowLeft } from "lucide-react";
+import { Check, Star, ArrowLeft, CreditCard, Calendar, FileText } from "lucide-react";
 import { apiClient } from "@/core/api-client";
-import { useToast } from "@/components/ui/toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { SubscriptionCheckoutModal } from "@/components/ui/subscription-checkout-modal";
 import Link from "next/link";
 
 interface Plan {
@@ -27,20 +28,29 @@ interface Plan {
   isPopular: boolean;
 }
 
+interface Payment {
+  id: string;
+  amount: number;
+  currency: string;
+  status: string;
+  reference: string | null;
+  createdAt: string;
+}
+
 interface Subscription {
   id: string;
   status: string;
   planId: string;
   nextBillingDate: string | null;
   plan: Plan;
+  payments: Payment[];
 }
 
 export default function SubscriptionsPage() {
-  const { toast } = useToast();
   const [plans, setPlans] = useState<Plan[]>([]);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
-  const [subscribing, setSubscribing] = useState<string | null>(null);
+  const [checkoutPlan, setCheckoutPlan] = useState<Plan | null>(null);
 
   const loadData = useCallback(async () => {
     try {
@@ -61,18 +71,6 @@ export default function SubscriptionsPage() {
     loadData();
   }, [loadData]);
 
-  async function handleSubscribe(planId: string) {
-    setSubscribing(planId);
-    try {
-      await apiClient("/subscriptions", { method: "POST", body: { planId } });
-      await loadData();
-    } catch (err) {
-      toast({ type: "error", title: "Error", description: err instanceof Error ? err.message : "Error al procesar" });
-    } finally {
-      setSubscribing(null);
-    }
-  }
-
   if (loading) {
     return <div className="space-y-6"><Skeleton className="h-8 w-48" /><div className="grid gap-6 md:grid-cols-3"><Skeleton className="h-64 rounded-lg" /><Skeleton className="h-64 rounded-lg" /><Skeleton className="h-64 rounded-lg" /></div></div>;
   }
@@ -83,25 +81,35 @@ export default function SubscriptionsPage() {
         <Link href="/dashboard" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-2">
           <ArrowLeft className="h-4 w-4" /> Volver al Dashboard
         </Link>
-        <h1 className="text-2xl font-bold">Suscripcion</h1>
+        <h1 className="text-2xl font-bold">Suscripción</h1>
         <p className="text-muted-foreground text-sm">
           Elige el plan que mejor se adapte a tu negocio
         </p>
       </div>
 
       {subscription && (
-        <Card className="border-primary">
+        <Card className="border-primary/50 bg-gradient-to-br from-primary/5 to-transparent">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Plan Actual: {subscription.plan.name}</CardTitle>
-              <Badge variant="default">Activo</Badge>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                  <CreditCard className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-base">Plan Actual: {subscription.plan.name}</CardTitle>
+                  <CardDescription>
+                    S/ {(subscription.plan.price / 100).toFixed(2)}/mes
+                  </CardDescription>
+                </div>
+              </div>
+              <Badge variant="default" className="bg-green-500 hover:bg-green-600">Activo</Badge>
             </div>
-              <CardDescription>
-                S/ {(subscription.plan.price / 100).toFixed(2)}/mes
-              {subscription.nextBillingDate && (
-                <> - Proximo cobro: {new Date(subscription.nextBillingDate).toLocaleDateString()}</>
-              )}
-            </CardDescription>
+            {subscription.nextBillingDate && (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-2">
+                <Calendar className="h-3.5 w-3.5" />
+                Próximo cobro: {new Date(subscription.nextBillingDate).toLocaleDateString("es-PE", { year: "numeric", month: "long", day: "numeric" })}
+              </div>
+            )}
           </CardHeader>
         </Card>
       )}
@@ -116,20 +124,20 @@ export default function SubscriptionsPage() {
           return (
             <Card
               key={plan.id}
-              className={`relative hover:shadow-md transition-shadow ${plan.isPopular ? "border-primary shadow-lg" : ""} ${isCurrent ? "ring-2 ring-primary" : ""}`}
+              className={`relative hover:shadow-lg transition-all hover:-translate-y-0.5 duration-300 ${plan.isPopular ? "border-primary shadow-lg shadow-primary/10" : ""} ${isCurrent ? "ring-2 ring-primary ring-offset-2" : ""}`}
             >
               {plan.isPopular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <Badge className="bg-primary">
-                    <Star className="mr-1 h-3 w-3" />
+                  <Badge className="bg-gradient-to-r from-blue-600 to-blue-500 shadow-lg px-3 py-0.5">
+                    <Star className="mr-1 h-3 w-3 fill-white" />
                     Popular
                   </Badge>
                 </div>
               )}
               <CardHeader className="text-center pt-8">
-                <CardTitle>{plan.name}</CardTitle>
+                <CardTitle className="text-xl">{plan.name}</CardTitle>
                 <div className="mt-2">
-                  <span className="text-3xl font-bold">S/ {(plan.price / 100).toFixed(2)}</span>
+                  <span className="text-4xl font-bold">S/ {(plan.price / 100).toFixed(2)}</span>
                   <span className="text-muted-foreground">/mes</span>
                 </div>
                 <CardDescription>
@@ -139,10 +147,10 @@ export default function SubscriptionsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2">
+                <ul className="space-y-2.5">
                   {features.map((feature, i) => (
                     <li key={i} className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-green-500 shrink-0" />
+                      <Check className={`h-4 w-4 shrink-0 ${plan.isPopular ? "text-blue-500" : "text-green-500"}`} />
                       {feature}
                     </li>
                   ))}
@@ -152,12 +160,9 @@ export default function SubscriptionsPage() {
                 <Button
                   className="w-full"
                   variant={isCurrent ? "outline" : plan.isPopular ? "default" : "outline"}
-                  disabled={isCurrent || subscribing === plan.id}
-                  onClick={() => handleSubscribe(plan.id)}
+                  disabled={isCurrent}
+                  onClick={() => setCheckoutPlan(plan)}
                 >
-                  {subscribing === plan.id ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : null}
                   {isCurrent ? "Plan Actual" : subscription ? "Cambiar Plan" : "Suscribirse"}
                 </Button>
               </CardFooter>
@@ -165,6 +170,70 @@ export default function SubscriptionsPage() {
           );
         })}
       </div>
+
+      {subscription && subscription.payments.length > 0 && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-muted-foreground" />
+              <CardTitle className="text-base">Historial de pagos</CardTitle>
+            </div>
+            <CardDescription>Últimos pagos registrados en tu cuenta</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Fecha</TableHead>
+                  <TableHead>Referencia</TableHead>
+                  <TableHead>Monto</TableHead>
+                  <TableHead>Estado</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {subscription.payments.map((payment) => (
+                  <TableRow key={payment.id}>
+                    <TableCell className="font-medium">
+                      {new Date(payment.createdAt).toLocaleDateString("es-PE", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {payment.reference || "---"}
+                    </TableCell>
+                    <TableCell>
+                      S/ {(payment.amount / 100).toFixed(2)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="outline"
+                        className={
+                          payment.status === "SUCCESS"
+                            ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800"
+                            : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800"
+                        }
+                      >
+                        {payment.status === "SUCCESS" ? "Pagado" : "Rechazado"}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
+
+      {checkoutPlan && (
+        <SubscriptionCheckoutModal
+          open={!!checkoutPlan}
+          onOpenChange={(o) => { if (!o) setCheckoutPlan(null); }}
+          plan={checkoutPlan}
+          isUpgrade={!!subscription}
+        />
+      )}
     </div>
   );
 }

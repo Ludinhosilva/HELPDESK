@@ -13,6 +13,7 @@ model Organization {
   slug            String           @unique
   logoUrl         String?
   planStatus      String           @default("ACTIVE")
+  aiUsageCount    Int            @default(0)
   culqiCustomerId String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt

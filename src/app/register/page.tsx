@@ -57,7 +57,7 @@ export default function RegisterPage() {
             </div>
           </div>
           <CardTitle className="text-2xl">Crear cuenta</CardTitle>
-          <CardDescription>Registra tu empresa en ServiDesk</CardDescription>
+          <CardDescription>Registra tu empresa en Flix Support</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">

@@ -90,7 +90,7 @@ export default function KnowledgePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Base de Conocimiento</h1>
           <p className="text-muted-foreground text-sm">
@@ -105,7 +105,7 @@ export default function KnowledgePage() {
         </Link>
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
@@ -116,7 +116,7 @@ export default function KnowledgePage() {
           />
         </div>
         <Select value={categoryId} onValueChange={setCategoryId}>
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="w-full sm:w-[200px]">
             <SelectValue placeholder="Todas las categorias" />
           </SelectTrigger>
           <SelectContent>

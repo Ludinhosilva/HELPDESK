@@ -111,6 +111,16 @@ export default function TicketDetailClient({
           similarTickets: [],
         }),
       });
+      if (res.status === 403) {
+        const errData = await res.json();
+        setCopilotResponse({
+          subject: "Límite de IA alcanzado",
+          body: errData.message || "Límite alcanzado",
+          estimatedTime: "",
+        });
+        return;
+      }
+
       if (res.ok) {
         const data = await res.json();
         setCopilotResponse(data);

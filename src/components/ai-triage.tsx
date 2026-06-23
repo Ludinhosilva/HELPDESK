@@ -30,7 +30,7 @@ interface AITriageProps {
   onBack: () => void;
 }
 
-const BOT_GREETING = "¡Hola! Soy el asistente inteligente de ServiDesk. Describe tu problema en una línea para analizarlo:";
+const BOT_GREETING = "¡Hola! Soy el asistente inteligente de Flix Support. Describe tu problema en una línea para analizarlo:";
 
 export function AITriage({ onComplete, onBack }: AITriageProps) {
   const [messages, setMessages] = useState<Message[]>([
@@ -60,6 +60,13 @@ export function AITriage({ onComplete, onBack }: AITriageProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: userText }),
       });
+
+      if (res.status === 403) {
+        const errData = await res.json();
+        setMessages((prev) => [...prev, { role: "bot", text: errData.message || "Límite alcanzado", type: "info" }]);
+        setDone(true);
+        return;
+      }
 
       if (!res.ok) throw new Error("Error");
 
@@ -160,7 +167,7 @@ export function AITriage({ onComplete, onBack }: AITriageProps) {
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="h-[320px] overflow-y-auto p-4 space-y-3">
+        <div className="h-[280px] sm:h-[320px] overflow-y-auto p-4 space-y-3">
           {messages.map((msg, i) => (
             <div
               key={i}

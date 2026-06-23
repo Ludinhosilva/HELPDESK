@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
 function getJwtSecret(): Uint8Array {
-  const secret = process.env.JWT_SECRET || "servidesk-secret-2026";
+  const secret = process.env.JWT_SECRET || "flix-support-secret-2026";
   return new TextEncoder().encode(secret);
 }
 

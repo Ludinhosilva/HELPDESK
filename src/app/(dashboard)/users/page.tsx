@@ -123,7 +123,7 @@ export default function UsersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <Link href="/dashboard" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-2">
             <ArrowLeft className="h-4 w-4" /> Volver al Dashboard
@@ -154,13 +154,14 @@ export default function UsersPage() {
           </div>
         </CardHeader>
         <CardContent>
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Nombre</TableHead>
-                <TableHead>Email</TableHead>
+                <TableHead className="hidden sm:table-cell">Email</TableHead>
                 <TableHead>Rol</TableHead>
-                <TableHead>Estado</TableHead>
+                <TableHead className="hidden sm:table-cell">Estado</TableHead>
                 <TableHead className="text-right">Acciones</TableHead>
               </TableRow>
             </TableHeader>
@@ -182,13 +183,13 @@ export default function UsersPage() {
                 filtered.map((user) => (
                   <TableRow key={user.id} className="hover:bg-muted/50 transition-colors">
                     <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
+                    <TableCell className="hidden sm:table-cell">{user.email}</TableCell>
                     <TableCell>
                       <Select
                         value={user.role}
                         onValueChange={(value) => handleRoleChange(user.id, value)}
                       >
-                        <SelectTrigger className="w-[150px] h-8">
+                         <SelectTrigger className="w-full sm:w-[150px] h-8">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -198,7 +199,7 @@ export default function UsersPage() {
                         </SelectContent>
                       </Select>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <Badge variant={user.isActive ? "default" : "destructive"}>
                         {user.isActive ? "Activo" : "Inactivo"}
                       </Badge>
@@ -222,6 +223,7 @@ export default function UsersPage() {
               )}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
 

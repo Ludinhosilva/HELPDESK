@@ -125,7 +125,7 @@ export default function DashboardShell({
       <aside className="hidden lg:flex lg:flex-col w-[260px] border-r border-border bg-card/80 backdrop-blur-xl">
         <div className="flex items-center gap-2 px-5 h-16 border-b border-border shrink-0">
           <Wrench className="h-5 w-5 text-primary" />
-          <span className="font-bold text-lg">ServiDesk</span>
+          <span className="font-bold text-lg">Flix Support</span>
         </div>
         <SidebarNav />
         <div className="p-3 border-t border-border shrink-0">
@@ -148,7 +148,7 @@ export default function DashboardShell({
               <SheetContent side="left" className="w-[260px] p-0">
                 <SheetHeader className="px-5 h-16 border-b border-border flex flex-row items-center">
                   <Wrench className="h-5 w-5 text-primary mr-2" />
-                  <SheetTitle>ServiDesk</SheetTitle>
+                  <SheetTitle>Flix Support</SheetTitle>
                 </SheetHeader>
                 <SidebarNav onNavigate={() => setOpen(false)} />
               </SheetContent>

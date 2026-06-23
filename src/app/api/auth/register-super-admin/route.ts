@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 
     const { name, email, password, secretKey } = parsed.data;
 
-    if (secretKey !== "servidesk-super-2026") {
+    if (secretKey !== "flix-super-2026") {
       return NextResponse.json(
         { error: "forbidden", message: "Clave secreta incorrecta" },
         { status: 403 }

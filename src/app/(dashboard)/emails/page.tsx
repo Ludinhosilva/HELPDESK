@@ -71,13 +71,14 @@ export default function EmailsPage() {
 
       <Card>
         <CardContent className="pt-6">
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Para</TableHead>
                 <TableHead>Asunto</TableHead>
-                <TableHead>Tipo</TableHead>
-                <TableHead>Fecha</TableHead>
+                <TableHead className="hidden sm:table-cell">Tipo</TableHead>
+                <TableHead className="hidden md:table-cell">Fecha</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -99,12 +100,12 @@ export default function EmailsPage() {
                   <TableRow key={email.id} className="hover:bg-muted/50 transition-colors">
                     <TableCell className="font-medium">{email.to}</TableCell>
                     <TableCell>{email.subject}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <Badge variant="outline">
                         {typeLabels[email.type] || email.type}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell className="hidden md:table-cell text-muted-foreground">
                       {new Date(email.sentAt).toLocaleString()}
                     </TableCell>
                   </TableRow>
@@ -112,6 +113,7 @@ export default function EmailsPage() {
               )}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

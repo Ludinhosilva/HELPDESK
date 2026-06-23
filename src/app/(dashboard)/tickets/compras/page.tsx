@@ -87,7 +87,7 @@ export default async function ComprasPage() {
                     <th className="text-left px-4 py-3 font-medium text-muted-foreground">Estado</th>
                     <th className="text-left px-4 py-3 font-medium text-muted-foreground">Monto</th>
                     <th className="text-left px-4 py-3 font-medium text-muted-foreground">Vencimiento</th>
-                    <th className="text-left px-4 py-3 font-medium text-muted-foreground">SLA</th>
+                    <th className="text-left px-4 py-3 font-medium text-muted-foreground">Ticket Exprés</th>
                   </tr>
                 </thead>
                 <tbody>

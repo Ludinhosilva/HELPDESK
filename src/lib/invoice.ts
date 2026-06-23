@@ -28,6 +28,6 @@ Total: S/ ${(amount / 100).toFixed(2)}
 Forma de pago: Tarjeta de credito/debito
 Estado: CANCELADO
 
-Gracias por confiar en ServiDesk.
+Gracias por confiar en Flix Support.
 `;
 }

@@ -73,7 +73,7 @@ export default function SuperAdminRegisterPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Correo electronico</Label>
-              <Input id="email" type="email" placeholder="super@servidesk.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <Input id="email" type="email" placeholder="super@flixsupport.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Contrasena</Label>

@@ -6,7 +6,7 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ServiDesk - Gestion de Soporte TI",
+  title: "Flix Support - Gestion de Soporte TI",
   description: "Plataforma de gestion de tickets de soporte tecnico",
 };
 

@@ -59,7 +59,7 @@ export default function LoginPage() {
             </div>
           </div>
           <CardTitle className="text-2xl">Iniciar sesion</CardTitle>
-          <CardDescription>Ingresa tus credenciales para acceder a ServiDesk</CardDescription>
+          <CardDescription>Ingresa tus credenciales para acceder a Flix Support</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
