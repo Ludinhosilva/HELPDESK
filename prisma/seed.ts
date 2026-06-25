@@ -43,9 +43,22 @@ async function main() {
     },
   });
 
+  console.log("Creando organizacion interna FlixSupport...");
+  const flixOrg = await prisma.organization.create({
+    data: { name: "FlixSupport HQ", slug: "flix-support", type: "INTERNAL" },
+  });
+
   console.log("Creando super administrador global...");
   const superAdmin = await prisma.user.create({
-    data: { email: "super@flixsupport.com", password: hashedPassword, name: "Super Administrador", role: "SUPER_ADMIN" },
+    data: { email: "super@flixsupport.com", password: hashedPassword, name: "Super Administrador", role: "SUPER_ADMIN", organizationId: flixOrg.id },
+  });
+
+  console.log("Creando técnicos de FlixSupport...");
+  const flixTech1 = await prisma.user.create({
+    data: { email: "ludwing@flixsupport.com", password: hashedPassword, name: "Ludwing Silva", role: "TECHNICIAN", organizationId: flixOrg.id },
+  });
+  const flixTech2 = await prisma.user.create({
+    data: { email: "carlos@flixsupport.com", password: hashedPassword, name: "Carlos Mendoza", role: "TECHNICIAN", organizationId: flixOrg.id },
   });
 
   console.log("Creando organizacion 1: TechCorp...");
@@ -277,7 +290,9 @@ async function main() {
   console.log("  2 evaluaciones");
   console.log("---");
   console.log("Credenciales:");
-  console.log("  super@flixsupport.com / admin123 (SUPER_ADMIN - Global)");
+  console.log("  super@flixsupport.com / admin123 (SUPER_ADMIN - FlixSupport HQ)");
+  console.log("  ludwing@flixsupport.com / admin123 (TECHNICIAN - FlixSupport)");
+  console.log("  carlos@flixsupport.com / admin123 (TECHNICIAN - FlixSupport)");
   console.log("  admin@techcorp.com / admin123 (ADMIN - TechCorp)");
   console.log("  ludwing@techcorp.com / admin123 (TECHNICIAN - TechCorp)");
   console.log("  jhor@techcorp.com / admin123 (TECHNICIAN - TechCorp)");

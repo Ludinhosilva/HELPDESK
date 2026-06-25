@@ -1,0 +1,5 @@
+-- This migration documents valid Organization.type values:
+-- 'COMPANY' (default) - business/enterprise organizations
+-- 'PERSONAL' - individual users who buy support service
+-- 'INTERNAL' - FlixSupport's own internal support organization
+-- No schema changes needed; type is a free-text String field.

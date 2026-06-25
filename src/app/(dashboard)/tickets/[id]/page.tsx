@@ -100,22 +100,36 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
     },
   });
 
-  if (!ticket || ticket.organizationId !== payload.orgId) {
+  if (!ticket || (ticket.organizationId !== payload.orgId && user.role !== "SUPER_ADMIN" && user.role !== "TECHNICIAN")) {
     notFound();
   }
 
-  const categories = await prisma.category.findMany({
-    where: { organizationId: payload.orgId },
-    select: { id: true, name: true },
-  });
+  // Allow FlixSupport techs to see tickets assigned to them from any org
+  const isFlixSupportTech = user.role === "TECHNICIAN" && ticket.assignedToId !== payload.sub &&
+    ticket.organizationId !== payload.orgId;
+  if (isFlixSupportTech) {
+    notFound();
+  }
 
-  const technicians = await prisma.user.findMany({
-    where: { organizationId: payload.orgId, role: "TECHNICIAN" },
-    select: { id: true, name: true },
-  });
+  const categories = user.role === "SUPER_ADMIN"
+    ? await prisma.category.findMany({ select: { id: true, name: true } })
+    : await prisma.category.findMany({
+      where: { organizationId: payload.orgId },
+      select: { id: true, name: true },
+    });
 
-  const canChangeStatus = user.role === "ADMIN" || user.role === "TECHNICIAN";
-  const canAssign = user.role === "ADMIN";
+  const technicians = user.role === "SUPER_ADMIN"
+    ? await prisma.user.findMany({
+      where: { role: "TECHNICIAN", organization: { type: "INTERNAL" } },
+      select: { id: true, name: true },
+    })
+    : await prisma.user.findMany({
+      where: { organizationId: payload.orgId, role: "TECHNICIAN" },
+      select: { id: true, name: true },
+    });
+
+  const canChangeStatus = user.role === "ADMIN" || user.role === "TECHNICIAN" || user.role === "SUPER_ADMIN";
+  const canAssign = user.role === "ADMIN" || user.role === "SUPER_ADMIN";
   const showEvaluation =
     user.role === "END_USER" &&
     (ticket.status === "RESOLVED" || ticket.status === "CLOSED") &&

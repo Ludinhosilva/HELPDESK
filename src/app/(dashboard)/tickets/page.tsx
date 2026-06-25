@@ -81,7 +81,7 @@ export default async function TicketsPage({ searchParams }: TicketsPageProps) {
 
   const user = await prisma.user.findUnique({
     where: { id: payload.sub },
-    select: { id: true, role: true },
+    select: { id: true, role: true, organization: { select: { type: true } } },
   });
   if (!user) redirect("/login");
 
@@ -92,14 +92,21 @@ export default async function TicketsPage({ searchParams }: TicketsPageProps) {
   const q = params.q || "";
   const pageSize = 15;
 
-  const where: Record<string, unknown> = {
-    organizationId: payload.orgId,
-  };
+  const isInternalTech = user.role === "TECHNICIAN" && user.organization?.type === "INTERNAL";
+  const isSuperAdmin = user.role === "SUPER_ADMIN";
 
-  if (user.role === "TECHNICIAN") {
-    where.assignedToId = payload.sub;
-  } else if (user.role === "END_USER") {
-    where.createdById = payload.sub;
+  const where: Record<string, unknown> = isSuperAdmin
+    ? {}
+    : isInternalTech
+    ? { assignedToId: payload.sub }
+    : { organizationId: payload.orgId };
+
+  if (!isInternalTech && !isSuperAdmin) {
+    if (user.role === "TECHNICIAN") {
+      where.assignedToId = payload.sub;
+    } else if (user.role === "END_USER") {
+      where.createdById = payload.sub;
+    }
   }
 
   if (status && status !== "all") where.status = status;
