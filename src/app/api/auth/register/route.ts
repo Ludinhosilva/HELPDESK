@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
-import { registerUser } from "@/lib/auth-actions";
+import { registerCompany, registerPersonal } from "@/lib/auth-actions";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const result = await registerUser(body);
+
+    // Si viene orgName → registro de empresa
+    // Si no viene → registro personal
+    const result = body.orgName
+      ? await registerCompany(body)
+      : await registerPersonal(body);
 
     if (result.error) {
       return NextResponse.json(

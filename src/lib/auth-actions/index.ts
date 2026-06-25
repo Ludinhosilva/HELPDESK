@@ -7,8 +7,14 @@ export const LoginSchema = z.object({
   password: z.string().min(1, "La contrasena es requerida"),
 });
 
-export const RegisterSchema = z.object({
+export const RegisterCompanySchema = z.object({
   orgName: z.string().min(2, "El nombre de la organizacion es requerido"),
+  name: z.string().min(2, "El nombre es requerido"),
+  email: z.string().email("Formato de email invalido"),
+  password: z.string().min(6, "La contrasena debe tener al menos 6 caracteres"),
+});
+
+export const RegisterPersonalSchema = z.object({
   name: z.string().min(2, "El nombre es requerido"),
   email: z.string().email("Formato de email invalido"),
   password: z.string().min(6, "La contrasena debe tener al menos 6 caracteres"),
@@ -76,13 +82,13 @@ export async function loginUser(email: string, password: string): Promise<LoginR
   };
 }
 
-export async function registerUser(data: {
+export async function registerCompany(data: {
   email: string;
   password: string;
   name: string;
   orgName: string;
 }): Promise<RegisterResult> {
-  const parsed = RegisterSchema.safeParse(data);
+  const parsed = RegisterCompanySchema.safeParse(data);
   if (!parsed.success) {
     return { error: parsed.error.errors[0]?.message || "Datos invalidos", status: 400 };
   }
@@ -107,6 +113,7 @@ export async function registerUser(data: {
     data: {
       name: orgName,
       slug,
+      type: "COMPANY",
       users: {
         create: { email, password: hashedPassword, name, role: "ADMIN" },
       },
@@ -115,4 +122,42 @@ export async function registerUser(data: {
   });
 
   return { message: "Organizacion y usuario administrador creados correctamente", status: 201 };
+}
+
+export async function registerPersonal(data: {
+  email: string;
+  password: string;
+  name: string;
+}): Promise<RegisterResult> {
+  const parsed = RegisterPersonalSchema.safeParse(data);
+  if (!parsed.success) {
+    return { error: parsed.error.errors[0]?.message || "Datos invalidos", status: 400 };
+  }
+
+  const { name, email, password } = parsed.data;
+
+  // Verificar si el email ya existe como usuario individual
+  const existingUser = await prisma.user.findFirst({
+    where: { email },
+  });
+  if (existingUser) {
+    return { error: "Este email ya esta registrado", status: 409 };
+  }
+
+  const hashedPassword = await hashPassword(password);
+  const slug = `personal-${slugify(name)}-${Date.now().toString(36)}`;
+
+  await prisma.organization.create({
+    data: {
+      name: `Usuario: ${name}`,
+      slug,
+      type: "PERSONAL",
+      users: {
+        create: { email, password: hashedPassword, name, role: "END_USER" },
+      },
+    },
+    include: { users: true },
+  });
+
+  return { message: "Cuenta creada correctamente", status: 201 };
 }

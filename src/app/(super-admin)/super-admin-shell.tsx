@@ -10,6 +10,7 @@ import {
   LogOut,
   Shield,
   ArrowLeft,
+  UserCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ interface UserPayload {
 
 const navItems = [
   { label: "Panel Global", href: "/super-admin", icon: LayoutDashboard },
+  { label: "Soporte", href: "/super-admin", icon: UserCircle },
   { label: "Organizaciones", href: "/super-admin/organizations", icon: Building2 },
 ];
 

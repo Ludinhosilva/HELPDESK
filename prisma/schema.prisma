@@ -11,6 +11,7 @@ model Organization {
   id              String           @id @default(cuid())
   name            String
   slug            String           @unique
+  type            String           @default("COMPANY")
   logoUrl         String?
   planStatus      String           @default("ACTIVE")
   aiUsageCount    Int            @default(0)

@@ -50,7 +50,7 @@ async function main() {
 
   console.log("Creando organizacion 1: TechCorp...");
   const org1 = await prisma.organization.create({
-    data: { name: "TechCorp S.A.C.", slug: "techcorp" },
+    data: { name: "TechCorp S.A.C.", slug: "techcorp", type: "COMPANY" },
   });
 
   const admin1 = await prisma.user.create({
@@ -71,7 +71,7 @@ async function main() {
 
   console.log("Creando organizacion 2: InnovaSoft...");
   const org2 = await prisma.organization.create({
-    data: { name: "InnovaSoft E.I.R.L.", slug: "innovasoft" },
+    data: { name: "InnovaSoft E.I.R.L.", slug: "innovasoft", type: "COMPANY" },
   });
   const admin2 = await prisma.user.create({
     data: { email: "admin@innovasoft.com", password: hashedPassword, name: "Renzo Bereca", role: "ADMIN", organizationId: org2.id },

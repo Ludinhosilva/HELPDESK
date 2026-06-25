@@ -1,11 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mockLogin = vi.fn();
-const mockRegister = vi.fn();
+const mockRegisterCompany = vi.fn();
+const mockRegisterPersonal = vi.fn();
 
 vi.mock("@/lib/auth-actions", () => ({
   loginUser: mockLogin,
-  registerUser: mockRegister,
+  registerCompany: mockRegisterCompany,
+  registerPersonal: mockRegisterPersonal,
 }));
 
 describe("Auth API Routes", () => {
@@ -75,8 +77,8 @@ describe("Auth API Routes", () => {
 
   describe("POST /api/auth/register", () => {
     it("retorna 400 si validacion falla", async () => {
-      mockRegister.mockResolvedValue({
-        error: "El nombre de la organizacion es requerido",
+      mockRegisterPersonal.mockResolvedValue({
+        error: "El nombre es requerido",
         status: 400,
       });
 
@@ -95,7 +97,7 @@ describe("Auth API Routes", () => {
     });
 
     it("retorna 201 si registro exitoso", async () => {
-      mockRegister.mockResolvedValue({
+      mockRegisterCompany.mockResolvedValue({
         message: "Organizacion y usuario administrador creados correctamente",
         status: 201,
       });

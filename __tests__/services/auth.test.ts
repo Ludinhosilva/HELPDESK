@@ -23,7 +23,7 @@ vi.mock("jose", () => ({
 }));
 
 import { prisma } from "@/core/prisma";
-import { loginUser, registerUser } from "@/lib/auth-actions";
+import { loginUser, registerCompany } from "@/lib/auth-actions";
 
 const prismaMock = prisma as unknown as {
   user: {
@@ -86,13 +86,13 @@ describe("loginUser", () => {
   });
 });
 
-describe("registerUser", () => {
+describe("registerCompany", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it("retorna error si email falta", async () => {
-    const result = await registerUser({
+    const result = await registerCompany({
       email: "",
       password: "password123",
       name: "Test",
@@ -104,7 +104,7 @@ describe("registerUser", () => {
   });
 
   it("retorna error si email tiene formato invalido", async () => {
-    const result = await registerUser({
+    const result = await registerCompany({
       email: "noesunemail",
       password: "password123",
       name: "Test",
@@ -116,7 +116,7 @@ describe("registerUser", () => {
   });
 
   it("retorna error si contraseña es corta", async () => {
-    const result = await registerUser({
+    const result = await registerCompany({
       email: "test@test.com",
       password: "12345",
       name: "Test",
@@ -128,7 +128,7 @@ describe("registerUser", () => {
   });
 
   it("retorna error si nombre esta vacio", async () => {
-    const result = await registerUser({
+    const result = await registerCompany({
       email: "test@test.com",
       password: "password123",
       name: "",
@@ -143,7 +143,7 @@ describe("registerUser", () => {
     prismaMock.organization.findUnique.mockResolvedValue({ id: "org-1" });
     prismaMock.user.findFirst.mockResolvedValue({ id: "existing", email: "test@test.com" });
 
-    const result = await registerUser({
+    const result = await registerCompany({
       email: "test@test.com",
       password: "password123",
       name: "Test User",
@@ -161,7 +161,7 @@ describe("registerUser", () => {
       users: [{ id: "user-new", email: "nuevo@test.com" }],
     });
 
-    const result = await registerUser({
+    const result = await registerCompany({
       email: "nuevo@test.com",
       password: "password123",
       name: "Nuevo User",

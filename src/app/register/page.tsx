@@ -7,10 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wrench, ArrowLeft } from "lucide-react";
+import { Wrench, ArrowLeft, Building2, UserCircle } from "lucide-react";
+
+type RegisterType = "COMPANY" | "PERSONAL";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [registerType, setRegisterType] = useState<RegisterType>("COMPANY");
   const [orgName, setOrgName] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -24,10 +27,15 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
+      const body: Record<string, string> = { name, email, password };
+      if (registerType === "COMPANY") {
+        body.orgName = orgName;
+      }
+
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orgName, name, email, password }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -57,7 +65,7 @@ export default function RegisterPage() {
             </div>
           </div>
           <CardTitle className="text-2xl">Crear cuenta</CardTitle>
-          <CardDescription>Registra tu empresa en Flix Support</CardDescription>
+          <CardDescription>Registrate en Flix Support</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -66,26 +74,73 @@ export default function RegisterPage() {
                 {error}
               </div>
             )}
-            <div className="space-y-2">
-              <Label htmlFor="orgName">Nombre de la empresa</Label>
-              <Input id="orgName" placeholder="TechCorp S.A.C." value={orgName} onChange={(e) => setOrgName(e.target.value)} required />
+
+            {/* Toggle Empresa / Individual */}
+            <div className="grid grid-cols-2 gap-2 p-1 bg-muted rounded-lg">
+              <button
+                type="button"
+                onClick={() => setRegisterType("COMPANY")}
+                className={`flex items-center justify-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
+                  registerType === "COMPANY"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Building2 className="h-4 w-4" />
+                Empresa
+              </button>
+              <button
+                type="button"
+                onClick={() => setRegisterType("PERSONAL")}
+                className={`flex items-center justify-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
+                  registerType === "PERSONAL"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <UserCircle className="h-4 w-4" />
+                Usuario Individual
+              </button>
             </div>
+
+            {/* Nombre de empresa (solo si COMPANY) */}
+            {registerType === "COMPANY" && (
+              <div className="space-y-2">
+                <Label htmlFor="orgName">Nombre de la empresa</Label>
+                <Input id="orgName" placeholder="TechCorp S.A.C." value={orgName} onChange={(e) => setOrgName(e.target.value)} required />
+              </div>
+            )}
+
+            {/* Nombre del usuario */}
             <div className="space-y-2">
-              <Label htmlFor="name">Tu nombre</Label>
+              <Label htmlFor="name">
+                {registerType === "COMPANY" ? "Tu nombre" : "Tu nombre completo"}
+              </Label>
               <Input id="name" placeholder="Juan Perez" value={name} onChange={(e) => setName(e.target.value)} required />
             </div>
+
+            {/* Email */}
             <div className="space-y-2">
               <Label htmlFor="email">Correo electronico</Label>
-              <Input id="email" type="email" placeholder="admin@empresa.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <Input id="email" type="email" placeholder={registerType === "COMPANY" ? "admin@empresa.com" : "usuario@email.com"} value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
+
+            {/* Password */}
             <div className="space-y-2">
               <Label htmlFor="password">Contrasena</Label>
               <Input id="password" type="password" placeholder="Minimo 6 caracteres" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
             </div>
+
+            {/* Info adicional */}
+            {registerType === "PERSONAL" && (
+              <div className="rounded-md bg-blue-50 p-3 text-sm text-blue-700 border border-blue-200">
+                Al registrarte como usuario individual, tendras tu propio espacio de soporte. Podras crear tickets, comprar Ticket Exprés y suscribirte a planes de soporte.
+              </div>
+            )}
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Registrando..." : "Crear cuenta"}
+              {loading ? "Registrando..." : registerType === "COMPANY" ? "Crear empresa" : "Crear cuenta"}
             </Button>
             <p className="text-sm text-gray-500">
               Ya tienes cuenta?{" "}

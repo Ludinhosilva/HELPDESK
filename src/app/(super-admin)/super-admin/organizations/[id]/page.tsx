@@ -24,6 +24,10 @@ const roleColors: Record<string, string> = {
 const statusLabels: Record<string, string> = {
   OPEN: "Abierto",
   IN_PROGRESS: "En Progreso",
+  DIAGNOSING: "Diagnosticando",
+  REPAIRING: "Reparando",
+  WAITING_PARTS: "Esperando Repuestos",
+  READY: "Listo",
   ON_HOLD: "En Espera",
   RESOLVED: "Resuelto",
   CLOSED: "Cerrado",
@@ -32,6 +36,10 @@ const statusLabels: Record<string, string> = {
 const statusColors: Record<string, string> = {
   OPEN: "bg-blue-100 text-blue-700 border-blue-200",
   IN_PROGRESS: "bg-yellow-100 text-yellow-700 border-yellow-200",
+  DIAGNOSING: "bg-cyan-100 text-cyan-700 border-cyan-200",
+  REPAIRING: "bg-purple-100 text-purple-700 border-purple-200",
+  WAITING_PARTS: "bg-orange-100 text-orange-700 border-orange-200",
+  READY: "bg-green-100 text-green-700 border-green-200",
   ON_HOLD: "bg-orange-100 text-orange-700 border-orange-200",
   RESOLVED: "bg-green-100 text-green-700 border-green-200",
   CLOSED: "bg-gray-100 text-gray-700 border-gray-200",
