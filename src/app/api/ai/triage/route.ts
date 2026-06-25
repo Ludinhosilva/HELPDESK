@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { triage } from "@/lib/triage";
+import { triageAsync } from "@/lib/triage";
 import { getAuthFromHeaders } from "@/lib/auth-helpers";
 import { checkAiUsage } from "@/lib/ai-usage";
 import { startDiagnostic, progressDiagnostic } from "@/lib/ai/diagnostic";
@@ -9,11 +9,6 @@ export async function POST(request: NextRequest) {
     const auth = getAuthFromHeaders(request);
     if (!auth?.orgId) {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-    }
-
-    const access = await checkAiUsage(auth.orgId);
-    if (!access.allowed) {
-      return NextResponse.json({ upsell: true, message: access.message }, { status: 403 });
     }
 
     const body = await request.json();
@@ -27,7 +22,7 @@ export async function POST(request: NextRequest) {
           mode: "diagnostic",
           state,
           question: state.nextQuestion,
-          options: state.suggestedActions.length > 0 ? [] : diagnosticState?.nextQuestion ? [] : [],
+          options: [],
         });
       }
 
@@ -47,9 +42,8 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // Si el diagnóstico deriva a ticket, hacer también triage para pre-llenar
       if (progress.conclusion === "Derivando a creación de ticket...") {
-        const triageResult = triage(text || progress.symptom);
+        const triageResult = await triageAsync(text || progress.symptom);
         return NextResponse.json({
           mode: "diagnostic",
           state: progress,
@@ -73,7 +67,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Describe tu problema brevemente" }, { status: 400 });
     }
 
-    const triageResult = triage(text);
+    const access = await checkAiUsage(auth.orgId);
+    if (!access.allowed) {
+      return NextResponse.json({ upsell: true, message: access.message }, { status: 403 });
+    }
+
+    const triageResult = await triageAsync(text);
 
     return NextResponse.json({
       mode: "triage",
