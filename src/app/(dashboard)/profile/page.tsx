@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { RoleBadge } from "@/components/ui/role-badge";
 import { User, Check, Lock, ArrowLeft } from "lucide-react";
@@ -169,21 +170,21 @@ export default function ProfilePage() {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="currentPassword">Contraseña Actual</Label>
-            <Input
+            <PasswordInput
               id="currentPassword"
-              type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
+              autoComplete="current-password"
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="newPassword">Nueva Contraseña</Label>
-            <Input
+            <PasswordInput
               id="newPassword"
-              type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Minimo 6 caracteres"
+              placeholder="Mínimo 6 caracteres"
+              autoComplete="new-password"
             />
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}

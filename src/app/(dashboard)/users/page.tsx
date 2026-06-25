@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -252,9 +253,8 @@ export default function UsersPage() {
             </div>
             <div className="space-y-2">
               <Label>Contraseña</Label>
-              <Input
-                type="password"
-                placeholder="Minimo 6 caracteres"
+              <PasswordInput
+                placeholder="Mínimo 6 caracteres"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               />

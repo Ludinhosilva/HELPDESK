@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Wrench, ArrowLeft, Building2, UserCircle } from "lucide-react";
@@ -127,8 +128,8 @@ export default function RegisterPage() {
 
             {/* Password */}
             <div className="space-y-2">
-              <Label htmlFor="password">Contrasena</Label>
-              <Input id="password" type="password" placeholder="Minimo 6 caracteres" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+              <Label htmlFor="password">Contraseña</Label>
+              <PasswordInput id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mínimo 6 caracteres" required minLength={6} />
             </div>
 
             {/* Info adicional */}

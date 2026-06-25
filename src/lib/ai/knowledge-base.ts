@@ -413,7 +413,6 @@ export const KNOWLEDGE_BASE: KnowledgeEntry[] = [
 // Buscar en la base de conocimiento por síntomas mencionados
 export function findKnowledge(text: string): KnowledgeEntry | null {
   const lower = text.toLowerCase();
-  const words = lower.split(/\s+/).filter(w => w.length > 2);
   let bestMatch: KnowledgeEntry | null = null;
   let bestScore = 0;
 

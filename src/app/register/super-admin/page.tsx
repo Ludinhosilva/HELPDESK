@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { Shield, ArrowLeft } from "lucide-react";
 
 export default function SuperAdminRegisterPage() {
   const router = useRouter();
@@ -15,7 +16,6 @@ export default function SuperAdminRegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [secretKey, setSecretKey] = useState("");
-  const [showSecret, setShowSecret] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -76,24 +76,18 @@ export default function SuperAdminRegisterPage() {
               <Input id="email" type="email" placeholder="super@flixsupport.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Contrasena</Label>
-              <Input id="password" type="password" placeholder="Minimo 6 caracteres" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+              <Label htmlFor="password">Contraseña</Label>
+              <PasswordInput id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mínimo 6 caracteres" required minLength={6} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="secretKey">Clave secreta</Label>
-              <div className="relative">
-                <Input
-                  id="secretKey"
-                  type={showSecret ? "text" : "password"}
-                  placeholder="Clave de registro super admin"
-                  value={secretKey}
-                  onChange={(e) => setSecretKey(e.target.value)}
-                  required
-                />
-                <Button type="button" variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7" onClick={() => setShowSecret(!showSecret)}>
-                  {showSecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
+              <PasswordInput
+                id="secretKey"
+                value={secretKey}
+                onChange={(e) => setSecretKey(e.target.value)}
+                placeholder="Clave de registro super admin"
+                required
+              />
               <p className="text-xs text-muted-foreground">Ingresa la clave secreta proporcionada por el desarrollador</p>
             </div>
           </CardContent>
