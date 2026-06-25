@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { triage } from "@/lib/triage";
-import { analyzeSentiment, getPriorityOverride } from "@/lib/sentiment";
 import { getAuthFromHeaders } from "@/lib/auth-helpers";
 import { checkAiUsage } from "@/lib/ai-usage";
+import { startDiagnostic, progressDiagnostic } from "@/lib/ai/diagnostic";
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,21 +16,68 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ upsell: true, message: access.message }, { status: 403 });
     }
 
-    const { text } = await request.json();
+    const body = await request.json();
+    const { text, mode, diagnosticState, diagnosticAnswer } = body;
 
+    // Modo diagnóstico interactivo
+    if (mode === "diagnostic") {
+      if (!diagnosticState) {
+        const state = startDiagnostic(text || "");
+        return NextResponse.json({
+          mode: "diagnostic",
+          state,
+          question: state.nextQuestion,
+          options: state.suggestedActions.length > 0 ? [] : diagnosticState?.nextQuestion ? [] : [],
+        });
+      }
+
+      const progress = progressDiagnostic(
+        diagnosticState,
+        diagnosticState.currentNode || diagnosticState.lastNode || "start",
+        diagnosticAnswer
+      );
+
+      if (progress.resolved && progress.conclusion !== "Derivando a creación de ticket...") {
+        return NextResponse.json({
+          mode: "diagnostic",
+          state: progress,
+          resolved: true,
+          conclusion: progress.conclusion,
+          suggestedActions: progress.suggestedActions,
+        });
+      }
+
+      // Si el diagnóstico deriva a ticket, hacer también triage para pre-llenar
+      if (progress.conclusion === "Derivando a creación de ticket...") {
+        const triageResult = triage(text || progress.symptom);
+        return NextResponse.json({
+          mode: "diagnostic",
+          state: progress,
+          resolved: true,
+          createTicket: true,
+          triage: triageResult,
+          suggestedActions: progress.suggestedActions,
+        });
+      }
+
+      return NextResponse.json({
+        mode: "diagnostic",
+        state: progress,
+        question: progress.nextQuestion,
+        suggestedActions: progress.suggestedActions,
+      });
+    }
+
+    // Modo triage normal (análisis directo)
     if (!text || text.trim().length < 3) {
       return NextResponse.json({ error: "Describe tu problema brevemente" }, { status: 400 });
     }
 
     const triageResult = triage(text);
 
-    const sentimentResult = analyzeSentiment(text);
-    const priorityOverride = getPriorityOverride(sentimentResult.level, "MEDIUM");
-
     return NextResponse.json({
+      mode: "triage",
       ...triageResult,
-      sentiment: sentimentResult,
-      priorityOverride,
     });
   } catch {
     return NextResponse.json({ error: "Error al analizar el problema" }, { status: 500 });

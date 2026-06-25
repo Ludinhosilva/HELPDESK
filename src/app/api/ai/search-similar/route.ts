@@ -25,7 +25,16 @@ export async function POST(request: NextRequest) {
       take: 100,
     });
 
-    const results = searchSimilar(title, description, resolvedTickets);
+    const results = searchSimilar(
+      title,
+      description,
+      resolvedTickets.map(t => ({
+        id: t.id,
+        title: t.title,
+        description: t.description,
+        category: t.category?.name || "otros",
+      }))
+    );
 
     return NextResponse.json({ results });
   } catch {

@@ -25,12 +25,20 @@ import { SLA_PREMIUM_PRICE } from "@/lib/sla";
 interface TriageResult {
   complexity: string;
   category: string;
+  categoryConfidence?: number;
   solution: string | null;
   requiresPayment: boolean;
   reason: string;
   suggestedAction: string;
   estimatedCost: number;
   priorityOverride: string | null;
+  priorityReason?: string;
+  classification?: {
+    diagnosis: string;
+    suggestedSteps: string[];
+    priority: string;
+    urgency: string;
+  };
 }
 
 const complexityColors: Record<string, string> = {
@@ -73,11 +81,16 @@ export default function NewTicketPage() {
   function handleTriageComplete(result: TriageResult, problem: string) {
     setTriageResult(result);
 
+    // Buscar categoryId que coincida con la categoría detectada por IA
+    const matchingCategory = categories.find(
+      (c) => c.name.toLowerCase() === result.category.toLowerCase()
+    );
+
     setForm({
       title: problem.length > 80 ? problem.slice(0, 77) + "..." : problem,
       description: problem,
-      categoryId: "",
-      priority: result.priorityOverride || "MEDIUM",
+      categoryId: matchingCategory?.id || "",
+      priority: result.priorityOverride || result.classification?.priority || "MEDIUM",
     });
 
     setStep("form");
