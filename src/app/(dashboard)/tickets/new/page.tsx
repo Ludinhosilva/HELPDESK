@@ -19,7 +19,6 @@ import { ArrowLeft, Bot, Loader2, AlertTriangle, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/components/ui/toast";
 import { AITriage } from "@/components/ai-triage";
-import { PaymentModal } from "@/components/ui/payment-modal";
 import { SLA_PREMIUM_PRICE } from "@/lib/sla";
 
 interface TriageResult {
@@ -60,9 +59,6 @@ export default function NewTicketPage() {
   const [triageResult, setTriageResult] = useState<TriageResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
-  const [showPayment, setShowPayment] = useState(false);
-  const [ticketId, setTicketId] = useState<string | null>(null);
-  const [ticketNumber, setTicketNumber] = useState(0);
 
   const [form, setForm] = useState({
     title: "",
@@ -119,20 +115,8 @@ export default function NewTicketPage() {
 
       if (res.ok) {
         const data = await res.json();
-
-        if (triageResult?.complexity === "COMPLEX") {
-          setTicketId(data.id);
-          setTicketNumber(data.ticketNumber);
-          setShowPayment(true);
-          toast({
-            type: "info",
-            title: "Ticket creado",
-            description: "Activa Ticket Exprés para prioridad urgente.",
-          });
-        } else {
-          toast({ type: "success", title: "Ticket creado", description: "Tu ticket ha sido creado exitosamente" });
-          router.push(`/tickets/${data.id}`);
-        }
+        toast({ type: "success", title: "Ticket creado", description: `TK-${data.ticketNumber} creado exitosamente` });
+        router.push(`/tickets/${data.id}`);
       } else {
         const err = await res.json();
         toast({ type: "error", title: "Error", description: err.message || "Error al crear el ticket" });
@@ -288,18 +272,6 @@ export default function NewTicketPage() {
           </form>
         </CardContent>
       </Card>
-
-      {ticketId && (
-        <PaymentModal
-          open={showPayment}
-          onOpenChange={(o) => {
-            setShowPayment(o);
-            if (!o) router.push(`/tickets/${ticketId}`);
-          }}
-          ticketId={ticketId}
-          ticketNumber={ticketNumber}
-        />
-      )}
     </div>
   );
 }
