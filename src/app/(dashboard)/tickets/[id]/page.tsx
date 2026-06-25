@@ -18,6 +18,10 @@ export const dynamic = "force-dynamic";
 const statusLabels: Record<string, string> = {
   OPEN: "Abierto",
   IN_PROGRESS: "En Progreso",
+  DIAGNOSING: "Diagnosticando",
+  REPAIRING: "Reparando",
+  WAITING_PARTS: "Esperando Repuestos",
+  READY: "Listo para Entregar",
   ON_HOLD: "En Espera",
   RESOLVED: "Resuelto",
   CLOSED: "Cerrado",
@@ -33,6 +37,10 @@ const priorityLabels: Record<string, string> = {
 const statusColors: Record<string, string> = {
   OPEN: "bg-blue-500/10 text-blue-400 border-blue-500/20",
   IN_PROGRESS: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
+  DIAGNOSING: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+  REPAIRING: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+  WAITING_PARTS: "bg-orange-500/10 text-orange-400 border-orange-500/20",
+  READY: "bg-green-500/10 text-green-400 border-green-500/20",
   ON_HOLD: "bg-orange-500/10 text-orange-400 border-orange-500/20",
   RESOLVED: "bg-green-500/10 text-green-400 border-green-500/20",
   CLOSED: "bg-gray-500/10 text-gray-400 border-gray-500/20",

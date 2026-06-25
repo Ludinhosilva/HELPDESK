@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -47,6 +48,7 @@ export default function RunbookButton({
   const [visibleLines, setVisibleLines] = useState<RunbookLine[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [isDone, setIsDone] = useState(false);
+  const router = useRouter();
 
   const canRun = currentStatus !== "READY" && currentStatus !== "CLOSED" && currentStatus !== "RESOLVED";
 
@@ -85,6 +87,7 @@ export default function RunbookButton({
     setOpen(false);
     if (isDone) {
       onComplete();
+      router.refresh();
     }
   };
 
