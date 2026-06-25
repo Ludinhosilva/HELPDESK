@@ -13,6 +13,8 @@ import {
   Headphones,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getRoleTheme } from "@/lib/theme";
+import { RoleBadge } from "@/components/ui/role-badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -63,6 +65,7 @@ export default function SuperAdminShell({
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const theme = getRoleTheme(user.role);
 
   function handleLogout() {
     document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
@@ -85,7 +88,7 @@ export default function SuperAdminShell({
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-primary/10 text-primary"
+                  ? cn(theme.bg, theme.text)
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
@@ -100,10 +103,10 @@ export default function SuperAdminShell({
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <aside className="hidden lg:flex lg:flex-col w-[260px] border-r border-border bg-card/80 backdrop-blur-xl">
-        <div className="flex items-center gap-2 px-5 h-16 border-b border-border shrink-0">
-          <Shield className="h-5 w-5 text-purple-500" />
-          <span className="font-bold text-lg">Flix Support Admin</span>
+      <aside className={cn("hidden lg:flex lg:flex-col w-[260px] border-r bg-card/80 backdrop-blur-xl role-transition", theme.border)}>
+        <div className={cn("flex items-center gap-2 px-5 h-16 border-b shrink-0 role-transition shell-gradient", theme.border, theme.gradient)}>
+          <Shield className={cn("h-5 w-5", theme.sidebarIcon)} />
+          <span className="font-bold text-lg text-white">Flix Support Admin</span>
         </div>
         <SidebarNav />
         <div className="p-3 border-t border-border shrink-0">
@@ -125,8 +128,8 @@ export default function SuperAdminShell({
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-[260px] p-0">
-                  <SheetHeader className="px-5 h-16 border-b border-border flex flex-row items-center">
-                    <Shield className="h-5 w-5 text-purple-500 mr-2" />
+                  <SheetHeader className={cn("px-5 h-16 border-b flex flex-row items-center", theme.border)}>
+                    <Shield className={cn("h-5 w-5 mr-2", theme.sidebarIcon)} />
                     <SheetTitle>Flix Support Admin</SheetTitle>
                   </SheetHeader>
                   <SidebarNav onNavigate={() => setOpen(false)} />
@@ -145,7 +148,7 @@ export default function SuperAdminShell({
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-9 gap-2 px-2">
                 <Avatar className="h-7 w-7">
-                  <AvatarFallback className="text-xs bg-purple-500/10 text-purple-600">
+                  <AvatarFallback className={cn("text-xs role-transition", theme.avatar)}>
                     {getInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
@@ -159,9 +162,9 @@ export default function SuperAdminShell({
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium">{user.name}</p>
                   <p className="text-xs text-muted-foreground">{user.email}</p>
-                  <p className="text-xs text-muted-foreground capitalize">
-                    Super Administrador
-                  </p>
+                  <div className="pt-1">
+                    <RoleBadge role={user.role} />
+                  </div>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
@@ -178,7 +181,7 @@ export default function SuperAdminShell({
           </DropdownMenu>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 lg:p-6 page-transition">{children}</main>
       </div>
     </div>
   );

@@ -20,6 +20,7 @@ import {
 import { KanbanColumn } from "./kanban-column";
 import { KanbanCard } from "./kanban-card";
 import { Ticket } from "lucide-react";
+import { getPriorityBadge, getPriorityLabel } from "@/lib/theme";
 
 interface TicketItem {
   id: string;
@@ -38,17 +39,6 @@ const columns = [
   { id: "ON_HOLD", label: "En Espera", color: "border-t-orange-400" },
   { id: "RESOLVED", label: "Resuelto", color: "border-t-green-400" },
 ];
-
-const priorityLabels: Record<string, string> = {
-  LOW: "Baja", MEDIUM: "Media", HIGH: "Alta", URGENT: "Urgente",
-};
-
-const priorityColors: Record<string, string> = {
-  LOW: "bg-gray-100 text-gray-700",
-  MEDIUM: "bg-blue-100 text-blue-700",
-  HIGH: "bg-orange-100 text-orange-700",
-  URGENT: "bg-red-100 text-red-700",
-};
 
 interface KanbanBoardProps {
   tickets: TicketItem[];
@@ -128,8 +118,8 @@ export function KanbanBoard({ tickets }: KanbanBoardProps) {
                   ticketNumber={ticket.ticketNumber}
                   title={ticket.title}
                   priority={ticket.priority}
-                  priorityLabel={priorityLabels[ticket.priority] || ticket.priority}
-                  priorityColor={priorityColors[ticket.priority] || ""}
+                  priorityLabel={getPriorityLabel(ticket.priority)}
+                   priorityColor={getPriorityBadge(ticket.priority)}
                   assignee={ticket.assignedTo?.name}
                   category={ticket.category?.name}
                   createdAt={ticket.createdAt}
@@ -155,8 +145,8 @@ export function KanbanBoard({ tickets }: KanbanBoardProps) {
               ticketNumber={activeTicket.ticketNumber}
               title={activeTicket.title}
               priority={activeTicket.priority}
-              priorityLabel={priorityLabels[activeTicket.priority] || activeTicket.priority}
-              priorityColor={priorityColors[activeTicket.priority] || ""}
+               priorityLabel={getPriorityLabel(activeTicket.priority)}
+               priorityColor={getPriorityBadge(activeTicket.priority)}
               assignee={activeTicket.assignedTo?.name}
               category={activeTicket.category?.name}
               createdAt={activeTicket.createdAt}

@@ -30,5 +30,9 @@ export default async function SuperAdminLayout({
     redirect("/login");
   }
 
-  return <SuperAdminShell user={user}>{children}</SuperAdminShell>;
+  return (
+    <div data-role={user.role}>
+      <SuperAdminShell user={user}>{children}</SuperAdminShell>
+    </div>
+  );
 }

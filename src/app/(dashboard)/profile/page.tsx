@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import { RoleBadge } from "@/components/ui/role-badge";
 import { User, Check, Lock, ArrowLeft } from "lucide-react";
 import { apiClient } from "@/core/api-client";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -26,12 +26,6 @@ interface UserProfile {
   organization: { id: string; name: string; slug: string };
   createdAt: string;
 }
-
-const roleLabels: Record<string, string> = {
-  ADMIN: "Administrador",
-  TECHNICIAN: "Tecnico",
-  END_USER: "Usuario",
-};
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -131,9 +125,7 @@ export default function ProfilePage() {
             <div className="space-y-2">
               <Label>Rol</Label>
               <div>
-                <Badge variant="outline">
-                  {roleLabels[profile.role] || profile.role}
-                </Badge>
+                <RoleBadge role={profile.role} />
               </div>
             </div>
           </div>

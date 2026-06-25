@@ -42,6 +42,8 @@ export default async function DashboardLayout({
   }
 
   return (
-    <DashboardShell user={user}>{children}</DashboardShell>
+    <div data-role={user.role}>
+      <DashboardShell user={user}>{children}</DashboardShell>
+    </div>
   );
 }

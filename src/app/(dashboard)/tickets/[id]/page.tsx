@@ -12,46 +12,9 @@ import { ArrowLeft, User, Tag, Calendar, Clock } from "lucide-react";
 import Link from "next/link";
 import { SLASection } from "./sla-section";
 import RunbookButton from "@/components/tickets/RunbookButton";
+import { getStatusBadge, getStatusLabel, getPriorityBadge, getPriorityLabel } from "@/lib/theme";
 
 export const dynamic = "force-dynamic";
-
-const statusLabels: Record<string, string> = {
-  OPEN: "Abierto",
-  IN_PROGRESS: "En Progreso",
-  DIAGNOSING: "Diagnosticando",
-  REPAIRING: "Reparando",
-  WAITING_PARTS: "Esperando Repuestos",
-  READY: "Listo para Entregar",
-  ON_HOLD: "En Espera",
-  RESOLVED: "Resuelto",
-  CLOSED: "Cerrado",
-};
-
-const priorityLabels: Record<string, string> = {
-  LOW: "Baja",
-  MEDIUM: "Media",
-  HIGH: "Alta",
-  URGENT: "Urgente",
-};
-
-const statusColors: Record<string, string> = {
-  OPEN: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  IN_PROGRESS: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-  DIAGNOSING: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
-  REPAIRING: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-  WAITING_PARTS: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-  READY: "bg-green-500/10 text-green-400 border-green-500/20",
-  ON_HOLD: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-  RESOLVED: "bg-green-500/10 text-green-400 border-green-500/20",
-  CLOSED: "bg-gray-500/10 text-gray-400 border-gray-500/20",
-};
-
-const priorityColors: Record<string, string> = {
-  LOW: "bg-gray-500/10 text-gray-400 border-gray-500/20",
-  MEDIUM: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  HIGH: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-  URGENT: "bg-red-500/10 text-red-400 border-red-500/20",
-};
 
 function formatDate(d: Date | null) {
   if (!d) return "—";
@@ -148,11 +111,11 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
             <h1 className="text-2xl font-bold tracking-tight">
               TK-{ticket.ticketNumber}
             </h1>
-            <Badge variant="outline" className={statusColors[ticket.status]}>
-              {statusLabels[ticket.status] || ticket.status}
+            <Badge variant="outline" className={getStatusBadge(ticket.status)}>
+              {getStatusLabel(ticket.status)}
             </Badge>
-            <Badge variant="outline" className={priorityColors[ticket.priority]}>
-{priorityLabels[ticket.priority] || ticket.priority}
+            <Badge variant="outline" className={getPriorityBadge(ticket.priority)}>
+{getPriorityLabel(ticket.priority)}
             </Badge>
           </div>
           <p className="text-muted-foreground mt-1">{ticket.title}</p>
