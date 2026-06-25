@@ -18,6 +18,7 @@ import {
   LogOut,
   Wrench,
   Columns3,
+  Radio,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -53,6 +54,7 @@ const allNavItems = [
   { label: "Panel Principal", href: "/dashboard", icon: LayoutDashboard, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
   { label: "Tickets", href: "/tickets", icon: Ticket, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
   { label: "Tablero Kanban", href: "/tickets/kanban", icon: Columns3, roles: ["ADMIN", "TECHNICIAN"] },
+  { label: "Centro de Comando", href: "/flix-feed", icon: Radio, roles: ["ADMIN", "TECHNICIAN"] },
   { label: "Base de Conocimiento", href: "/knowledge", icon: BookOpen, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
   { label: "Perfil", href: "/profile", icon: User, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
   { label: "Usuarios", href: "/users", icon: Users, roles: ["ADMIN"] },

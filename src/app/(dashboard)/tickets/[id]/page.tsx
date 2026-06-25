@@ -11,6 +11,7 @@ import CommentSection from "./comment-section";
 import { ArrowLeft, User, Tag, Calendar, Clock } from "lucide-react";
 import Link from "next/link";
 import { SLASection } from "./sla-section";
+import RunbookButton from "@/components/tickets/RunbookButton";
 
 export const dynamic = "force-dynamic";
 
@@ -215,6 +216,13 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
             paymentStatus={ticket.paymentStatus}
             slaExpiresAt={ticket.slaExpiresAt?.toISOString() ?? null}
             userRole={user.role}
+          />
+
+          <RunbookButton
+            ticketId={ticket.id}
+            ticketNumber={ticket.ticketNumber}
+            currentStatus={ticket.status}
+            onComplete={() => {}}
           />
 
           <Card>
