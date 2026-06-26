@@ -2,7 +2,8 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { CreditCard, Check } from "lucide-react";
-import { CardPayment } from "@/components/ui/card-payment";
+import { PaymentMethods } from "@/components/ui/payment-methods";
+import Image from "next/image";
 
 interface Plan {
   id: string;
@@ -63,19 +64,30 @@ export function SubscriptionCheckoutModal({ open, onOpenChange, plan, isUpgrade 
         </div>
 
         {plan.price > 0 ? (
-          <CardPayment
-            amount={plan.price}
-            title={`Plan ${plan.name}`}
-            apiEndpoint="/api/subscriptions"
-            apiBody={{ planId: plan.id }}
-            onComplete={() => {
-              setTimeout(() => {
-                onOpenChange(false);
-                window.location.reload();
-              }, 2000);
-            }}
-            onCancel={() => onOpenChange(false)}
-          />
+          <>
+            <div className="flex justify-center mb-4">
+              <Image
+                src="/payment-methods.svg"
+                alt="Métodos de pago aceptados"
+                width={300}
+                height={75}
+                className="opacity-80"
+              />
+            </div>
+            <PaymentMethods
+              amount={plan.price}
+              title={`Plan ${plan.name}`}
+              apiEndpoint="/api/subscriptions"
+              apiBody={{ planId: plan.id }}
+              onComplete={() => {
+                setTimeout(() => {
+                  onOpenChange(false);
+                  window.location.reload();
+                }, 2000);
+              }}
+              onCancel={() => onOpenChange(false)}
+            />
+          </>
         ) : (
           <div className="text-center py-4">
             <form

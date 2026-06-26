@@ -2,40 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Wrench, ClipboardList, BarChart3, Brain, BookOpen, Zap, Check, ArrowRight, Star, Users, Building2, MessageSquare, TrendingUp, Monitor, Radio, UserCheck, Menu, X, MapPin, Smartphone, Terminal, Columns3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-
-// Payment Method Logos
-const YapeLogo = () => (
-  <svg viewBox="0 0 100 100" className="h-12 w-12">
-    <rect width="100" height="100" rx="20" fill="#6B2FA0"/>
-    <text x="50" y="65" fontSize="32" fontWeight="bold" fill="white" textAnchor="middle">Y</text>
-  </svg>
-);
-
-const PlinLogo = () => (
-  <svg viewBox="0 0 100 100" className="h-12 w-12">
-    <rect width="100" height="100" rx="20" fill="#0066CC"/>
-    <text x="50" y="65" fontSize="32" fontWeight="bold" fill="white" textAnchor="middle">P</text>
-  </svg>
-);
-
-const VisaLogo = () => (
-  <svg viewBox="0 0 100 60" className="h-12 w-20">
-    <rect width="100" height="60" rx="8" fill="#1A1F71"/>
-    <text x="50" y="40" fontSize="28" fontWeight="bold" fill="#F7B600" textAnchor="middle">VISA</text>
-  </svg>
-);
-
-const MastercardLogo = () => (
-  <svg viewBox="0 0 100 60" className="h-12 w-20">
-    <rect width="100" height="60" rx="8" fill="#1A1A1A"/>
-    <circle cx="35" cy="30" r="18" fill="#EB001B"/>
-    <circle cx="65" cy="30" r="18" fill="#FF5F00"/>
-    <path d="M 50 30 L 35 30 A 18 18 0 0 0 50 12 A 18 18 0 0 0 65 30 L 50 30" fill="#FF5F00"/>
-  </svg>
-);
 
 const features = [
   { icon: ClipboardList, title: "Gestión de Tickets", desc: "Creación, asignación, seguimiento por estados, comentarios y evaluación post-resolución.", color: "from-blue-500 to-cyan-500", bg: "bg-blue-50 dark:bg-blue-950/30", iconColor: "text-blue-600 dark:text-blue-400" },
@@ -445,35 +415,14 @@ export default function HomePage() {
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Paga como prefieras</h2>
               <p className="mt-4 text-muted-foreground">YAPE, PLIN, Visa o Mastercard. Sin fricción, sin complicaciones.</p>
             </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 max-w-4xl mx-auto">
-              <div className="rounded-2xl border border-border/50 bg-card p-6 text-center transition-all hover:shadow-lg hover:-translate-y-1 duration-300">
-                <div className="mb-4 flex items-center justify-center mx-auto">
-                  <YapeLogo />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">YAPE</h3>
-                <p className="text-sm text-muted-foreground">Pago instantáneo con QR desde tu celular</p>
-              </div>
-              <div className="rounded-2xl border border-border/50 bg-card p-6 text-center transition-all hover:shadow-lg hover:-translate-y-1 duration-300">
-                <div className="mb-4 flex items-center justify-center mx-auto">
-                  <PlinLogo />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">PLIN</h3>
-                <p className="text-sm text-muted-foreground">Transferencia rápida desde tu banco</p>
-              </div>
-              <div className="rounded-2xl border border-border/50 bg-card p-6 text-center transition-all hover:shadow-lg hover:-translate-y-1 duration-300">
-                <div className="mb-4 flex items-center justify-center mx-auto">
-                  <VisaLogo />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Visa</h3>
-                <p className="text-sm text-muted-foreground">Tarjeta de crédito o débito</p>
-              </div>
-              <div className="rounded-2xl border border-border/50 bg-card p-6 text-center transition-all hover:shadow-lg hover:-translate-y-1 duration-300">
-                <div className="mb-4 flex items-center justify-center mx-auto">
-                  <MastercardLogo />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Mastercard</h3>
-                <p className="text-sm text-muted-foreground">Tarjeta de crédito o débito</p>
-              </div>
+            <div className="rounded-2xl border border-border/50 bg-card p-8 text-center transition-all hover:shadow-lg duration-300 max-w-4xl mx-auto">
+              <Image
+                src="/payment-methods.svg"
+                alt="Métodos de pago aceptados: YAPE, PLIN, Visa, Mastercard"
+                width={800}
+                height={200}
+                className="mx-auto"
+              />
             </div>
           </div>
         </section>
@@ -580,20 +529,13 @@ export default function HomePage() {
             </div>
             <div>
               <h4 className="text-sm font-semibold mb-4">Métodos de Pago</h4>
-              <div className="flex flex-wrap gap-3">
-                <div className="flex items-center justify-center rounded-lg bg-muted/50 p-2">
-                  <YapeLogo />
-                </div>
-                <div className="flex items-center justify-center rounded-lg bg-muted/50 p-2">
-                  <PlinLogo />
-                </div>
-                <div className="flex items-center justify-center rounded-lg bg-muted/50 p-2">
-                  <VisaLogo />
-                </div>
-                <div className="flex items-center justify-center rounded-lg bg-muted/50 p-2">
-                  <MastercardLogo />
-                </div>
-              </div>
+              <Image
+                src="/payment-methods.svg"
+                alt="Métodos de pago aceptados"
+                width={200}
+                height={50}
+                className="opacity-70"
+              />
             </div>
           </div>
           <div className="mt-10 pt-8 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">

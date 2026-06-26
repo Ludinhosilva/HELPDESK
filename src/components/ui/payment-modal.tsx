@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Shield } from "lucide-react";
 import { SLA_PREMIUM_PRICE } from "@/lib/sla";
 import { PaymentMethods } from "@/components/ui/payment-methods";
+import Image from "next/image";
 
 interface PaymentModalProps {
   open: boolean;
@@ -32,6 +33,16 @@ export function PaymentModal({ open, onOpenChange, ticketId, ticketNumber }: Pay
             <span className="text-lg font-bold">S/ {(SLA_PREMIUM_PRICE / 100).toFixed(2)}</span>
           </div>
           <p className="text-xs text-muted-foreground mt-1">Prioridad Urgente + tiempo de respuesta garantizado</p>
+        </div>
+
+        <div className="flex justify-center mb-4">
+          <Image
+            src="/payment-methods.svg"
+            alt="Métodos de pago aceptados"
+            width={300}
+            height={75}
+            className="opacity-80"
+          />
         </div>
 
         <PaymentMethods
