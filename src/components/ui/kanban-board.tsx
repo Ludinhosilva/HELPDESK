@@ -19,8 +19,9 @@ import {
 } from "@dnd-kit/sortable";
 import { KanbanColumn } from "./kanban-column";
 import { KanbanCard } from "./kanban-card";
-import { Ticket } from "lucide-react";
+import { Ticket, Loader2 } from "lucide-react";
 import { getPriorityBadge, getPriorityLabel } from "@/lib/theme";
+import { useToast } from "@/components/ui/toast";
 
 interface TicketItem {
   id: string;
@@ -36,8 +37,13 @@ interface TicketItem {
 const columns = [
   { id: "OPEN", label: "Pendiente", color: "border-t-blue-400" },
   { id: "IN_PROGRESS", label: "En Progreso", color: "border-t-yellow-400" },
-  { id: "ON_HOLD", label: "En Espera", color: "border-t-orange-400" },
-  { id: "RESOLVED", label: "Resuelto", color: "border-t-green-400" },
+  { id: "DIAGNOSING", label: "Diagnosticando", color: "border-t-cyan-400" },
+  { id: "REPAIRING", label: "Reparando", color: "border-t-purple-400" },
+  { id: "WAITING_PARTS", label: "Esperando Repuestos", color: "border-t-orange-400" },
+  { id: "READY", label: "Listo", color: "border-t-green-400" },
+  { id: "ON_HOLD", label: "En Espera", color: "border-t-amber-400" },
+  { id: "RESOLVED", label: "Resuelto", color: "border-t-emerald-400" },
+  { id: "CLOSED", label: "Cerrado", color: "border-t-gray-400" },
 ];
 
 interface KanbanBoardProps {
@@ -46,7 +52,9 @@ interface KanbanBoardProps {
 
 export function KanbanBoard({ tickets }: KanbanBoardProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
@@ -71,15 +79,25 @@ export function KanbanBoard({ tickets }: KanbanBoardProps) {
     const ticket = tickets.find((t) => t.id === ticketId);
     if (!ticket || ticket.status === newStatus || newStatus === ticketId) return;
 
+    setSaving(true);
     try {
-      await fetch(`/api/tickets/${ticketId}`, {
+      const res = await fetch(`/api/tickets/${ticketId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
       });
-      router.refresh();
+
+      if (res.ok) {
+        router.refresh();
+        toast({ type: "success", title: "Estado actualizado", description: `Ticket movido a "${columns.find(c => c.id === newStatus)?.label || newStatus}"` });
+      } else {
+        const err = await res.json().catch(() => ({ message: "Error desconocido" }));
+        toast({ type: "error", title: "Transición no permitida", description: err.message || "No se puede cambiar a ese estado" });
+      }
     } catch {
-      // ignore errors on drag
+      toast({ type: "error", title: "Error", description: "Error de conexión al actualizar el ticket" });
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -98,44 +116,49 @@ export function KanbanBoard({ tickets }: KanbanBoardProps) {
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}
     >
-        <div className="flex lg:grid lg:grid-cols-4 gap-4 min-h-[70dvh] overflow-x-auto lg:overflow-visible snap-x lg:snap-none">
-          {columns.map((col) => (
-            <div key={col.id} className="min-w-[280px] w-[280px] lg:w-auto flex-shrink-0 snap-start">
+      {saving && (
+        <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center gap-2 bg-primary/10 backdrop-blur-sm py-2 text-sm font-medium text-primary animate-in slide-in-from-top-2">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Guardando...
+        </div>
+      )}
+      <div className="flex gap-4 min-h-[70dvh] overflow-x-auto pb-4 snap-x">
+        {columns.map((col) => (
+          <div key={col.id} className="min-w-[260px] w-[260px] flex-shrink-0 snap-start">
             <KanbanColumn
-              key={col.id}
-            id={col.id}
-            label={col.label}
-            color={col.color}
-            count={grouped[col.id]?.length ?? 0}
-          >
-            <SortableContext
-              items={grouped[col.id]?.map((t) => t.id) ?? []}
-              strategy={verticalListSortingStrategy}
+              id={col.id}
+              label={col.label}
+              color={col.color}
+              count={grouped[col.id]?.length ?? 0}
             >
-              {grouped[col.id]?.map((ticket) => (
-                <KanbanCard
-                  key={ticket.id}
-                  id={ticket.id}
-                  ticketNumber={ticket.ticketNumber}
-                  title={ticket.title}
-                  priority={ticket.priority}
-                  priorityLabel={getPriorityLabel(ticket.priority)}
-                   priorityColor={getPriorityBadge(ticket.priority)}
-                  assignee={ticket.assignedTo?.name}
-                  category={ticket.category?.name}
-                  createdAt={ticket.createdAt}
-                  href={`/tickets/${ticket.id}`}
-                />
-              ))}
-            </SortableContext>
-            {(!grouped[col.id] || grouped[col.id].length === 0) && (
-              <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-                <Ticket className="h-8 w-8 mb-2 opacity-30" />
-                <p className="text-sm">Sin tickets</p>
-              </div>
-            )}
-          </KanbanColumn>
-            </div>
+              <SortableContext
+                items={grouped[col.id]?.map((t) => t.id) ?? []}
+                strategy={verticalListSortingStrategy}
+              >
+                {grouped[col.id]?.map((ticket) => (
+                  <KanbanCard
+                    key={ticket.id}
+                    id={ticket.id}
+                    ticketNumber={ticket.ticketNumber}
+                    title={ticket.title}
+                    priority={ticket.priority}
+                    priorityLabel={getPriorityLabel(ticket.priority)}
+                    priorityColor={getPriorityBadge(ticket.priority)}
+                    assignee={ticket.assignedTo?.name}
+                    category={ticket.category?.name}
+                    createdAt={ticket.createdAt}
+                    href={`/tickets/${ticket.id}`}
+                  />
+                ))}
+              </SortableContext>
+              {(!grouped[col.id] || grouped[col.id].length === 0) && (
+                <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+                  <Ticket className="h-8 w-8 mb-2 opacity-30" />
+                  <p className="text-sm">Sin tickets</p>
+                </div>
+              )}
+            </KanbanColumn>
+          </div>
         ))}
       </div>
 
@@ -147,8 +170,8 @@ export function KanbanBoard({ tickets }: KanbanBoardProps) {
               ticketNumber={activeTicket.ticketNumber}
               title={activeTicket.title}
               priority={activeTicket.priority}
-               priorityLabel={getPriorityLabel(activeTicket.priority)}
-               priorityColor={getPriorityBadge(activeTicket.priority)}
+              priorityLabel={getPriorityLabel(activeTicket.priority)}
+              priorityColor={getPriorityBadge(activeTicket.priority)}
               assignee={activeTicket.assignedTo?.name}
               category={activeTicket.category?.name}
               createdAt={activeTicket.createdAt}
