@@ -11,6 +11,17 @@ import {
   Shield,
   ArrowLeft,
   Headphones,
+  Ticket,
+  Columns3,
+  BookOpen,
+  Users,
+  User,
+  Radio,
+  Tags,
+  BarChart3,
+  CreditCard,
+  Mail,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getRoleTheme } from "@/lib/theme";
@@ -45,6 +56,19 @@ const navItems = [
   { label: "Panel Global", href: "/super-admin", icon: LayoutDashboard },
   { label: "Centro de Soporte", href: "/super-admin/support", icon: Headphones },
   { label: "Organizaciones", href: "/super-admin/organizations", icon: Building2 },
+  { label: "Dashboard", href: "/dashboard", icon: BarChart3 },
+  { label: "Tickets", href: "/tickets", icon: Ticket },
+  { label: "Tablero Kanban", href: "/tickets/kanban", icon: Columns3 },
+  { label: "Centro de Comando", href: "/flix-feed", icon: Radio },
+  { label: "Base de Conocimiento", href: "/knowledge", icon: BookOpen },
+  { label: "Usuarios", href: "/users", icon: Users },
+  { label: "Compras", href: "/tickets/compras", icon: CreditCard },
+  { label: "Categorías", href: "/categories", icon: Tags },
+  { label: "Analíticas", href: "/analytics", icon: BarChart3 },
+  { label: "Suscripciones", href: "/subscriptions", icon: CreditCard },
+  { label: "Logs de Email", href: "/emails", icon: Mail },
+  { label: "Configuración", href: "/settings", icon: Settings },
+  { label: "Perfil", href: "/profile", icon: User },
 ];
 
 function getInitials(name: string) {
@@ -76,12 +100,17 @@ export default function SuperAdminShell({
   function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
     return (
       <nav className="flex flex-col gap-1 flex-1 overflow-y-auto py-4 px-3">
-        {navItems.map((item) => {
+        {navItems.map((item, idx) => {
           const isActive =
             item.href === "/super-admin"
               ? pathname === "/super-admin"
               : pathname.startsWith(item.href);
+          const showSeparator = item.label === "Dashboard" && (idx > 0);
           return (
+            <div key={item.href}>
+              {showSeparator && (
+                <div className="my-2 border-t border-border/50" />
+              )}
             <Link
               key={item.href}
               href={item.href}
@@ -96,6 +125,7 @@ export default function SuperAdminShell({
               <item.icon className="h-4 w-4 shrink-0" />
               {item.label}
             </Link>
+            </div>
           );
         })}
       </nav>
