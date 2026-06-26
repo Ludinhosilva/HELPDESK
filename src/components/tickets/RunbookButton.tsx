@@ -35,7 +35,7 @@ interface RunbookButtonProps {
   ticketId: string;
   ticketNumber: number;
   currentStatus: string;
-  onComplete: () => void;
+  onComplete?: () => void;
 }
 
 export default function RunbookButton({
@@ -86,7 +86,7 @@ export default function RunbookButton({
   const handleClose = () => {
     setOpen(false);
     if (isDone) {
-      onComplete();
+      onComplete?.();
       router.refresh();
     }
   };

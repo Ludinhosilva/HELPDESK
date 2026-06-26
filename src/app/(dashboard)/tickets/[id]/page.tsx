@@ -207,7 +207,6 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
             ticketId={ticket.id}
             ticketNumber={ticket.ticketNumber}
             currentStatus={ticket.status}
-            onComplete={() => {}}
           />
 
           <Card>
