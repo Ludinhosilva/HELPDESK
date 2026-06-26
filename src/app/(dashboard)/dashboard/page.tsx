@@ -29,10 +29,6 @@ export const dynamic = "force-dynamic";
 const statusLabels: Record<string, string> = {
   OPEN: "Abierto",
   IN_PROGRESS: "En Progreso",
-  DIAGNOSING: "Diagnosticando",
-  REPAIRING: "Reparando",
-  WAITING_PARTS: "Esperando Repuestos",
-  READY: "Listo",
   ON_HOLD: "En Espera",
   RESOLVED: "Resuelto",
   CLOSED: "Cerrado",

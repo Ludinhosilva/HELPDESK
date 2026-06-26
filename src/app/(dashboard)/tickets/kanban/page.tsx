@@ -18,17 +18,16 @@ export default async function KanbanPage() {
 
   const user = await prisma.user.findUnique({
     where: { id: payload.sub },
-    select: { role: true, organization: { select: { type: true } } },
+    select: { role: true },
   });
   if (!user) redirect("/login");
 
-  const isInternalTech = user.role === "TECHNICIAN" && user.organization?.type === "INTERNAL";
   const isSuperAdmin = user.role === "SUPER_ADMIN";
 
   const tickets = await prisma.ticket.findMany({
     where: isSuperAdmin
       ? {}
-      : isInternalTech
+      : user.role === "TECHNICIAN"
       ? { assignedToId: payload.sub }
       : { organizationId: payload.orgId },
     include: {

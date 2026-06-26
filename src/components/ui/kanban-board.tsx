@@ -37,10 +37,6 @@ interface TicketItem {
 const columns = [
   { id: "OPEN", label: "Pendiente", color: "border-t-blue-400" },
   { id: "IN_PROGRESS", label: "En Progreso", color: "border-t-yellow-400" },
-  { id: "DIAGNOSING", label: "Diagnosticando", color: "border-t-cyan-400" },
-  { id: "REPAIRING", label: "Reparando", color: "border-t-purple-400" },
-  { id: "WAITING_PARTS", label: "Esperando Repuestos", color: "border-t-orange-400" },
-  { id: "READY", label: "Listo", color: "border-t-green-400" },
   { id: "ON_HOLD", label: "En Espera", color: "border-t-amber-400" },
   { id: "RESOLVED", label: "Resuelto", color: "border-t-emerald-400" },
   { id: "CLOSED", label: "Cerrado", color: "border-t-gray-400" },

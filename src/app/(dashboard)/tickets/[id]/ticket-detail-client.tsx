@@ -30,11 +30,7 @@ interface TicketDetailClientProps {
 
 const statusTransitions: Record<string, string[]> = {
   OPEN: ["IN_PROGRESS"],
-  IN_PROGRESS: ["DIAGNOSING", "ON_HOLD", "RESOLVED"],
-  DIAGNOSING: ["REPAIRING", "ON_HOLD"],
-  REPAIRING: ["WAITING_PARTS", "READY", "ON_HOLD"],
-  WAITING_PARTS: ["REPAIRING"],
-  READY: ["RESOLVED"],
+  IN_PROGRESS: ["ON_HOLD", "RESOLVED"],
   ON_HOLD: ["IN_PROGRESS", "RESOLVED"],
   RESOLVED: ["CLOSED", "OPEN"],
   CLOSED: [],
@@ -43,10 +39,6 @@ const statusTransitions: Record<string, string[]> = {
 const statusLabels: Record<string, string> = {
   OPEN: "Abierto",
   IN_PROGRESS: "En Progreso",
-  DIAGNOSING: "Diagnosticando",
-  REPAIRING: "Reparando",
-  WAITING_PARTS: "Esperando Repuestos",
-  READY: "Listo para Entregar",
   ON_HOLD: "En Espera",
   RESOLVED: "Resuelto",
   CLOSED: "Cerrado",
