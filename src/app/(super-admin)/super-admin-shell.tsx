@@ -22,6 +22,7 @@ import {
   CreditCard,
   Mail,
   Settings,
+  Monitor,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getRoleTheme } from "@/lib/theme";
@@ -60,6 +61,7 @@ const navItems = [
   { label: "Tickets", href: "/tickets", icon: Ticket },
   { label: "Tablero Kanban", href: "/tickets/kanban", icon: Columns3 },
   { label: "Centro de Comando", href: "/flix-feed", icon: Radio },
+  { label: "Kiosko", href: "/kiosk", icon: Monitor },
   { label: "Base de Conocimiento", href: "/knowledge", icon: BookOpen },
   { label: "Usuarios", href: "/users", icon: Users },
   { label: "Compras", href: "/tickets/compras", icon: CreditCard },

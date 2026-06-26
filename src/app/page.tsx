@@ -75,6 +75,7 @@ export default function HomePage() {
             <Link href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Características</Link>
             <Link href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Precios</Link>
             <Link href="#steps" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Cómo funciona</Link>
+            <Link href="/kiosk" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Kiosko</Link>
             <Link href="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Iniciar sesión</Link>
             <Link href="/register" className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:shadow-xl hover:shadow-blue-500/30 hover:scale-105 active:scale-100">
               Crear cuenta gratis
@@ -109,6 +110,7 @@ export default function HomePage() {
                     <Link href="#features" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-accent transition-colors">Características</Link>
                     <Link href="#pricing" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-accent transition-colors">Precios</Link>
                     <Link href="#steps" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-accent transition-colors">Cómo funciona</Link>
+                    <Link href="/kiosk" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-accent transition-colors">Kiosko</Link>
                     <div className="mt-auto border-t border-border pt-3 space-y-2">
                       <Link href="/login" onClick={() => setMobileOpen(false)} className="flex items-center justify-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-accent transition-colors">
                         Iniciar sesión

@@ -19,6 +19,7 @@ import {
   Wrench,
   Columns3,
   Radio,
+  Monitor,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getRoleTheme } from "@/lib/theme";
@@ -57,6 +58,7 @@ const allNavItems = [
   { label: "Tickets", href: "/tickets", icon: Ticket, roles: ["SUPER_ADMIN", "ADMIN", "TECHNICIAN", "END_USER"] },
   { label: "Tablero Kanban", href: "/tickets/kanban", icon: Columns3, roles: ["SUPER_ADMIN", "ADMIN", "TECHNICIAN"] },
   { label: "Centro de Comando", href: "/flix-feed", icon: Radio, roles: ["SUPER_ADMIN", "ADMIN", "TECHNICIAN"] },
+  { label: "Kiosko", href: "/kiosk", icon: Monitor, roles: ["SUPER_ADMIN", "ADMIN", "TECHNICIAN", "END_USER"] },
   { label: "Base de Conocimiento", href: "/knowledge", icon: BookOpen, roles: ["SUPER_ADMIN", "ADMIN", "TECHNICIAN", "END_USER"] },
   { label: "Perfil", href: "/profile", icon: User, roles: ["SUPER_ADMIN", "ADMIN", "TECHNICIAN", "END_USER"] },
   { label: "Usuarios", href: "/users", icon: Users, roles: ["SUPER_ADMIN", "ADMIN"] },
