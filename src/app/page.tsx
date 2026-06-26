@@ -6,6 +6,37 @@ import { Wrench, ClipboardList, BarChart3, Brain, BookOpen, Zap, Check, ArrowRig
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 
+// Payment Method Logos
+const YapeLogo = () => (
+  <svg viewBox="0 0 100 100" className="h-12 w-12">
+    <rect width="100" height="100" rx="20" fill="#6B2FA0"/>
+    <text x="50" y="65" fontSize="32" fontWeight="bold" fill="white" textAnchor="middle">Y</text>
+  </svg>
+);
+
+const PlinLogo = () => (
+  <svg viewBox="0 0 100 100" className="h-12 w-12">
+    <rect width="100" height="100" rx="20" fill="#0066CC"/>
+    <text x="50" y="65" fontSize="32" fontWeight="bold" fill="white" textAnchor="middle">P</text>
+  </svg>
+);
+
+const VisaLogo = () => (
+  <svg viewBox="0 0 100 60" className="h-12 w-20">
+    <rect width="100" height="60" rx="8" fill="#1A1F71"/>
+    <text x="50" y="40" fontSize="28" fontWeight="bold" fill="#F7B600" textAnchor="middle">VISA</text>
+  </svg>
+);
+
+const MastercardLogo = () => (
+  <svg viewBox="0 0 100 60" className="h-12 w-20">
+    <rect width="100" height="60" rx="8" fill="#1A1A1A"/>
+    <circle cx="35" cy="30" r="18" fill="#EB001B"/>
+    <circle cx="65" cy="30" r="18" fill="#FF5F00"/>
+    <path d="M 50 30 L 35 30 A 18 18 0 0 0 50 12 A 18 18 0 0 0 65 30 L 50 30" fill="#FF5F00"/>
+  </svg>
+);
+
 const features = [
   { icon: ClipboardList, title: "Gestión de Tickets", desc: "Creación, asignación, seguimiento por estados, comentarios y evaluación post-resolución.", color: "from-blue-500 to-cyan-500", bg: "bg-blue-50 dark:bg-blue-950/30", iconColor: "text-blue-600 dark:text-blue-400" },
   { icon: BarChart3, title: "Analytics en Tiempo Real", desc: "Dashboard con métricas, gráficos por categoría, rendimiento de técnicos y tendencias temporales.", color: "from-emerald-500 to-teal-500", bg: "bg-emerald-50 dark:bg-emerald-950/30", iconColor: "text-emerald-600 dark:text-emerald-400" },
@@ -416,29 +447,29 @@ export default function HomePage() {
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 max-w-4xl mx-auto">
               <div className="rounded-2xl border border-border/50 bg-card p-6 text-center transition-all hover:shadow-lg hover:-translate-y-1 duration-300">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-purple-100 dark:bg-purple-950/30 mx-auto">
-                  <Smartphone className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+                <div className="mb-4 flex items-center justify-center mx-auto">
+                  <YapeLogo />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">YAPE</h3>
                 <p className="text-sm text-muted-foreground">Pago instantáneo con QR desde tu celular</p>
               </div>
               <div className="rounded-2xl border border-border/50 bg-card p-6 text-center transition-all hover:shadow-lg hover:-translate-y-1 duration-300">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 dark:bg-blue-950/30 mx-auto">
-                  <Smartphone className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                <div className="mb-4 flex items-center justify-center mx-auto">
+                  <PlinLogo />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">PLIN</h3>
                 <p className="text-sm text-muted-foreground">Transferencia rápida desde tu banco</p>
               </div>
               <div className="rounded-2xl border border-border/50 bg-card p-6 text-center transition-all hover:shadow-lg hover:-translate-y-1 duration-300">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 dark:bg-blue-950/30 mx-auto">
-                  <span className="text-2xl font-bold text-blue-700">VISA</span>
+                <div className="mb-4 flex items-center justify-center mx-auto">
+                  <VisaLogo />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Visa</h3>
                 <p className="text-sm text-muted-foreground">Tarjeta de crédito o débito</p>
               </div>
               <div className="rounded-2xl border border-border/50 bg-card p-6 text-center transition-all hover:shadow-lg hover:-translate-y-1 duration-300">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-100 dark:bg-red-950/30 mx-auto">
-                  <span className="text-2xl font-bold text-red-600">MC</span>
+                <div className="mb-4 flex items-center justify-center mx-auto">
+                  <MastercardLogo />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Mastercard</h3>
                 <p className="text-sm text-muted-foreground">Tarjeta de crédito o débito</p>
@@ -549,20 +580,18 @@ export default function HomePage() {
             </div>
             <div>
               <h4 className="text-sm font-semibold mb-4">Métodos de Pago</h4>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Smartphone className="h-4 w-4 text-purple-600" />
-                  <span>YAPE</span>
+              <div className="flex flex-wrap gap-3">
+                <div className="flex items-center justify-center rounded-lg bg-muted/50 p-2">
+                  <YapeLogo />
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Smartphone className="h-4 w-4 text-blue-600" />
-                  <span>PLIN</span>
+                <div className="flex items-center justify-center rounded-lg bg-muted/50 p-2">
+                  <PlinLogo />
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span className="font-bold text-blue-700">VISA</span>
+                <div className="flex items-center justify-center rounded-lg bg-muted/50 p-2">
+                  <VisaLogo />
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span className="font-bold text-red-600">Mastercard</span>
+                <div className="flex items-center justify-center rounded-lg bg-muted/50 p-2">
+                  <MastercardLogo />
                 </div>
               </div>
             </div>

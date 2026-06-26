@@ -12,7 +12,7 @@ const roleRouteRestrictions: Record<string, string[]> = {
   "/analytics": ["SUPER_ADMIN", "ADMIN"],
   "/emails": ["SUPER_ADMIN", "ADMIN"],
   "/settings": ["SUPER_ADMIN", "ADMIN"],
-  "/subscriptions": ["SUPER_ADMIN", "ADMIN"],
+  "/subscriptions": ["SUPER_ADMIN", "ADMIN", "END_USER"],
   "/tickets/kanban": ["SUPER_ADMIN", "ADMIN", "TECHNICIAN"],
   "/tickets/compras": ["SUPER_ADMIN", "ADMIN"],
   "/tickets/new": ["SUPER_ADMIN", "ADMIN", "END_USER"],

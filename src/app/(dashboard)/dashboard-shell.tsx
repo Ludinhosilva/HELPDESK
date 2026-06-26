@@ -65,7 +65,7 @@ const allNavItems = [
   { label: "Compras", href: "/tickets/compras", icon: CreditCard, roles: ["SUPER_ADMIN", "ADMIN"] },
   { label: "Categorías", href: "/categories", icon: Tags, roles: ["SUPER_ADMIN", "ADMIN"] },
   { label: "Analíticas", href: "/analytics", icon: BarChart3, roles: ["SUPER_ADMIN", "ADMIN"] },
-  { label: "Suscripciones", href: "/subscriptions", icon: CreditCard, roles: ["SUPER_ADMIN", "ADMIN"] },
+  { label: "Suscripciones", href: "/subscriptions", icon: CreditCard, roles: ["SUPER_ADMIN", "ADMIN", "END_USER"] },
   { label: "Logs de Email", href: "/emails", icon: Mail, roles: ["SUPER_ADMIN", "ADMIN"] },
   { label: "Configuración", href: "/settings", icon: Settings, roles: ["SUPER_ADMIN", "ADMIN"] },
 ];
