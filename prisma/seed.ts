@@ -273,6 +273,73 @@ async function main() {
     },
   });
 
+  // 7 artículos útiles adicionales para clientes
+  await prisma.knowledgeArticle.create({
+    data: {
+      title: "Como cambiar tu contrasena de Windows", slug: "cambiar-contrasena-windows",
+      content: "1. Presiona Ctrl+Alt+Supr y selecciona 'Cambiar una contrasena'.\n2. Ingresa tu contrasena actual.\n3. Escribe y confirma la nueva contrasena (minimo 8 caracteres, incluye mayusculas, numeros y simbolos).\n4. Presiona Enter.\n5. La proxima vez que inicies sesion, usa la nueva contrasena.\n6. Si olvidaste tu contrasena actual, contacta al administrador de TI.",
+      status: "PUBLISHED", organizationId: org1.id, categoryId: cat4.id, viewCount: 156, helpfulCount: 89,
+    },
+  });
+  await prisma.knowledgeArticle.create({
+    data: {
+      title: "Que hacer si tu PC no enciende", slug: "pc-no-enciende",
+      content: "1. Verifica que el cable de corriente este bien conectado en ambos extremos.\n2. Prueba con otro tomacorriente que sepas que funciona.\n3. Si es laptop, retira la bateria (si es removible) y prueba solo con el cargador.\n4. Manten presionado el boton de encendido por 20 segundos para descargar electricidad estatica.\n5. Revisa si el LED del cargador enciende. Si no, el cargador puede estar danado.\n6. Si nada funciona, reporta un ticket a soporte tecnico.",
+      status: "PUBLISHED", organizationId: org1.id, categoryId: cat1.id, viewCount: 234, helpfulCount: 178,
+    },
+  });
+  await prisma.knowledgeArticle.create({
+    data: {
+      title: "Como liberar espacio en tu disco duro", slug: "liberar-espacio-disco",
+      content: "1. Presiona Win+R, escribe 'cleanmgr' y presiona Enter.\n2. Selecciona el disco C: y haz clic en Aceptar.\n3. Marca todas las casillas, especialmente 'Archivos temporales' y 'Papelera de reciclaje'.\n4. Haz clic en 'Limpiar archivos del sistema' para liberar aun mas espacio.\n5. Desinstala programas que ya no uses desde Panel de Control > Programas.\n6. Mueve archivos grandes (videos, fotos) a un disco externo o a OneDrive.",
+      status: "PUBLISHED", organizationId: org1.id, categoryId: cat2.id, viewCount: 189, helpfulCount: 145,
+    },
+  });
+  await prisma.knowledgeArticle.create({
+    data: {
+      title: "Como conectarte a la red WiFi de la oficina", slug: "conectar-wifi-oficina",
+      content: "1. Haz clic en el icono de red en la barra de tareas (esquina inferior derecha).\n2. Selecciona la red 'TechCorp-Oficina' de la lista.\n3. Marca 'Conectar automaticamente'.\n4. Ingresa la contrasena de la red (solicitala al administrador si no la tienes).\n5. Haz clic en Conectar.\n6. Si no aparece la red, verifica que el WiFi de tu equipo este activado (Fn + tecla de WiFi).",
+      status: "PUBLISHED", organizationId: org1.id, categoryId: cat3.id, viewCount: 312, helpfulCount: 267,
+    },
+  });
+  await prisma.knowledgeArticle.create({
+    data: {
+      title: "Como hacer una copia de seguridad de tus archivos", slug: "copia-seguridad-archivos",
+      content: "1. Conecta un disco duro externo a tu computadora.\n2. Abre OneDrive desde el icono en la barra de tareas.\n3. Arrastra las carpetas importantes (Documentos, Escritorio, Imagenes) a la carpeta de OneDrive.\n4. OneDrive sincronizara automaticamente tus archivos a la nube.\n5. Para copias locales: copia y pega tus carpetas al disco externo.\n6. Recomendacion: haz backups cada viernes antes de salir.",
+      status: "PUBLISHED", organizationId: org1.id, categoryId: cat2.id, viewCount: 98, helpfulCount: 72,
+    },
+  });
+  await prisma.knowledgeArticle.create({
+    data: {
+      title: "Solucion: La impresora no imprime", slug: "impresora-no-imprime",
+      content: "1. Verifica que la impresora este encendida y tenga papel.\n2. Revisa los niveles de tinta o toner en la pantalla de la impresora.\n3. Cancela todos los trabajos atascados en la cola de impresion.\n4. En Windows: Configuracion > Bluetooth y dispositivos > Impresoras > selecciona tu impresora > Quitar dispositivo. Luego agregala de nuevo.\n5. Reinicia la impresora (apagala 30 segundos).\n6. Si sigue sin funcionar, notifica al area de TI.",
+      status: "PUBLISHED", organizationId: org1.id, categoryId: cat1.id, viewCount: 201, helpfulCount: 163,
+    },
+  });
+  await prisma.knowledgeArticle.create({
+    data: {
+      title: "Como usar el asistente IA para crear un ticket", slug: "asistente-ia-ticket",
+      content: "1. Ingresa a la plataforma FlixSupport con tu usuario y contrasena.\n2. Haz clic en 'Tickets' en el menu lateral, luego en 'Crear Ticket'.\n3. Escribe tu problema en lenguaje natural (ej: 'mi laptop esta muy lenta').\n4. El asistente IA analizara tu problema y te dara pasos para resolverlo.\n5. Si el problema persiste, haz clic en 'Crear ticket de soporte'.\n6. Un tecnico revisara tu caso y te contactara pronto.",
+      status: "PUBLISHED", organizationId: org1.id, categoryId: cat5.id, viewCount: 87, helpfulCount: 61,
+    },
+  });
+
+  // Artículos para InnovaSoft
+  await prisma.knowledgeArticle.create({
+    data: {
+      title: "Guia basica de ciberseguridad para empleados", slug: "guia-ciberseguridad",
+      content: "1. No abras correos electronicos de remitentes desconocidos.\n2. No hagas clic en enlaces sospechosos ni descargues archivos adjuntos no solicitados.\n3. Usa contrasenas seguras (minimo 8 caracteres, con mayusculas, numeros y simbolos).\n4. Bloquea tu computadora cuando te alejes de tu escritorio (Win + L).\n5. No compartas tus credenciales con nadie, ni siquiera con companeros.\n6. Reporta inmediatamente cualquier actividad sospechosa al area de TI.",
+      status: "PUBLISHED", organizationId: org2.id, categoryId: cat4.id, viewCount: 45, helpfulCount: 34,
+    },
+  });
+  await prisma.knowledgeArticle.create({
+    data: {
+      title: "Como instalar y activar Microsoft Office", slug: "instalar-activar-office",
+      content: "1. Ve al portal de Office 365: portal.office.com.\n2. Inicia sesion con tu cuenta corporativa.\n3. Haz clic en 'Instalar Office' > 'Aplicaciones de Office 365'.\n4. Ejecuta el archivo descargado y sigue el asistente de instalacion.\n5. Abre cualquier aplicacion (Word, Excel) e inicia sesion para activar.\n6. Si tienes problemas de activacion, contacta al administrador de TI.",
+      status: "PUBLISHED", organizationId: org2.id, categoryId: cat2.id, viewCount: 32, helpfulCount: 28,
+    },
+  });
+
   console.log("Creando logs de email...");
   await prisma.emailLog.create({
     data: { to: "alex@techcorp.com", subject: "Ticket #1 creado", body: "Su ticket ha sido registrado exitosamente.", type: "TICKET_CREATED", organizationId: org1.id, ticketId: tk1.id },
@@ -286,7 +353,7 @@ async function main() {
   console.log("  Org 1: TechCorp S.A.C. (slug: techcorp)");
   console.log("  Org 2: InnovaSoft E.I.R.L. (slug: innovasoft)");
   console.log("  8 tickets creados en diferentes estados");
-  console.log("  3 articulos de KB (2 publicados, 1 borrador)");
+  console.log("  13 articulos de KB (11 publicados, 1 borrador)");
   console.log("  2 evaluaciones");
   console.log("---");
   console.log("Credenciales:");
