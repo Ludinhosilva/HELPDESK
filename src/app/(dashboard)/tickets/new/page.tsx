@@ -65,7 +65,19 @@ export default function NewTicketPage() {
     description: "",
     categoryId: "",
     priority: "MEDIUM" as string,
+    location: "",
   });
+
+  const officeLocations = [
+    "Oficina de Administración",
+    "Secretaría General",
+    "Oficina de Desarrollo",
+    "Contabilidad",
+    "Sala de Reuniones",
+    "Recepción",
+    "Servidor / Data Center",
+    "Otra ubicación",
+  ];
 
   useEffect(() => {
     fetch("/api/categories")
@@ -87,6 +99,7 @@ export default function NewTicketPage() {
       description: problem,
       categoryId: matchingCategory?.id || "",
       priority: result.priorityOverride || result.classification?.priority || "MEDIUM",
+      location: form.location,
     });
 
     setStep("form");
@@ -110,6 +123,7 @@ export default function NewTicketPage() {
           description: form.description,
           categoryId: form.categoryId || undefined,
           priority: form.priority,
+          location: form.location || undefined,
         }),
       });
 
@@ -244,6 +258,23 @@ export default function NewTicketPage() {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Ubicación (oficina o área)</Label>
+              <Select
+                value={form.location}
+                onValueChange={(v) => setForm({ ...form, location: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccionar ubicación..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {officeLocations.map((loc) => (
+                    <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {triageResult?.complexity === "COMPLEX" && (

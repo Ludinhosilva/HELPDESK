@@ -69,6 +69,7 @@ model Ticket {
   aiCategorySuggested String?
   aiSentiment         String?
   slaExpiresAt        DateTime?
+  location            String?
   paymentStatus       String         @default("NONE")
   paymentAmount       Int?
   paymentReference    String?

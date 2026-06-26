@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Shield } from "lucide-react";
 import { SLA_PREMIUM_PRICE } from "@/lib/sla";
-import { CardPayment } from "@/components/ui/card-payment";
+import { PaymentMethods } from "@/components/ui/payment-methods";
 
 interface PaymentModalProps {
   open: boolean;
@@ -34,7 +34,7 @@ export function PaymentModal({ open, onOpenChange, ticketId, ticketNumber }: Pay
           <p className="text-xs text-muted-foreground mt-1">Prioridad Urgente + tiempo de respuesta garantizado</p>
         </div>
 
-        <CardPayment
+        <PaymentMethods
           amount={SLA_PREMIUM_PRICE}
           title="Ticket Exprés"
           apiEndpoint="/api/payments"

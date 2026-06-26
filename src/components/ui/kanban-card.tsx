@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
+import { MapPin } from "lucide-react";
 
 interface KanbanCardProps {
   id: string;
@@ -16,6 +17,7 @@ interface KanbanCardProps {
   category: string | undefined;
   createdAt: Date;
   href: string;
+  location?: string | null;
 }
 
 export function KanbanCard({
@@ -28,6 +30,7 @@ export function KanbanCard({
   category,
   createdAt,
   href,
+  location,
 }: KanbanCardProps) {
   const {
     attributes,
@@ -85,6 +88,12 @@ export function KanbanCard({
             <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
               {category}
             </span>
+          </div>
+        )}
+        {location && (
+          <div className="mt-1 flex items-center gap-1 text-[10px] text-muted-foreground">
+            <MapPin className="h-3 w-3" />
+            <span className="truncate">{location}</span>
           </div>
         )}
       </Link>

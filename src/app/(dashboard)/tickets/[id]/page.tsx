@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import TicketDetailClient from "./ticket-detail-client";
 import CommentSection from "./comment-section";
-import { ArrowLeft, User, Tag, Calendar, Clock } from "lucide-react";
+import { ArrowLeft, User, Tag, Calendar, Clock, MapPin } from "lucide-react";
 import Link from "next/link";
 import { SLASection } from "./sla-section";
 import RunbookButton from "@/components/tickets/RunbookButton";
@@ -241,6 +241,14 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
                 <div>
                   <p className="text-muted-foreground text-xs">Categoría</p>
                   <p className="font-medium">{ticket.category?.name ?? "—"}</p>
+                </div>
+              </div>
+              <Separator />
+              <div className="flex items-center gap-2 text-sm">
+                <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
+                <div>
+                  <p className="text-muted-foreground text-xs">Ubicación</p>
+                  <p className="font-medium">{ticket.location || "—"}</p>
                 </div>
               </div>
               <Separator />

@@ -41,6 +41,7 @@ interface TicketItem {
   assignedTo: { name: string } | null;
   category: { name: string } | null;
   createdAt: Date;
+  location?: string | null;
 }
 
 const columns = [
@@ -159,8 +160,9 @@ export function KanbanBoard({ tickets }: KanbanBoardProps) {
                     assignee={ticket.assignedTo?.name}
                     category={ticket.category?.name}
                     createdAt={ticket.createdAt}
-                    href={`/tickets/${ticket.id}`}
-                  />
+                   href={`/tickets/${ticket.id}`}
+                   location={ticket.location}
+                 />
                 ))}
               </SortableContext>
               {(!grouped[col.id] || grouped[col.id].length === 0) && (
