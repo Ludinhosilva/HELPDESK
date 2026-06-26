@@ -53,19 +53,19 @@ interface UserPayload {
 }
 
 const allNavItems = [
-  { label: "Panel Principal", href: "/dashboard", icon: LayoutDashboard, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
-  { label: "Tickets", href: "/tickets", icon: Ticket, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
-  { label: "Tablero Kanban", href: "/tickets/kanban", icon: Columns3, roles: ["ADMIN", "TECHNICIAN"] },
-  { label: "Centro de Comando", href: "/flix-feed", icon: Radio, roles: ["ADMIN", "TECHNICIAN"] },
-  { label: "Base de Conocimiento", href: "/knowledge", icon: BookOpen, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
-  { label: "Perfil", href: "/profile", icon: User, roles: ["ADMIN", "TECHNICIAN", "END_USER"] },
-  { label: "Usuarios", href: "/users", icon: Users, roles: ["ADMIN"] },
-  { label: "Compras", href: "/tickets/compras", icon: CreditCard, roles: ["ADMIN"] },
-  { label: "Categorías", href: "/categories", icon: Tags, roles: ["ADMIN"] },
-  { label: "Analíticas", href: "/analytics", icon: BarChart3, roles: ["ADMIN"] },
-  { label: "Suscripciones", href: "/subscriptions", icon: CreditCard, roles: ["ADMIN"] },
-  { label: "Logs de Email", href: "/emails", icon: Mail, roles: ["ADMIN"] },
-  { label: "Configuración", href: "/settings", icon: Settings, roles: ["ADMIN"] },
+  { label: "Panel Principal", href: "/dashboard", icon: LayoutDashboard, roles: ["SUPER_ADMIN", "ADMIN", "TECHNICIAN", "END_USER"] },
+  { label: "Tickets", href: "/tickets", icon: Ticket, roles: ["SUPER_ADMIN", "ADMIN", "TECHNICIAN", "END_USER"] },
+  { label: "Tablero Kanban", href: "/tickets/kanban", icon: Columns3, roles: ["SUPER_ADMIN", "ADMIN", "TECHNICIAN"] },
+  { label: "Centro de Comando", href: "/flix-feed", icon: Radio, roles: ["SUPER_ADMIN", "ADMIN", "TECHNICIAN"] },
+  { label: "Base de Conocimiento", href: "/knowledge", icon: BookOpen, roles: ["SUPER_ADMIN", "ADMIN", "TECHNICIAN", "END_USER"] },
+  { label: "Perfil", href: "/profile", icon: User, roles: ["SUPER_ADMIN", "ADMIN", "TECHNICIAN", "END_USER"] },
+  { label: "Usuarios", href: "/users", icon: Users, roles: ["SUPER_ADMIN", "ADMIN"] },
+  { label: "Compras", href: "/tickets/compras", icon: CreditCard, roles: ["SUPER_ADMIN", "ADMIN"] },
+  { label: "Categorías", href: "/categories", icon: Tags, roles: ["SUPER_ADMIN", "ADMIN"] },
+  { label: "Analíticas", href: "/analytics", icon: BarChart3, roles: ["SUPER_ADMIN", "ADMIN"] },
+  { label: "Suscripciones", href: "/subscriptions", icon: CreditCard, roles: ["SUPER_ADMIN", "ADMIN"] },
+  { label: "Logs de Email", href: "/emails", icon: Mail, roles: ["SUPER_ADMIN", "ADMIN"] },
+  { label: "Configuración", href: "/settings", icon: Settings, roles: ["SUPER_ADMIN", "ADMIN"] },
 ];
 
 function getInitials(name: string) {
