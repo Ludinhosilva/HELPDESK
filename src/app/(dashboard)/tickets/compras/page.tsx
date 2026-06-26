@@ -36,7 +36,7 @@ export default async function ComprasPage() {
     where: { id: payload.sub },
     select: { role: true },
   });
-  if (!user || user.role !== "ADMIN") redirect("/dashboard");
+  if (!user || (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN")) redirect("/dashboard");
 
   const tickets = await prisma.ticket.findMany({
     where: {

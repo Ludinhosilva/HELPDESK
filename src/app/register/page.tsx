@@ -129,7 +129,7 @@ export default function RegisterPage() {
             {/* Password */}
             <div className="space-y-2">
               <Label htmlFor="password">Contraseña</Label>
-              <PasswordInput id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mínimo 6 caracteres" required minLength={6} />
+              <PasswordInput id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mínimo 8 caracteres, 1 mayúscula, 1 número" required minLength={8} />
             </div>
 
             {/* Info adicional */}

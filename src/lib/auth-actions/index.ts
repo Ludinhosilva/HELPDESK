@@ -11,13 +11,19 @@ export const RegisterCompanySchema = z.object({
   orgName: z.string().min(2, "El nombre de la organizacion es requerido"),
   name: z.string().min(2, "El nombre es requerido"),
   email: z.string().email("Formato de email invalido"),
-  password: z.string().min(6, "La contrasena debe tener al menos 6 caracteres"),
+  password: z.string()
+    .min(8, "La contrasena debe tener al menos 8 caracteres")
+    .regex(/[A-Z]/, "Debe contener al menos una mayuscula")
+    .regex(/[0-9]/, "Debe contener al menos un numero"),
 });
 
 export const RegisterPersonalSchema = z.object({
   name: z.string().min(2, "El nombre es requerido"),
   email: z.string().email("Formato de email invalido"),
-  password: z.string().min(6, "La contrasena debe tener al menos 6 caracteres"),
+  password: z.string()
+    .min(8, "La contrasena debe tener al menos 8 caracteres")
+    .regex(/[A-Z]/, "Debe contener al menos una mayuscula")
+    .regex(/[0-9]/, "Debe contener al menos un numero"),
 });
 
 export function slugify(text: string): string {

@@ -254,7 +254,7 @@ export default function UsersPage() {
             <div className="space-y-2">
               <Label>Contraseña</Label>
               <PasswordInput
-                placeholder="Mínimo 6 caracteres"
+                placeholder="Mínimo 8 caracteres, 1 mayúscula, 1 número"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               />

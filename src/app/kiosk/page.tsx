@@ -15,36 +15,21 @@ const issues = [
   { label: "Otro problema", icon: HelpCircle },
 ];
 
-const scanMessages = [
-  "Conectando con FlixSupport...",
-  "Analizando tu equipo...",
-  "Clasificando el problema...",
-  "Generando reporte exprés...",
-];
-
 export default function KioskPage() {
   const [step, setStep] = useState<Step>("idle");
   const [selectedIssue, setSelectedIssue] = useState("");
   const [ticketId, setTicketId] = useState("");
-  const [scanIndex, setScanIndex] = useState(0);
+  const [scanProgress, setScanProgress] = useState(0);
+  const [scanMessage, setScanMessage] = useState("");
   const [error, setError] = useState("");
-
-  // Rotar mensajes durante scanning
-  useEffect(() => {
-    if (step !== "scanning") return;
-    setScanIndex(0);
-    const interval = setInterval(() => {
-      setScanIndex((prev) => (prev + 1) % scanMessages.length);
-    }, 1500);
-    return () => clearInterval(interval);
-  }, [step]);
 
   // Reset
   const reset = useCallback(() => {
     setStep("idle");
     setSelectedIssue("");
     setTicketId("");
-    setScanIndex(0);
+    setScanProgress(0);
+    setScanMessage("");
     setError("");
   }, []);
 
@@ -59,46 +44,79 @@ export default function KioskPage() {
   const handleIssueSelect = async (label: string) => {
     setStep("scanning");
     setSelectedIssue(label);
+    setScanProgress(0);
+    setScanMessage("Conectando con FlixSupport...");
 
     const title = label;
     const description = `El usuario reporta desde el kiosko: ${label}`;
 
-    // Timer de 4 segundos + fetch en paralelo
-    const timerPromise = new Promise<void>((resolve) => setTimeout(resolve, 4000));
-
-    const triagePromise = fetch("/api/ai/triage", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: `${title}. ${description}` }),
-    }).then(async (res) => {
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: "Error de IA" }));
-        if (err.upsell) throw new Error("Límite de IA alcanzado");
-        throw new Error(err.error || "Error de triage");
-      }
-      return res.json();
-    });
-
     try {
-      const [, triage] = await Promise.all([timerPromise, triagePromise]);
+      // Paso 1: Analizar con IA (25% de progreso)
+      setScanMessage("Analizando con IA...");
+      setScanProgress(25);
 
-      // Crear ticket
+      const triageRes = await fetch("/api/ai/triage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: `${title}. ${description}` }),
+      });
+
+      if (!triageRes.ok) {
+        if (triageRes.status === 401) throw new Error("Sesión expirada. Por favor inicia sesión nuevamente.");
+        const err = await triageRes.json().catch(() => ({ error: "Error de IA" }));
+        if (err.upsell) throw new Error("Límite de IA alcanzado. Contacta al administrador.");
+        throw new Error(err.error || "Error al analizar el problema");
+      }
+
+      const triage = await triageRes.json();
+
+      // Buscar categoryId que coincida con la categoría detectada por IA
+      let categoryId: string | undefined;
+      try {
+        const catRes = await fetch("/api/categories");
+        if (catRes.ok) {
+          const catData = await catRes.json();
+          const categories: Array<{ id: string; name: string; slug: string }> = catData.categories || [];
+          const matched = categories.find(
+            (c) => c.name.toLowerCase() === (triage.category || "").toLowerCase()
+          );
+          if (matched) categoryId = matched.id;
+        }
+      } catch { /* ignore - optional */ }
+
+      // Paso 2: Crear ticket (50% de progreso)
+      setScanMessage("Creando ticket...");
+      setScanProgress(50);
+
       const ticketRes = await fetch("/api/tickets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: `Ticket Kiosko: ${label}`,
-          description: `Generado automáticamente desde Kiosko FlixSupport.\n\nProblema: ${label}\n\nCategoría sugerida por IA: ${triage.category}\nSentimiento: ${triage.sentiment?.level || "N/A"}`,
+          description: `Generado automáticamente desde Kiosko FlixSupport.\n\nProblema: ${label}\n\nCategoría sugerida por IA: ${triage.category}\nPrioridad: ${triage.priority || "MEDIUM"}\nSentimiento: ${triage.sentiment?.level || "N/A"}`,
           priority: triage.priorityOverride || triage.priority || "MEDIUM",
+          categoryId: categoryId || undefined,
         }),
       });
 
+      // Progreso intermedio
+      setScanMessage("Registrando en el sistema...");
+      setScanProgress(75);
+
       if (!ticketRes.ok) {
-        throw new Error("Error al crear ticket");
+        if (ticketRes.status === 401) throw new Error("Sesión expirada. Inicia sesión nuevamente.");
+        throw new Error("Error al crear el ticket");
       }
 
       const ticket = await ticketRes.json();
+
+      // Paso 3: Completado (100%)
+      setScanMessage("Ticket creado exitosamente");
+      setScanProgress(100);
       setTicketId(ticket.ticketNumber?.toString() || ticket.id);
+
+      // Pequeña pausa para mostrar el 100%
+      await new Promise((r) => setTimeout(r, 600));
       setStep("done");
     } catch (err) {
       console.error("Kiosk error:", err);
@@ -112,7 +130,7 @@ export default function KioskPage() {
   // ============================
   if (step === "idle") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex flex-col items-center justify-center p-6">
+      <div className="min-h-dvh bg-gradient-to-br from-blue-50 via-white to-sky-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex flex-col items-center justify-center p-6">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -153,12 +171,12 @@ export default function KioskPage() {
   }
 
   // ============================
-  // RENDER: Estado SCANNING (animación)
+  // RENDER: Estado SCANNING (progreso real)
   // ============================
   if (step === "scanning") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex flex-col items-center justify-center p-6">
-        {/* Círculo pulsante */}
+      <div className="min-h-dvh bg-gradient-to-br from-blue-50 via-white to-sky-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex flex-col items-center justify-center p-6">
+        {/* Círculo pulsante con spinner */}
         <div className="relative mb-10">
           <div className="absolute inset-0 w-32 h-32 bg-blue-500 rounded-full animate-ping opacity-20" />
           <div className="relative w-32 h-32 bg-blue-500/20 rounded-full flex items-center justify-center">
@@ -166,26 +184,23 @@ export default function KioskPage() {
           </div>
         </div>
 
-        {/* Mensaje rotativo */}
-        <p className="text-xl text-foreground font-mono h-8 transition-opacity duration-300">
-          {scanMessages[scanIndex]}
+        {/* Mensaje de progreso real */}
+        <p className="text-xl text-foreground font-mono h-8 text-center">
+          {scanMessage}
         </p>
 
-        {/* Barra de progreso */}
+        {/* Barra de progreso real */}
         <div className="mt-8 w-80 max-w-full">
-          <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-            <div className="h-full bg-blue-500 rounded-full animate-[progress_4s_ease-in-out]" />
+          <div className="h-2 bg-muted rounded-full overflow-hidden">
+            <div
+              className="h-full bg-blue-500 rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${scanProgress}%` }}
+            />
           </div>
-          <p className="text-sm text-muted-foreground mt-3 text-center">{selectedIssue}</p>
+          <p className="text-sm text-muted-foreground mt-3 text-center">
+            {selectedIssue}
+          </p>
         </div>
-
-        {/* Keyframes inline para la barra */}
-        <style jsx>{`
-          @keyframes progress {
-            0% { width: 0%; }
-            100% { width: 100%; }
-          }
-        `}</style>
       </div>
     );
   }
@@ -195,7 +210,7 @@ export default function KioskPage() {
   // ============================
   if (step === "done") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex flex-col items-center justify-center p-6">
+      <div className="min-h-dvh bg-gradient-to-br from-blue-50 via-white to-sky-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex flex-col items-center justify-center p-6">
         {/* Check animado */}
         <div className="mb-8 animate-[scaleIn_0.5s_ease-out]">
           <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center">
@@ -214,13 +229,15 @@ export default function KioskPage() {
 
         <p className="text-sm text-muted-foreground/70 mb-10">Un técnico está siendo notificado ahora mismo.</p>
 
-        {/* Botón nuevo reporte */}
-        <button
-          onClick={reset}
-          className="bg-blue-600 hover:bg-blue-500 text-white font-medium px-8 py-3 rounded-xl transition-colors shadow-lg shadow-blue-500/25"
-        >
-          Nuevo reporte
-        </button>
+        {/* Botones */}
+        <div className="flex gap-3">
+          <button
+            onClick={reset}
+            className="bg-blue-600 hover:bg-blue-500 text-white font-medium px-8 py-3 rounded-xl transition-colors shadow-lg shadow-blue-500/25"
+          >
+            Nuevo reporte
+          </button>
+        </div>
 
         {/* Keyframes para scaleIn */}
         <style jsx>{`
@@ -237,7 +254,7 @@ export default function KioskPage() {
   // RENDER: Estado ERROR
   // ============================
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex flex-col items-center justify-center p-6">
+    <div className="min-h-dvh bg-gradient-to-br from-blue-50 via-white to-sky-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex flex-col items-center justify-center p-6">
       <div className="text-center max-w-md">
         <div className="mb-8">
           <div className="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center mx-auto">
@@ -251,7 +268,7 @@ export default function KioskPage() {
 
         <div className="flex gap-3 justify-center">
           <button
-            onClick={() => handleIssueSelect(selectedIssue)}
+            onClick={() => handleIssueSelect(selectedIssue || issues[0].label)}
             className="bg-blue-600 hover:bg-blue-500 text-white font-medium px-6 py-3 rounded-xl transition-colors shadow-lg shadow-blue-500/25"
           >
             Reintentar

@@ -103,6 +103,7 @@ export const config = {
     "/settings/:path*",
     "/profile/:path*",
     "/notifications/:path*",
+    "/kiosk",
     "/super-admin/:path*",
     "/api/:path*",
   ],

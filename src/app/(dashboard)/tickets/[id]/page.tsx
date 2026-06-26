@@ -63,15 +63,21 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
     },
   });
 
-  if (!ticket || (ticket.organizationId !== payload.orgId && user.role !== "SUPER_ADMIN" && user.role !== "TECHNICIAN")) {
-    notFound();
-  }
+  if (!ticket) notFound();
 
-  // Allow FlixSupport techs to see tickets assigned to them from any org
-  const isFlixSupportTech = user.role === "TECHNICIAN" && ticket.assignedToId !== payload.sub &&
-    ticket.organizationId !== payload.orgId;
-  if (isFlixSupportTech) {
-    notFound();
+  // SUPER_ADMIN: acceso total a cualquier ticket
+  if (user.role !== "SUPER_ADMIN") {
+    // TECHNICIAN: ve tickets de su org O tickets asignados a él de cualquier org
+    if (user.role === "TECHNICIAN") {
+      if (ticket.assignedToId !== payload.sub && ticket.organizationId !== payload.orgId) {
+        notFound();
+      }
+    } else {
+      // ADMIN y END_USER solo ven tickets de su propia org
+      if (ticket.organizationId !== payload.orgId) {
+        notFound();
+      }
+    }
   }
 
   const categories = user.role === "SUPER_ADMIN"

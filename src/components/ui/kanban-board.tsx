@@ -23,6 +23,15 @@ import { Ticket, Loader2 } from "lucide-react";
 import { getPriorityBadge, getPriorityLabel } from "@/lib/theme";
 import { useToast } from "@/components/ui/toast";
 
+// Must match VALID_STATUS_TRANSITIONS in ticket.types.ts
+const VALID_TRANSITIONS: Record<string, string[]> = {
+  OPEN: ["IN_PROGRESS", "ON_HOLD", "CLOSED"],
+  IN_PROGRESS: ["ON_HOLD", "RESOLVED"],
+  ON_HOLD: ["IN_PROGRESS", "CLOSED"],
+  RESOLVED: ["CLOSED", "OPEN"],
+  CLOSED: [],
+};
+
 interface TicketItem {
   id: string;
   ticketNumber: number;
@@ -75,6 +84,13 @@ export function KanbanBoard({ tickets }: KanbanBoardProps) {
     const ticket = tickets.find((t) => t.id === ticketId);
     if (!ticket || ticket.status === newStatus || newStatus === ticketId) return;
 
+    // Client-side validation
+    const allowed = VALID_TRANSITIONS[ticket.status] || [];
+    if (!allowed.includes(newStatus)) {
+      toast({ type: "error", title: "Transición no permitida", description: `No se puede mover de "${ticket.status}" a "${newStatus}"` });
+      return;
+    }
+
     setSaving(true);
     try {
       const res = await fetch(`/api/tickets/${ticketId}`, {
@@ -88,7 +104,7 @@ export function KanbanBoard({ tickets }: KanbanBoardProps) {
         toast({ type: "success", title: "Estado actualizado", description: `Ticket movido a "${columns.find(c => c.id === newStatus)?.label || newStatus}"` });
       } else {
         const err = await res.json().catch(() => ({ message: "Error desconocido" }));
-        toast({ type: "error", title: "Transición no permitida", description: err.message || "No se puede cambiar a ese estado" });
+        toast({ type: "error", title: "Error", description: err.message || "No se pudo actualizar el ticket" });
       }
     } catch {
       toast({ type: "error", title: "Error", description: "Error de conexión al actualizar el ticket" });

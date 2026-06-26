@@ -71,12 +71,8 @@ const statusIcons: Record<string, React.ReactNode> = {
 
 const statusTransitionMap: Record<string, string[]> = {
   OPEN: ["IN_PROGRESS"],
-  IN_PROGRESS: ["DIAGNOSING", "ON_HOLD", "RESOLVED"],
-  DIAGNOSING: ["REPAIRING", "ON_HOLD"],
-  REPAIRING: ["WAITING_PARTS", "READY", "ON_HOLD"],
-  WAITING_PARTS: ["REPAIRING"],
-  READY: ["RESOLVED"],
-  ON_HOLD: ["IN_PROGRESS", "RESOLVED"],
+  IN_PROGRESS: ["ON_HOLD", "RESOLVED"],
+  ON_HOLD: ["IN_PROGRESS", "CLOSED"],
   RESOLVED: ["CLOSED", "OPEN"],
   CLOSED: [],
 };

@@ -94,7 +94,7 @@ describe("registerCompany", () => {
   it("retorna error si email falta", async () => {
     const result = await registerCompany({
       email: "",
-      password: "password123",
+      password: "Password1",
       name: "Test",
       orgName: "Test Org",
     });
@@ -106,7 +106,7 @@ describe("registerCompany", () => {
   it("retorna error si email tiene formato invalido", async () => {
     const result = await registerCompany({
       email: "noesunemail",
-      password: "password123",
+      password: "Password1",
       name: "Test",
       orgName: "Test Org",
     });
@@ -118,19 +118,19 @@ describe("registerCompany", () => {
   it("retorna error si contraseña es corta", async () => {
     const result = await registerCompany({
       email: "test@test.com",
-      password: "12345",
+      password: "Ab1",
       name: "Test",
       orgName: "Test Org",
     });
 
-    expect(result.error).toContain("6 caracteres");
+    expect(result.error).toContain("8 caracteres");
     expect(result.status).toBe(400);
   });
 
   it("retorna error si nombre esta vacio", async () => {
     const result = await registerCompany({
       email: "test@test.com",
-      password: "password123",
+      password: "Password1",
       name: "",
       orgName: "Test Org",
     });
@@ -145,7 +145,7 @@ describe("registerCompany", () => {
 
     const result = await registerCompany({
       email: "test@test.com",
-      password: "password123",
+      password: "Password1",
       name: "Test User",
       orgName: "Test Org",
     });
@@ -163,7 +163,7 @@ describe("registerCompany", () => {
 
     const result = await registerCompany({
       email: "nuevo@test.com",
-      password: "password123",
+      password: "Password1",
       name: "Nuevo User",
       orgName: "Nueva Empresa",
     });
