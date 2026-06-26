@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Wrench, ClipboardList, BarChart3, Brain, BookOpen, Zap, Check, ArrowRight, Star, Users, Building2, MessageSquare, TrendingUp, Monitor, Radio, UserCheck, Menu, X } from "lucide-react";
+import { Wrench, ClipboardList, BarChart3, Brain, BookOpen, Zap, Check, ArrowRight, Star, Users, Building2, MessageSquare, TrendingUp, Monitor, Radio, UserCheck, Menu, X, MapPin, Smartphone, Terminal, Columns3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 
@@ -16,19 +16,23 @@ const features = [
   { icon: Monitor, title: "Kiosko Auto-Servicio", desc: "Pantalla pública de auto-servicio. Los usuarios crean tickets escaneando o tocando. Diagnóstico guiado por IA sin login.", color: "from-cyan-500 to-sky-500", bg: "bg-cyan-50 dark:bg-cyan-950/30", iconColor: "text-cyan-600 dark:text-cyan-400" },
   { icon: Radio, title: "Centro de Comando", desc: "Dashboard en tiempo real con Health Cards por categoría, auto-refresh y código de colores. Ideal para pizarras de control.", color: "from-yellow-500 to-amber-500", bg: "bg-yellow-50 dark:bg-yellow-950/30", iconColor: "text-yellow-600 dark:text-yellow-400" },
   { icon: UserCheck, title: "Soporte a Personas", desc: "Usuarios individuales reciben soporte directo de técnicos certificados de FlixSupport. Asignación y seguimiento garantizado.", color: "from-green-500 to-emerald-500", bg: "bg-green-50 dark:bg-green-950/30", iconColor: "text-green-600 dark:text-green-400" },
+  { icon: MapPin, title: "Ubicación de Tickets", desc: "Cada ticket registra la ubicación exacta del problema. Los técnicos saben exactamente dónde ir.", color: "from-teal-500 to-cyan-500", bg: "bg-teal-50 dark:bg-teal-950/30", iconColor: "text-teal-600 dark:text-teal-400" },
+  { icon: Smartphone, title: "Pago con YAPE y PLIN", desc: "Pagos móviles peruanos integrados. YAPE, PLIN, Visa y Mastercard. Sin fricción, sin complicaciones.", color: "from-pink-500 to-rose-500", bg: "bg-pink-50 dark:bg-pink-950/30", iconColor: "text-pink-600 dark:text-pink-400" },
+  { icon: Terminal, title: "Runbook Engine", desc: "Automatización de flujos de trabajo técnicos. Secuencias predefinidas para diagnósticos y reparaciones.", color: "from-slate-500 to-gray-500", bg: "bg-slate-50 dark:bg-slate-950/30", iconColor: "text-slate-600 dark:text-slate-400" },
+  { icon: Columns3, title: "Tablero Kanban", desc: "Visualización de tickets en columnas de estado. Drag & drop para mover tickets entre etapas.", color: "from-orange-500 to-amber-500", bg: "bg-orange-50 dark:bg-orange-950/30", iconColor: "text-orange-600 dark:text-orange-400" },
 ];
 
 const companyPlans = [
-  { name: "Gratis", price: "0", desc: "Perfecto para empezar", popular: false, features: ["50 tickets/mes", "Dashboard básico", "Base de conocimiento", "1 chat con IA gratis"], cta: "Empezar gratis", href: "/register" },
-  { name: "Básico", price: "29", desc: "Para equipos en crecimiento", popular: true, features: ["Tickets ilimitados", "IA ilimitada", "Analytics básico", "Notificaciones por correo", "Soporte por correo"], cta: "Suscribirse", href: "/register" },
-  { name: "Pro", price: "79", desc: "Para empresas que exigen más", popular: false, features: ["Todo del plan Básico", "IA clasificación automática", "Sugerencias de solución IA", "Analytics avanzado", "Soporte prioritario"], cta: "Contactar", href: "/register" },
+  { name: "Gratis", price: "0", desc: "Perfecto para empezar", popular: false, features: ["50 tickets/mes", "Dashboard básico", "Base de conocimiento", "1 chat con IA gratis", "Pago con YAPE/PLIN"], cta: "Empezar gratis", href: "/register" },
+  { name: "Básico", price: "29", desc: "Para equipos en crecimiento", popular: true, features: ["Tickets ilimitados", "IA ilimitada", "Analytics básico", "Notificaciones por correo", "Soporte por correo", "Pago con YAPE/PLIN/Tarjeta"], cta: "Suscribirse", href: "/register" },
+  { name: "Pro", price: "79", desc: "Para empresas que exigen más", popular: false, features: ["Todo del plan Básico", "IA clasificación automática", "Sugerencias de solución IA", "Analytics avanzado", "Soporte prioritario", "Runbook Engine", "Kanban avanzado"], cta: "Contactar", href: "/register" },
 ];
 
 const personalPlan = {
   name: "Soporte Individual",
   price: "0",
   desc: "Paga solo cuando necesites help desk",
-  features: ["Diagnóstico con IA gratis", "Técnicos FlixSupport asignados", "Seguimiento en tiempo real", "Pago por ticket resuelto", "Sin suscripción mensual"],
+  features: ["Diagnóstico con IA gratis", "Técnicos FlixSupport asignados", "Seguimiento en tiempo real", "Pago por ticket resuelto", "Sin suscripción mensual", "Paga con YAPE, PLIN o Tarjeta"],
   cta: "Registrarme",
   href: "/register",
 };
@@ -41,7 +45,7 @@ const testimonials = [
 ];
 
 const steps = [
-  { icon: Building2, step: "1", title: "Registra tu empresa", desc: "Crea tu cuenta en segundos. Configura tu organización, invita a tu equipo y define categorías." },
+  { icon: Building2, step: "1", title: "Registra tu empresa", desc: "Crea tu cuenta en segundos. Configura tu organización, invita a tu equipo y define ubicaciones." },
   { icon: MessageSquare, step: "2", title: "Crea y gestiona tickets", desc: "Usa el asistente IA para describir problemas. Asigna técnicos, da seguimiento y resuelve." },
   { icon: TrendingUp, step: "3", title: "Analiza y mejora", desc: "Métricas en tiempo real, evaluaciones post-resolución e IA que aprende de tu base de conocimiento." },
 ];
@@ -145,9 +149,23 @@ export default function HomePage() {
                 </span>
               </h1>
               <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg text-muted-foreground leading-relaxed">
-                Para empresas: gestiona tu equipo y automatiza con IA. Para personas: recibe
-                soporte técnico directo de los técnicos certificados de FlixSupport.
+                Para empresas: gestiona tu equipo, automatiza con IA y paga con YAPE o PLIN.
+                Para personas: recibe soporte técnico directo con ubicación en tiempo real.
               </p>
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm">
+                <div className="flex items-center gap-1.5 rounded-full bg-blue-50 dark:bg-blue-950/30 px-3 py-1 text-blue-700 dark:text-blue-300">
+                  <Brain className="h-3.5 w-3.5" />
+                  IA Real (Llama 3.1)
+                </div>
+                <div className="flex items-center gap-1.5 rounded-full bg-purple-50 dark:bg-purple-950/30 px-3 py-1 text-purple-700 dark:text-purple-300">
+                  <MapPin className="h-3.5 w-3.5" />
+                  Ubicación en Tiempo Real
+                </div>
+                <div className="flex items-center gap-1.5 rounded-full bg-pink-50 dark:bg-pink-950/30 px-3 py-1 text-pink-700 dark:text-pink-300">
+                  <Smartphone className="h-3.5 w-3.5" />
+                  YAPE / PLIN
+                </div>
+              </div>
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link href="/register" className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-blue-500/25 transition-all hover:shadow-2xl hover:shadow-blue-500/30 hover:scale-105 active:scale-100">
                   <Building2 className="h-4 w-4" />
@@ -164,6 +182,7 @@ export default function HomePage() {
                 <div className="flex items-center gap-1.5"><Check className="h-4 w-4 text-green-500" />Sin tarjeta</div>
                 <div className="flex items-center gap-1.5"><Check className="h-4 w-4 text-green-500" />50 tickets gratis</div>
                 <div className="flex items-center gap-1.5"><Check className="h-4 w-4 text-green-500" />IA incluida</div>
+                <div className="flex items-center gap-1.5"><Check className="h-4 w-4 text-green-500" />YAPE/PLIN</div>
               </div>
             </div>
 
@@ -391,6 +410,46 @@ export default function HomePage() {
         <section className="bg-muted/30 border-y border-border/50 py-20 sm:py-28">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <div className="mx-auto max-w-2xl text-center mb-16">
+              <div className="inline-flex items-center gap-2 rounded-full border border-pink-200 dark:border-pink-800 bg-pink-50 dark:bg-pink-950/50 px-4 py-1 text-xs font-semibold text-pink-700 dark:text-pink-300 mb-4">Métodos de Pago</div>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Paga como prefieras</h2>
+              <p className="mt-4 text-muted-foreground">YAPE, PLIN, Visa o Mastercard. Sin fricción, sin complicaciones.</p>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 max-w-4xl mx-auto">
+              <div className="rounded-2xl border border-border/50 bg-card p-6 text-center transition-all hover:shadow-lg hover:-translate-y-1 duration-300">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-purple-100 dark:bg-purple-950/30 mx-auto">
+                  <Smartphone className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">YAPE</h3>
+                <p className="text-sm text-muted-foreground">Pago instantáneo con QR desde tu celular</p>
+              </div>
+              <div className="rounded-2xl border border-border/50 bg-card p-6 text-center transition-all hover:shadow-lg hover:-translate-y-1 duration-300">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 dark:bg-blue-950/30 mx-auto">
+                  <Smartphone className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">PLIN</h3>
+                <p className="text-sm text-muted-foreground">Transferencia rápida desde tu banco</p>
+              </div>
+              <div className="rounded-2xl border border-border/50 bg-card p-6 text-center transition-all hover:shadow-lg hover:-translate-y-1 duration-300">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 dark:bg-blue-950/30 mx-auto">
+                  <span className="text-2xl font-bold text-blue-700">VISA</span>
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Visa</h3>
+                <p className="text-sm text-muted-foreground">Tarjeta de crédito o débito</p>
+              </div>
+              <div className="rounded-2xl border border-border/50 bg-card p-6 text-center transition-all hover:shadow-lg hover:-translate-y-1 duration-300">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-100 dark:bg-red-950/30 mx-auto">
+                  <span className="text-2xl font-bold text-red-600">MC</span>
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Mastercard</h3>
+                <p className="text-sm text-muted-foreground">Tarjeta de crédito o débito</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-muted/30 border-y border-border/50 py-20 sm:py-28">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+            <div className="mx-auto max-w-2xl text-center mb-16">
               <div className="inline-flex items-center gap-2 rounded-full border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/50 px-4 py-1 text-xs font-semibold text-green-700 dark:text-green-300 mb-4">Testimonios</div>
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Lo que dicen nuestros clientes</h2>
               <p className="mt-4 text-muted-foreground">Equipos de TI y usuarios individuales que ya confían en Flix Support.</p>
@@ -433,13 +492,29 @@ export default function HomePage() {
                 Soporte personal
               </Link>
             </div>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm text-blue-100/60">
+              <div className="flex items-center gap-2">
+                <Smartphone className="h-4 w-4" />
+                <span>YAPE</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Smartphone className="h-4 w-4" />
+                <span>PLIN</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold">VISA</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold">Mastercard</span>
+              </div>
+            </div>
           </div>
         </section>
       </main>
 
       <footer className="border-t border-border/50 bg-muted/30">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-lg">
@@ -471,6 +546,25 @@ export default function HomePage() {
                 <li><span className="hover:text-foreground transition-colors cursor-default">Términos y condiciones</span></li>
                 <li><span className="hover:text-foreground transition-colors cursor-default">Política de privacidad</span></li>
               </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold mb-4">Métodos de Pago</h4>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Smartphone className="h-4 w-4 text-purple-600" />
+                  <span>YAPE</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Smartphone className="h-4 w-4 text-blue-600" />
+                  <span>PLIN</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span className="font-bold text-blue-700">VISA</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span className="font-bold text-red-600">Mastercard</span>
+                </div>
+              </div>
             </div>
           </div>
           <div className="mt-10 pt-8 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
