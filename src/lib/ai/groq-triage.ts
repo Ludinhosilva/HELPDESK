@@ -42,7 +42,7 @@ Reglas:
 
 export async function groqTriage(text: string): Promise<GroqTriageOutput | null> {
   if (!isGroqAvailable()) {
-    console.log("[Groq] Skipping - no API key configured, using rule-based");
+    console.warn("[Groq] No API key - using rule-based fallback");
     return null;
   }
 
@@ -51,11 +51,11 @@ export async function groqTriage(text: string): Promise<GroqTriageOutput | null>
     { role: "user" as const, content: `Problema del usuario: "${text}"` },
   ];
 
-  console.log("[Groq] Sending triage request...");
+  console.warn("[Groq] Sending triage request...");
   const result = await groqChat(messages, { temperature: 0.3, maxTokens: 600 });
   if (!result) return null;
 
-  console.log("[Groq] Raw response:", result.text.slice(0, 200));
+  console.warn("[Groq] Got response, parsing...");
 
   // Intentar parsear el JSON. Limpiar markdown wrappers.
   let parsed: GroqTriageOutput;
@@ -90,7 +90,7 @@ export async function groqTriage(text: string): Promise<GroqTriageOutput | null>
     requiresTicket: !!parsed.requiresTicket,
   };
 
-  console.log("[Groq] Triage success:", output.category, output.priority);
+  console.warn("[Groq] Triage success:", output.category, output.priority, "- steps:", output.steps.length);
   return output;
 }
 

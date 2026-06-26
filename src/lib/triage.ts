@@ -45,10 +45,10 @@ export async function triageAsync(text: string): Promise<TriageResult> {
 
   // Intentar Groq primero
   if (isGroqAvailable()) {
-    console.log("[Triage] Using Groq AI...");
+    console.warn("[Triage] Using Groq AI...");
     const groqResult = await groqTriage(text);
     if (groqResult) {
-      console.log("[Triage] Groq success, building result...");
+      console.warn("[Triage] Groq success, building result...");
       const classification = groqToClassification(groqResult, text);
       const priorityOverride = getPriorityOverride(
         groqResult.urgency === "critical" ? "CRITICAL" : groqResult.urgency === "high" ? "FRUSTRATED" : "CALM",
@@ -60,11 +60,10 @@ export async function triageAsync(text: string): Promise<TriageResult> {
         aiProvider: "groq",
       };
     }
-    console.log("[Triage] Groq failed, falling back to rule-based...");
+    console.warn("[Triage] Groq failed, falling back to rule-based...");
   }
 
-  // Fallback rule-based
-  console.log("[Triage] Using rule-based engine...");
+  console.warn("[Triage] Using rule-based engine...");
   const classification = classifyProblem(text, text);
   return buildTriageResult(classification, sentiment, "rule-based");
 }

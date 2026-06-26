@@ -109,8 +109,16 @@ export function AITriage({ onComplete }: AITriageProps) {
 
       const triageResult = data as TriageResult;
 
+      // Badge indicando el motor de IA
+      const isGroq = data.aiProvider === "groq";
+      const providerBadge = isGroq
+        ? "🤖 **IA: Groq / Llama 3.1** — Análisis inteligente en tiempo real"
+        : "📋 **IA: Motor de reglas** — Análisis basado en patrones";
+
       // Mostrar análisis detallado
       const analysisLines: string[] = [];
+      analysisLines.push(providerBadge);
+      analysisLines.push("");
       analysisLines.push(`🔍 **Análisis**: He detectado un problema de tipo **${triageResult.category.toUpperCase()}** (${Math.round((triageResult.categoryConfidence || 0.7) * 100)}% de confianza).`);
 
       if (data.classification?.diagnosis) {
