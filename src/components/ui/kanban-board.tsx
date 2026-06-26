@@ -98,10 +98,11 @@ export function KanbanBoard({ tickets }: KanbanBoardProps) {
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 min-h-[70vh]">
-        {columns.map((col) => (
-          <KanbanColumn
-            key={col.id}
+        <div className="flex lg:grid lg:grid-cols-4 gap-4 min-h-[70dvh] overflow-x-auto lg:overflow-visible snap-x lg:snap-none">
+          {columns.map((col) => (
+            <div key={col.id} className="min-w-[280px] w-[280px] lg:w-auto flex-shrink-0 snap-start">
+            <KanbanColumn
+              key={col.id}
             id={col.id}
             label={col.label}
             color={col.color}
@@ -134,6 +135,7 @@ export function KanbanBoard({ tickets }: KanbanBoardProps) {
               </div>
             )}
           </KanbanColumn>
+            </div>
         ))}
       </div>
 

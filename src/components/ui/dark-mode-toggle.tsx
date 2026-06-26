@@ -23,7 +23,7 @@ export function DarkModeToggle() {
   }
 
   return (
-    <Button variant="ghost" size="icon" onClick={toggle} className="h-9 w-9">
+    <Button variant="ghost" size="icon" onClick={toggle} className="h-11 w-11">
       {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
       <span className="sr-only">Cambiar modo</span>
     </Button>

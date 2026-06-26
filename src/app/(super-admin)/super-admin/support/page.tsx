@@ -184,7 +184,7 @@ export default function SupportPage() {
       </div>
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <CardTitle className="text-base flex items-center gap-2">
             <Ticket className="h-5 w-5 text-cyan-500" />
             Tickets de Usuarios Individuales
@@ -223,11 +223,11 @@ export default function SupportPage() {
                   <TableRow>
                     <TableHead className="w-[90px]">Ticket</TableHead>
                     <TableHead>Usuario</TableHead>
-                    <TableHead>Título</TableHead>
-                    <TableHead>Prioridad</TableHead>
+                    <TableHead className="hidden sm:table-cell">Título</TableHead>
+                    <TableHead className="hidden sm:table-cell">Prioridad</TableHead>
                     <TableHead>Estado</TableHead>
                     <TableHead className="min-w-[180px]">Técnico</TableHead>
-                    <TableHead className="min-w-[120px]">Acción</TableHead>
+                    <TableHead className="min-w-[110px]">Acción</TableHead>
                     <TableHead className="w-[60px]"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -248,8 +248,8 @@ export default function SupportPage() {
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell className="max-w-[180px] truncate">{ticket.title}</TableCell>
-                        <TableCell>
+                        <TableCell className="hidden sm:table-cell max-w-[180px] truncate">{ticket.title}</TableCell>
+                        <TableCell className="hidden sm:table-cell">
                           <Badge variant="outline" className={priorityColors[ticket.priority]}>
                             {priorityLabels[ticket.priority] || ticket.priority}
                           </Badge>

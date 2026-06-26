@@ -123,7 +123,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <div className="space-y-6">
+        <div className="space-y-6 order-last lg:order-first">
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Descripción</CardTitle>
@@ -181,7 +181,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
           </Card>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 order-first lg:order-none">
           <TicketDetailClient
             ticketId={ticket.id}
             currentStatus={ticket.status}

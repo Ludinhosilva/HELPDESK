@@ -108,7 +108,7 @@ function FlixFeedCard({ name, icon: Icon, tickets }: { name: string; icon: React
                 )}
               </Badge>
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">{name}</h3>
+            <h3 className="text-xl font-bold text-foreground mb-2">{name}</h3>
             <p className={`text-3xl font-bold mb-2 ${isAlert ? "text-red-400" : isOperative ? "text-green-400" : "text-yellow-400"}`}>
               {activeCount} {activeCount === 1 ? "ticket" : "tickets"} activo{activeCount !== 1 ? "s" : ""}
             </p>
@@ -123,7 +123,7 @@ function FlixFeedCard({ name, icon: Icon, tickets }: { name: string; icon: React
         </Card>
       </SheetTrigger>
 
-      <SheetContent className="w-[400px] sm:w-[500px]">
+                <SheetContent className="w-[calc(100vw-2rem)] max-w-[500px]">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <Icon className="h-5 w-5" />
@@ -215,11 +215,11 @@ export default function FlixFeedGrid({ initialTickets }: { initialTickets: Ticke
   }, [fetchTickets]);
 
   return (
-    <div className="min-h-screen bg-zinc-950 p-8">
+    <div className="min-h-dvh bg-gradient-to-br from-blue-50 via-white to-sky-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-4 sm:p-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+          <h1 className="text-xl sm:text-3xl font-bold text-foreground flex items-center gap-3 truncate">
             FlixSupport — Centro de Comando
           </h1>
         </div>

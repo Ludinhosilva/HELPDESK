@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import { getRoleTheme } from "@/lib/theme";
 import { RoleBadge } from "@/components/ui/role-badge";
+import { DarkModeToggle } from "@/components/ui/dark-mode-toggle";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -102,7 +103,7 @@ export default function SuperAdminShell({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-dvh overflow-hidden bg-background">
       <aside className={cn("hidden lg:flex lg:flex-col w-[260px] border-r bg-card/80 backdrop-blur-xl role-transition", theme.border)}>
         <div className={cn("flex items-center gap-2 px-5 h-16 border-b shrink-0 role-transition shell-gradient", theme.border, theme.gradient)}>
           <Shield className={cn("h-5 w-5", theme.sidebarIcon)} />
@@ -144,9 +145,13 @@ export default function SuperAdminShell({
             )}
           </div>
 
+          <div className="flex items-center gap-1">
+            <DarkModeToggle />
+          </div>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-9 gap-2 px-2">
+              <Button variant="ghost" className="relative h-11 gap-2 px-2">
                 <Avatar className="h-7 w-7">
                   <AvatarFallback className={cn("text-xs role-transition", theme.avatar)}>
                     {getInitials(user.name)}

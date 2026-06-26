@@ -312,7 +312,7 @@ export function AITriage({ onComplete }: AITriageProps) {
   }
 
   return (
-    <Card className="flex flex-col h-[500px] sm:h-[550px]">
+    <Card className="flex flex-col h-[calc(100dvh-13rem)] sm:h-[550px]">
       <CardHeader className="pb-3 shrink-0">
         <CardTitle className="text-base flex items-center gap-2">
           <Bot className="h-5 w-5 text-primary" />
@@ -398,9 +398,9 @@ export function AITriage({ onComplete }: AITriageProps) {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={analyzing ? "Analizando tu problema..." : "Describe tu problema de TI..."}
                 disabled={analyzing}
-                className="flex-1 h-10"
+                className="flex-1 h-11"
               />
-              <Button type="submit" size="icon" className="h-10 w-10 shrink-0" disabled={analyzing || !input.trim()}>
+              <Button type="submit" size="icon" className="h-11 w-11 shrink-0" disabled={analyzing || !input.trim()}>
                 {analyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               </Button>
             </form>
@@ -416,9 +416,9 @@ export function AITriage({ onComplete }: AITriageProps) {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Tu respuesta..."
                 disabled={analyzing}
-                className="flex-1 h-10"
+                className="flex-1 h-11"
               />
-              <Button type="submit" size="icon" className="h-10 w-10 shrink-0" disabled={analyzing || !input.trim()}>
+              <Button type="submit" size="icon" className="h-11 w-11 shrink-0" disabled={analyzing || !input.trim()}>
                 {analyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
               </Button>
             </form>

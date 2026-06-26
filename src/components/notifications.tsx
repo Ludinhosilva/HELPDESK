@@ -59,7 +59,7 @@ export function NotificationsBell() {
 
   return (
     <div className="relative">
-      <Button variant="ghost" size="icon" className="h-9 w-9" onClick={clearCount}>
+      <Button variant="ghost" size="icon" className="h-11 w-11" onClick={clearCount}>
         <Bell className="h-4 w-4" />
         {count > 0 && (
           <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">

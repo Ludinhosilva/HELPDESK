@@ -52,7 +52,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-dvh flex-col items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 px-4 py-8">
       <div className="w-full max-w-md mb-4">
         <Link href="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4" /> Volver al inicio
@@ -99,8 +99,8 @@ export default function RegisterPage() {
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <UserCircle className="h-4 w-4" />
-                Usuario Individual
+                <UserCircle className="h-4 w-4 shrink-0" />
+                <span className="text-xs sm:text-sm truncate">Usuario Individual</span>
               </button>
             </div>
 
