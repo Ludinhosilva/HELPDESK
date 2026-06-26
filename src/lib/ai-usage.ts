@@ -18,6 +18,11 @@ export async function checkAiUsage(orgId: string): Promise<AIAccessResult> {
     return { allowed: false, message: "Organización no encontrada" };
   }
 
+  // FlixSupport HQ (org INTERNAL) — dueños del negocio, acceso ilimitado
+  if (org.type === "INTERNAL") {
+    return { allowed: true };
+  }
+
   const planSlug = org.subscription?.plan?.slug || "free";
 
   if (planSlug === "pro" || planSlug === "basico") {
