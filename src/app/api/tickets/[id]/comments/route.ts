@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/core/prisma";
 import { CreateCommentSchema } from "@/modules/tickets/types/ticket.types";
+import { createNotification } from "@/lib/notifications";
 
 export async function POST(
   request: NextRequest,
@@ -20,7 +21,7 @@ export async function POST(
 
     const ticket = await prisma.ticket.findFirst({
       where: { id, organizationId: orgId },
-      select: { id: true, ticketNumber: true },
+      select: { id: true, ticketNumber: true, title: true, priority: true, assignedToId: true, createdById: true },
     });
 
     if (!ticket) {
@@ -62,6 +63,24 @@ export async function POST(
         userId,
       },
     });
+
+    const notifyTarget = ticket.assignedToId && ticket.assignedToId !== userId
+      ? ticket.assignedToId
+      : ticket.createdById !== userId
+        ? ticket.createdById
+        : null;
+
+    if (notifyTarget) {
+      createNotification({
+        userId: notifyTarget,
+        ticketId: id,
+        ticketNumber: ticket.ticketNumber,
+        type: "COMMENT",
+        title: "Nuevo comentario",
+        message: `TK-${ticket.ticketNumber} - "${ticket.title}": nuevo comentario`,
+        priority: ticket.priority,
+      }).catch(() => {});
+    }
 
     return NextResponse.json(comment, { status: 201 });
   } catch {

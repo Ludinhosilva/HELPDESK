@@ -1,129 +1,197 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Wrench, ClipboardList, BarChart3, Brain, BookOpen, Zap, Check, ArrowRight, Star, Users, Building2, MessageSquare, TrendingUp, Monitor, Radio, UserCheck, Menu, X, MapPin, Smartphone, Terminal, Columns3 } from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  Wrench, ClipboardList, BarChart3, Brain, Zap, Check, ArrowRight, Building2,
+  UserCheck, Menu, X, ChevronLeft, ChevronRight, Sparkles, Columns3,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+import { useCountUp } from "@/hooks/use-count-up";
 
-const features = [
-  { icon: ClipboardList, title: "Gestión de Tickets", desc: "Creación, asignación, seguimiento por estados, comentarios y evaluación post-resolución.", color: "from-blue-500 to-cyan-500", bg: "bg-blue-50 dark:bg-blue-950/30", iconColor: "text-blue-600 dark:text-blue-400" },
-  { icon: BarChart3, title: "Analytics en Tiempo Real", desc: "Dashboard con métricas, gráficos por categoría, rendimiento de técnicos y tendencias temporales.", color: "from-emerald-500 to-teal-500", bg: "bg-emerald-50 dark:bg-emerald-950/30", iconColor: "text-emerald-600 dark:text-emerald-400" },
-  { icon: Brain, title: "IA Predictiva", desc: "Clasificación automática de tickets, análisis de sentimiento y sugerencias de solución inteligentes.", color: "from-purple-500 to-pink-500", bg: "bg-purple-50 dark:bg-purple-950/30", iconColor: "text-purple-600 dark:text-purple-400" },
-  { icon: BookOpen, title: "Base de Conocimiento", desc: "Artículos, guías y soluciones documentadas. Acceso rápido para técnicos y usuarios.", color: "from-amber-500 to-orange-500", bg: "bg-amber-50 dark:bg-amber-950/30", iconColor: "text-amber-600 dark:text-amber-400" },
-  { icon: Zap, title: "Ticket Exprés", desc: "Prioridad urgente con respuesta garantizada en menos de 2 horas. Pago integrado por ticket.", color: "from-rose-500 to-red-500", bg: "bg-rose-50 dark:bg-rose-950/30", iconColor: "text-rose-600 dark:text-rose-400" },
-  { icon: Users, title: "Roles y Equipos", desc: "Administradores, técnicos y usuarios. Asignación inteligente y flujos de trabajo personalizados.", color: "from-indigo-500 to-violet-500", bg: "bg-indigo-50 dark:bg-indigo-950/30", iconColor: "text-indigo-600 dark:text-indigo-400" },
-  { icon: Monitor, title: "Kiosko Auto-Servicio", desc: "Pantalla pública de auto-servicio. Los usuarios crean tickets escaneando o tocando. Diagnóstico guiado por IA sin login.", color: "from-cyan-500 to-sky-500", bg: "bg-cyan-50 dark:bg-cyan-950/30", iconColor: "text-cyan-600 dark:text-cyan-400" },
-  { icon: Radio, title: "Centro de Comando", desc: "Dashboard en tiempo real con Health Cards por categoría, auto-refresh y código de colores. Ideal para pizarras de control.", color: "from-yellow-500 to-amber-500", bg: "bg-yellow-50 dark:bg-yellow-950/30", iconColor: "text-yellow-600 dark:text-yellow-400" },
-  { icon: UserCheck, title: "Soporte a Personas", desc: "Usuarios individuales reciben soporte directo de técnicos certificados de FlixSupport. Asignación y seguimiento garantizado.", color: "from-green-500 to-emerald-500", bg: "bg-green-50 dark:bg-green-950/30", iconColor: "text-green-600 dark:text-green-400" },
-  { icon: MapPin, title: "Ubicación de Tickets", desc: "Cada ticket registra la ubicación exacta del problema. Los técnicos saben exactamente dónde ir.", color: "from-teal-500 to-cyan-500", bg: "bg-teal-50 dark:bg-teal-950/30", iconColor: "text-teal-600 dark:text-teal-400" },
-  { icon: Smartphone, title: "Pago con YAPE y PLIN", desc: "Pagos móviles peruanos integrados. YAPE, PLIN, Visa y Mastercard. Sin fricción, sin complicaciones.", color: "from-pink-500 to-rose-500", bg: "bg-pink-50 dark:bg-pink-950/30", iconColor: "text-pink-600 dark:text-pink-400" },
-  { icon: Terminal, title: "Runbook Engine", desc: "Automatización de flujos de trabajo técnicos. Secuencias predefinidas para diagnósticos y reparaciones.", color: "from-slate-500 to-gray-500", bg: "bg-slate-50 dark:bg-slate-950/30", iconColor: "text-slate-600 dark:text-slate-400" },
-  { icon: Columns3, title: "Tablero Kanban", desc: "Visualización de tickets en columnas de estado. Drag & drop para mover tickets entre etapas.", color: "from-orange-500 to-amber-500", bg: "bg-orange-50 dark:bg-orange-950/30", iconColor: "text-orange-600 dark:text-orange-400" },
+/* ── data ─────────────────────────────────────── */
+
+const statsData = [
+  { end: 1200, suffix: "+", label: "Tickets resueltos" },
+  { end: 98, suffix: "%", label: "Satisfacción" },
+  { value: "<2h", label: "Ticket Exprés" },
+  { value: "24/7", label: "Disponible" },
+];
+
+const featuresData = [
+  { icon: ClipboardList, title: "Gestión de Tickets", desc: "Crea, asigna y haz seguimiento con estados visuales. Comentarios, historial y evaluación post-resolución integrados.", img: "/screenshots/dashboard.svg", reverse: false },
+  { icon: BarChart3, title: "Analytics en Tiempo Real", desc: "Dashboard con métricas en vivo, gráficos por categoría, rendimiento del equipo y tendencias. Todo auto-actualizado.", img: "/screenshots/dashboard.svg", reverse: true },
+  { icon: Columns3, title: "Tablero Kanban", desc: "Visualiza tus tickets en columnas de estado. Arrastra y suelta para mover tickets entre etapas. Ideal para equipos ágiles.", img: "/screenshots/kanban.svg", reverse: false },
+  { icon: Brain, title: "Clasificación Automática", desc: "El sistema analiza cada ticket y sugiere categoría, prioridad y solución. Tú tomas la decisión final.", img: "/screenshots/dashboard.svg", reverse: true },
+  { icon: Zap, title: "Ticket Exprés", desc: "Respuesta garantizada en menos de 2 horas. Pago integrado con YAPE, PLIN o tarjeta. Ideal para urgencias.", img: "/screenshots/ticket.svg", reverse: false },
 ];
 
 const companyPlans = [
-  { name: "Gratis", price: "0", desc: "Perfecto para empezar", popular: false, features: ["50 tickets/mes", "Dashboard básico", "Base de conocimiento", "1 chat con IA gratis", "Pago con YAPE/PLIN"], cta: "Empezar gratis", href: "/register" },
-  { name: "Básico", price: "29", desc: "Para equipos en crecimiento", popular: true, features: ["Tickets ilimitados", "IA ilimitada", "Analytics básico", "Notificaciones por correo", "Soporte por correo", "Pago con YAPE/PLIN/Tarjeta"], cta: "Suscribirse", href: "/register" },
-  { name: "Pro", price: "79", desc: "Para empresas que exigen más", popular: false, features: ["Todo del plan Básico", "IA clasificación automática", "Sugerencias de solución IA", "Analytics avanzado", "Soporte prioritario", "Runbook Engine", "Kanban avanzado"], cta: "Contactar", href: "/register" },
+  { name: "Gratis", price: "0", desc: "Para empezar", features: ["50 tickets/mes", "Dashboard básico", "Base de conocimiento", "1 diagnóstico automático", "Pago con YAPE/PLIN"], cta: "Empezar gratis", href: "/register", popular: false },
+  { name: "Básico", price: "29", desc: "Para equipos en crecimiento", features: ["Tickets ilimitados", "Diagnóstico automático ilimitado", "Analytics intermedio", "Notificaciones por correo", "Soporte por correo"], cta: "Suscribirse", href: "/register", popular: true },
+  { name: "Pro", price: "79", desc: "Para empresas que exigen más", features: ["Todo del plan Básico", "Clasificación avanzada", "Sugerencias inteligentes", "Analytics avanzado", "Soporte prioritario", "Runbook Engine", "Kanban avanzado"], cta: "Contactar", href: "/register", popular: false },
 ];
 
 const personalPlan = {
-  name: "Soporte Individual",
-  price: "0",
-  desc: "Paga solo cuando necesites help desk",
-  features: ["Diagnóstico con IA gratis", "Técnicos FlixSupport asignados", "Seguimiento en tiempo real", "Pago por ticket resuelto", "Sin suscripción mensual", "Paga con YAPE, PLIN o Tarjeta"],
-  cta: "Registrarme",
-  href: "/register",
+  name: "Soporte Individual", price: "0", desc: "Paga solo cuando necesites help desk",
+  features: ["Diagnóstico automático gratis", "Técnicos asignados", "Seguimiento en tiempo real", "Pago por ticket resuelto", "Sin suscripción mensual"],
+  cta: "Registrarme", href: "/register",
 };
 
 const testimonials = [
-  { name: "Danny Ordoñez", role: "Admin TI - TechCorp S.A.C.", avatar: "DO", text: "Desde que implementamos Flix Support, nuestros tiempos de respuesta se redujeron en un 60%. La IA nos ayuda a clasificar tickets automáticamente.", rating: 5 },
-  { name: "Ludwing Silva", role: "Técnico - TechCorp S.A.C.", avatar: "LS", text: "La base de conocimiento integrada y las sugerencias de solución me permiten resolver tickets mucho más rápido. Excelente herramienta.", rating: 5 },
-  { name: "Jhor Grandez", role: "Técnico - TechCorp S.A.C.", avatar: "JG", text: "El Ticket Exprés es un game changer. Nuestros usuarios pueden obtener soporte urgente en menos de 2 horas. Muy recomendado.", rating: 4 },
-  { name: "Alexander Paredes", role: "Usuario Individual", avatar: "AP", text: "Mi laptop no encendía. En 3 horas un técnico de FlixSupport vino a mi casa y lo solucionó. Servicio rápido y profesional.", rating: 5 },
+  { name: "Danny Ordoñez", role: "Admin TI — TechCorp S.A.C.", text: "Desde Flix Support, tiempos de respuesta -60%. La clasificación automática nos ayuda a priorizar." },
+  { name: "Ludwing Silva", role: "Técnico — TechCorp S.A.C.", text: "La base de conocimiento integrada me permite resolver tickets mucho más rápido." },
+  { name: "Jhor Grandez", role: "Técnico — TechCorp S.A.C.", text: "El Ticket Exprés cambió todo. Soporte urgente en menos de 2 horas." },
+  { name: "Alexander Paredes", role: "Usuario Individual", text: "Mi laptop no encendía. En 3 horas un técnico vino a mi casa y lo solucionó." },
+  { name: "María Castillo", role: "Admin TI — InnovaSoft", text: "Migramos de hojas de cálculo a Flix Support y la diferencia fue inmediata." },
 ];
 
-const steps = [
-  { icon: Building2, step: "1", title: "Registra tu empresa", desc: "Crea tu cuenta en segundos. Configura tu organización, invita a tu equipo y define ubicaciones." },
-  { icon: MessageSquare, step: "2", title: "Crea y gestiona tickets", desc: "Usa el asistente IA para describir problemas. Asigna técnicos, da seguimiento y resuelve." },
-  { icon: TrendingUp, step: "3", title: "Analiza y mejora", desc: "Métricas en tiempo real, evaluaciones post-resolución e IA que aprende de tu base de conocimiento." },
-];
+/* ── sub-components ─────────────────────────── */
 
-function StarRating({ rating }: { rating: number }) {
+function AnimatedStat({ end, suffix, value, label }: { end?: number; suffix?: string; value?: string; label: string }) {
+  const { value: count, ref } = useCountUp(end || 0, 2000);
   return (
-    <div className="flex gap-0.5">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star key={i} className={`h-3.5 w-3.5 ${i < rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
-      ))}
+    <div ref={ref} className="text-center">
+      <div className="text-3xl sm:text-4xl font-bold tabular-nums text-foreground">
+        {value || `${count}${suffix || ""}`}
+      </div>
+      <div className="text-xs sm:text-sm text-muted-foreground mt-1">{label}</div>
     </div>
   );
 }
+
+function TestimonialCarousel() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const intervalRef = useRef<ReturnType<typeof setInterval>>();
+
+  const checkScroll = useCallback(() => {
+    if (!scrollRef.current) return;
+    const el = scrollRef.current;
+    setCanScrollLeft(el.scrollLeft > 10);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+  }, []);
+
+  function scroll(dir: "left" | "right") {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollBy({ left: dir === "left" ? -360 : 360, behavior: "smooth" });
+  }
+
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      if (!scrollRef.current) return;
+      const el = scrollRef.current;
+      if (el.scrollLeft >= el.scrollWidth - el.clientWidth - 10) {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        el.scrollBy({ left: 360, behavior: "smooth" });
+      }
+    }, 4000);
+    return () => clearInterval(intervalRef.current);
+  }, []);
+
+  return (
+    <div className="relative group" onMouseEnter={() => clearInterval(intervalRef.current)} onMouseLeave={() => {
+      intervalRef.current = setInterval(() => {
+        if (!scrollRef.current) return;
+        const el = scrollRef.current;
+        if (el.scrollLeft >= el.scrollWidth - el.clientWidth - 10) el.scrollTo({ left: 0, behavior: "smooth" });
+        else el.scrollBy({ left: 360, behavior: "smooth" });
+      }, 4000);
+    }}>
+      <div ref={scrollRef} onScroll={checkScroll} className="flex gap-5 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 -mx-4 px-4">
+        {testimonials.map((t) => (
+          <div key={t.name} className="flex-shrink-0 w-[300px] sm:w-[360px] snap-start rounded-2xl border border-border/60 bg-card/60 backdrop-blur-sm p-6">
+            <div className="flex gap-1 mb-4">
+              {[1,2,3,4,5].map((i) => <Sparkles key={i} className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />)}
+            </div>
+            <p className="text-sm text-foreground/80 leading-relaxed italic">&ldquo;{t.text}&rdquo;</p>
+            <div className="mt-5 flex items-center gap-3 border-t border-border/40 pt-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 text-sm font-semibold text-blue-600 dark:text-blue-400">{t.name.charAt(0)}</div>
+              <div>
+                <p className="text-sm font-semibold">{t.name}</p>
+                <p className="text-xs text-muted-foreground">{t.role}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <button onClick={() => scroll("left")} className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 h-10 w-10 rounded-full border border-border bg-card shadow-lg flex items-center justify-center transition-all hover:bg-muted ${canScrollLeft ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+        <ChevronLeft className="h-5 w-5" />
+      </button>
+      <button onClick={() => scroll("right")} className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 h-10 w-10 rounded-full border border-border bg-card shadow-lg flex items-center justify-center transition-all hover:bg-muted ${canScrollRight ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+        <ChevronRight className="h-5 w-5" />
+      </button>
+    </div>
+  );
+}
+
+function SectionHeading({ overline, title, subtitle }: { overline: string; title: string; subtitle?: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.5 }}
+      className="mb-8 sm:mb-12"
+    >
+      <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">{overline}</p>
+      <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-5xl">{title}</h2>
+      {subtitle && <p className="mt-4 max-w-xl text-muted-foreground text-lg">{subtitle}</p>}
+    </motion.div>
+  );
+}
+
+/* ── page ────────────────────────────────────── */
 
 export default function HomePage() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-white/80 dark:bg-gray-950/80 backdrop-blur-2xl">
+    <div className="flex min-h-screen flex-col bg-background">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 border-b border-transparent bg-background/70 backdrop-blur-xl dark:bg-black/50">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-lg transition-transform group-hover:scale-105 duration-300">
-              <Wrench className="h-4.5 w-4.5" />
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-foreground text-background">
+              <Wrench className="h-5 w-5" />
             </div>
-            <span className="text-lg font-bold tracking-tight">
-              Flix<span className="text-blue-600">Support</span>
-            </span>
+            <span className="text-lg font-bold tracking-tight">Flix<span className="text-blue-600">Support</span></span>
           </Link>
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-6">
             <Link href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Características</Link>
             <Link href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Precios</Link>
-            <Link href="#steps" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Cómo funciona</Link>
             <Link href="/kiosk" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Kiosko</Link>
             <Link href="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Iniciar sesión</Link>
-            <Link href="/register" className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:shadow-xl hover:shadow-blue-500/30 hover:scale-105 active:scale-100">
-              Crear cuenta gratis
-              <ArrowRight className="h-3.5 w-3.5" />
+            <Link href="/register" className="inline-flex items-center gap-1.5 rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background transition-all hover:opacity-90">
+              Crear cuenta <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </nav>
           <div className="md:hidden flex items-center gap-2">
-            <Link href="/login" className="rounded-xl border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground shadow-sm">
-              Iniciar sesión
-            </Link>
+            <Link href="/login" className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium">Iniciar sesión</Link>
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
+              <SheetTrigger asChild><Button variant="ghost" size="icon" className="h-9 w-9"><Menu className="h-5 w-5" /></Button></SheetTrigger>
               <SheetContent side="right" className="w-[260px] p-0">
-                <SheetTitle className="sr-only">Menú de navegación</SheetTitle>
+                <SheetTitle className="sr-only">Menú</SheetTitle>
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between px-5 h-16 border-b border-border">
                     <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 text-white">
-                        <Wrench className="h-4 w-4" />
-                      </div>
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground text-background"><Wrench className="h-4 w-4" /></div>
                       <span className="font-bold">Flix<span className="text-blue-600">Support</span></span>
                     </Link>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setMobileOpen(false)}>
-                      <X className="h-4 w-4" />
-                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setMobileOpen(false)}><X className="h-4 w-4" /></Button>
                   </div>
                   <nav className="flex flex-col gap-1 p-3 flex-1">
-                    <Link href="#features" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-accent transition-colors">Características</Link>
-                    <Link href="#pricing" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-accent transition-colors">Precios</Link>
-                    <Link href="#steps" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-accent transition-colors">Cómo funciona</Link>
-                    <Link href="/kiosk" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-accent transition-colors">Kiosko</Link>
+                    {[{ label: "Características", href: "#features" }, { label: "Precios", href: "#pricing" }, { label: "Kiosko", href: "/kiosk" }].map((i) => (
+                      <Link key={i.label} href={i.href} onClick={() => setMobileOpen(false)} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors">{i.label}</Link>
+                    ))}
                     <div className="mt-auto border-t border-border pt-3 space-y-2">
-                      <Link href="/login" onClick={() => setMobileOpen(false)} className="flex items-center justify-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-accent transition-colors">
-                        Iniciar sesión
-                      </Link>
-                      <Link href="/register" onClick={() => setMobileOpen(false)} className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg">
-                        Crear cuenta gratis
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </Link>
+                      <Link href="/login" onClick={() => setMobileOpen(false)} className="flex items-center justify-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-semibold hover:bg-muted">Iniciar sesión</Link>
+                      <Link href="/register" onClick={() => setMobileOpen(false)} className="flex items-center justify-center gap-2 rounded-lg bg-foreground px-4 py-2.5 text-sm font-semibold text-background">Crear cuenta<ArrowRight className="h-3.5 w-3.5" /></Link>
                     </div>
                   </nav>
                 </div>
@@ -134,416 +202,316 @@ export default function HomePage() {
       </header>
 
       <main className="flex-1">
-        <section className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-50/40 via-transparent to-transparent dark:from-blue-950/20" />
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-r from-blue-500/5 to-purple-500/5 blur-3xl pointer-events-none" />
-          <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
-            <div className="mx-auto max-w-3xl text-center">
-              <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/50 px-4 py-1.5 text-sm font-medium text-green-700 dark:text-green-300 shadow-sm">
-                <UserCheck className="h-3.5 w-3.5" />
-                Nuevo: Soporte para usuarios individuales
-              </div>
-              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-                Soporte TI inteligente,{" "}
-                <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-purple-600 bg-clip-text text-transparent">
-                  para empresas y personas
-                </span>
-              </h1>
-              <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg text-muted-foreground leading-relaxed">
-                Para empresas: gestiona tu equipo, automatiza con IA y paga con YAPE o PLIN.
-                Para personas: recibe soporte técnico directo con ubicación en tiempo real.
-              </p>
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm">
-                <div className="flex items-center gap-1.5 rounded-full bg-blue-50 dark:bg-blue-950/30 px-3 py-1 text-blue-700 dark:text-blue-300">
-                  <Brain className="h-3.5 w-3.5" />
-                  IA Real (Llama 3.1)
-                </div>
-                <div className="flex items-center gap-1.5 rounded-full bg-purple-50 dark:bg-purple-950/30 px-3 py-1 text-purple-700 dark:text-purple-300">
-                  <MapPin className="h-3.5 w-3.5" />
-                  Ubicación en Tiempo Real
-                </div>
-                <div className="flex items-center gap-1.5 rounded-full bg-pink-50 dark:bg-pink-950/30 px-3 py-1 text-pink-700 dark:text-pink-300">
-                  <Smartphone className="h-3.5 w-3.5" />
-                  YAPE / PLIN
-                </div>
-              </div>
-              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link href="/register" className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-blue-500/25 transition-all hover:shadow-2xl hover:shadow-blue-500/30 hover:scale-105 active:scale-100">
-                  <Building2 className="h-4 w-4" />
-                  Para Empresas
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                </Link>
-                <Link href="/register" className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-600 to-green-500 px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-green-500/25 transition-all hover:shadow-2xl hover:shadow-green-500/30 hover:scale-105 active:scale-100">
-                  <UserCheck className="h-4 w-4" />
-                  Soporte Personal
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                </Link>
-              </div>
-              <div className="mt-8 flex items-center justify-center gap-6 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1.5"><Check className="h-4 w-4 text-green-500" />Sin tarjeta</div>
-                <div className="flex items-center gap-1.5"><Check className="h-4 w-4 text-green-500" />50 tickets gratis</div>
-                <div className="flex items-center gap-1.5"><Check className="h-4 w-4 text-green-500" />IA incluida</div>
-                <div className="flex items-center gap-1.5"><Check className="h-4 w-4 text-green-500" />YAPE/PLIN</div>
-              </div>
-            </div>
-
-            <div className="mt-16 mx-auto max-w-5xl">
-              <div className="relative rounded-2xl border border-border/50 bg-white/50 dark:bg-gray-900/50 backdrop-blur-xl p-2 shadow-2xl">
-                <div className="rounded-xl border border-border/30 bg-background overflow-hidden">
-                  <div className="flex items-center gap-2 border-b border-border/50 bg-muted/30 px-4 py-2.5">
-                    <div className="flex gap-1.5">
-                      <div className="h-3 w-3 rounded-full bg-red-400" />
-                      <div className="h-3 w-3 rounded-full bg-amber-400" />
-                      <div className="h-3 w-3 rounded-full bg-green-400" />
-                    </div>
-                    <div className="mx-auto rounded-md bg-muted/50 px-3 py-0.5 text-xs text-muted-foreground">dashboard.flixsupport.app</div>
-                  </div>
-                  <div className="p-4 sm:p-6">
-                    <div className="grid grid-cols-4 gap-3 sm:gap-4 mb-4">
-                      {[
-                        { label: "Tickets abiertos", value: "12", color: "text-blue-600" },
-                        { label: "Resueltos hoy", value: "8", color: "text-green-600" },
-                        { label: "T. promedio", value: "2.4h", color: "text-amber-600" },
-                        { label: "Satisfacción", value: "96%", color: "text-purple-600" },
-                      ].map((s) => (
-                        <div key={s.label} className="rounded-lg bg-muted/50 p-3 text-center">
-                          <div className={`text-lg sm:text-2xl font-bold ${s.color}`}>{s.value}</div>
-                          <div className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{s.label}</div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                      <div className="rounded-lg bg-muted/30 p-3 sm:p-4 border border-border/30">
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="h-2 w-2 rounded-full bg-blue-500" />
-                          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tickets por día</span>
-                        </div>
-                        <div className="flex items-end gap-1 h-12 sm:h-16">
-                          {[40, 65, 45, 80, 55, 70, 90].map((h, i) => (
-                            <div key={i} className="flex-1 rounded-sm bg-gradient-to-t from-blue-500 to-blue-400 transition-all hover:opacity-80" style={{ height: `${h}%` }} />
-                          ))}
-                        </div>
-                      </div>
-                      <div className="rounded-lg bg-muted/30 p-3 sm:p-4 border border-border/30">
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Por categoría</span>
-                        </div>
-                        <div className="space-y-2">
-                          {[{ label: "Hardware", pct: 40 }, { label: "Software", pct: 30 }, { label: "Red", pct: 20 }, { label: "Accesos", pct: 10 }].map((c) => (
-                            <div key={c.label} className="flex items-center gap-2">
-                              <span className="text-[10px] sm:text-xs text-muted-foreground w-14 shrink-0">{c.label}</span>
-                              <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
-                                <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all" style={{ width: `${c.pct}%` }} />
-                              </div>
-                              <span className="text-[10px] sm:text-xs text-muted-foreground w-6 text-right">{c.pct}%</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-1 text-xs font-medium text-white shadow-lg">
-                  Dashboard en vivo
-                </div>
-              </div>
-            </div>
+        {/* ── HERO ── */}
+        <section className="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24">
+          {/* Light mode: organic blobs */}
+          <div className="absolute inset-0 dark:hidden">
+            <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-blue-200/40 via-purple-200/30 to-rose-200/30 blur-3xl" />
+            <div className="absolute -bottom-60 -left-40 w-[700px] h-[700px] rounded-full bg-gradient-to-tr from-amber-200/30 via-pink-200/20 to-blue-200/30 blur-3xl" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-gradient-to-r from-blue-300/20 to-purple-300/20 blur-2xl" />
           </div>
-        </section>
+          {/* Dark mode: animated mesh */}
+            <div className="absolute inset-0 hidden dark:block">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.15),transparent)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_80%_80%,rgba(139,92,246,0.1),transparent)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_20%_50%,rgba(6,182,212,0.08),transparent)]" />
+          </div>
 
-        <section className="border-y border-border/50 bg-muted/30 py-10">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6">
-            <p className="text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6">Usado por equipos de TI y usuarios individuales</p>
-            <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
-              {["TechCorp S.A.C.", "InnovaSoft E.I.R.L.", "DataCenter Perú", "Soluciones TI", "CloudNet SAC", "+ Usuarios Individuales"].map((c) => (
-                <div key={c} className="flex items-center gap-2 text-sm font-medium text-muted-foreground/60">
-                  <Building2 className="h-4 w-4" />
-                  {c}
+          <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+              >
+                <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 px-4 py-1.5 text-sm font-medium text-blue-700 dark:text-blue-300 mb-6">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Nueva plataforma
+                </div>
+                <h1 className="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
+                  <span className="font-light text-muted-foreground">Soporte TI</span>
+                  <br />
+                  <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-purple-600 dark:from-blue-400 dark:via-cyan-400 dark:to-purple-400 bg-clip-text text-transparent">
+                    que funciona
+                  </span>
+                </h1>
+                <p className="mt-4 sm:mt-6 max-w-lg text-base sm:text-lg text-muted-foreground leading-relaxed">
+                  La plataforma que tu equipo de help desk merece. Tickets, Kanban, analytics y pagos con YAPE/PLIN. Para empresas y personas.
+                </p>
+                <div className="mt-8 flex flex-col sm:flex-row gap-4">
+                  <Link href="/register" className="group inline-flex items-center gap-2 rounded-xl bg-blue-600 px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5">
+                    <Building2 className="h-4 w-4" /> Para Empresas <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </Link>
+                  <Link href="/register" className="group inline-flex items-center gap-2 rounded-xl border-2 border-border px-7 py-3.5 text-base font-semibold text-foreground transition-all hover:border-foreground/30 hover:-translate-y-0.5 dark:border-white/20 dark:hover:border-white/40">
+                    <UserCheck className="h-4 w-4" /> Soporte Personal <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </Link>
+                </div>
+                <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> Sin tarjeta</span>
+                  <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> 50 tickets gratis</span>
+                  <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> YAPE / PLIN</span>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+                className="relative"
+              >
+                {/* Laptop frame */}
+                <div className="relative mx-auto max-w-lg">
+                  <div className="rounded-2xl border border-border/60 bg-card shadow-2xl shadow-blue-500/5 dark:shadow-blue-500/10 overflow-hidden">
+                    <div className="flex items-center gap-2 border-b border-border/40 bg-muted/30 px-4 py-2.5">
+                      <div className="flex gap-1.5"><div className="h-3 w-3 rounded-full bg-red-400" /><div className="h-3 w-3 rounded-full bg-amber-400" /><div className="h-3 w-3 rounded-full bg-green-400" /></div>
+                    </div>
+                    <Image src="/screenshots/dashboard.svg" alt="Dashboard de FlixSupport" width={600} height={340} className="w-full" />
+                  </div>
+                  {/* Glow behind */}
+                  <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10 blur-2xl -z-10 dark:from-blue-500/20 dark:via-purple-500/20 dark:to-cyan-500/20" />
+                </div>
+
+                {/* Floating phone */}
+                <div className="hidden lg:block absolute -bottom-6 -right-6 w-36 rounded-2xl border border-border/60 bg-card shadow-xl overflow-hidden rotate-6 hover:rotate-3 transition-transform duration-500">
+                  <Image src="/screenshots/mobile.svg" alt="FlixSupport mobile" width={150} height={240} className="w-full" />
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Stats bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="mt-14 sm:mt-20 grid grid-cols-2 sm:grid-cols-4 gap-4"
+            >
+              {statsData.map((s) => (
+                <div key={s.label} className="rounded-2xl border border-border/40 bg-card/60 backdrop-blur-sm p-5 sm:p-6">
+                  <AnimatedStat end={s.end} suffix={s.suffix} value={s.value} label={s.label} />
                 </div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </section>
 
-        <section id="features" className="py-20 sm:py-28">
+        {/* ── FEATURES ── */}
+        <section id="features" className="border-t border-border/40 py-16 sm:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
-            <div className="mx-auto max-w-2xl text-center mb-16">
-              <div className="inline-flex items-center gap-2 rounded-full border border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-950/50 px-4 py-1 text-xs font-semibold text-purple-700 dark:text-purple-300 mb-4">Características</div>
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Todo lo que necesitas para gestionar soporte TI</h2>
-              <p className="mt-4 text-muted-foreground">Una plataforma completa con herramientas modernas, IA integrada, kiosko auto-servicio y soporte para personas.</p>
-            </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {features.map((f) => (
-                <div key={f.title} className="group relative rounded-2xl border border-border/50 bg-card p-6 sm:p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-transparent">
-                  <div className={`absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${f.bg}`} />
-                  <div className="relative">
-                    <div className={`mb-5 flex h-12 w-12 items-center justify-center rounded-xl ${f.bg} ${f.iconColor} transition-transform group-hover:scale-110 duration-300`}>
+            <SectionHeading overline="Lo que incluye" title="Todo el poder de un help desk moderno" subtitle="Herramientas reales que tu equipo va a usar. Sin relleno." />
+
+            <div className="space-y-16 sm:space-y-20">
+              {featuresData.map((f, i) => (
+                <motion.div
+                  key={f.title}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.6, delay: i * 0.1 }}
+                  className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center"
+                >
+                  <div className={f.reverse ? "lg:order-2" : ""}>
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 mb-5">
                       <f.icon className="h-6 w-6" />
                     </div>
-                    <h3 className="text-lg font-semibold mb-2">{f.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+                    <h3 className="text-2xl sm:text-3xl font-bold">{f.title}</h3>
+                    <p className="mt-2 sm:mt-3 text-muted-foreground text-lg leading-relaxed max-w-md">{f.desc}</p>
+                    <ul className="mt-4 space-y-2">
+                      {["Configuración en minutos", "Soporte multiplataforma", "Actualizaciones automáticas"].map((feat) => (
+                        <li key={feat} className="flex items-center gap-2.5 text-sm text-muted-foreground">
+                          <Check className="h-4 w-4 text-green-500 shrink-0" /> {feat}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
+                  <div className={`relative ${f.reverse ? "lg:order-1" : ""}`}>
+                    <div className="rounded-2xl border border-border/40 bg-card shadow-xl shadow-blue-500/5 dark:shadow-blue-500/10 overflow-hidden">
+                      <Image src={f.img} alt={f.title} width={600} height={380} className="w-full" />
+                    </div>
+                    <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-blue-500/5 to-purple-500/5 blur-xl -z-10 dark:from-blue-500/10 dark:to-purple-500/10" />
+                  </div>
+                </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="steps" className="bg-muted/30 border-y border-border/50 py-20 sm:py-28">
+        {/* ── PRICING ── */}
+        <section id="pricing" className="border-t border-border/40 bg-muted/20 py-16 sm:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
-            <div className="mx-auto max-w-2xl text-center mb-16">
-              <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/50 px-4 py-1 text-xs font-semibold text-amber-700 dark:text-amber-300 mb-4">Cómo funciona</div>
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Comienza en 3 pasos</h2>
-              <p className="mt-4 text-muted-foreground">Configura tu plataforma de soporte TI en minutos, no en semanas.</p>
-            </div>
-            <div className="grid gap-8 md:grid-cols-3 relative">
-              <div className="hidden md:block absolute top-12 left-[calc(16.66%+2rem)] right-[calc(16.66%+2rem)] h-0.5 bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-transparent" />
-              {steps.map((s) => (
-                <div key={s.title} className="relative text-center">
-                  <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-lg shadow-blue-500/20">
-                    <s.icon className="h-7 w-7" />
-                  </div>
-                  <div className="absolute top-0 right-1/2 translate-x-16 -translate-y-1 hidden md:flex h-7 w-7 items-center justify-center rounded-full bg-muted-foreground/10 text-xs font-bold text-muted-foreground">
-                    {s.step}
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2">{s.title}</h3>
-                  <p className="text-sm text-muted-foreground max-w-xs mx-auto">{s.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+            <SectionHeading overline="Precios" title="Sin letra chica" subtitle="Empieza gratis. Escala cuando quieras. Sin compromisos forzosos." />
 
-        <section id="pricing" className="py-20 sm:py-28">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6">
-            <div className="mx-auto max-w-2xl text-center mb-16">
-              <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/50 px-4 py-1 text-xs font-semibold text-blue-700 dark:text-blue-300 mb-4">Precios</div>
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Planes para cada necesidad</h2>
-              <p className="mt-4 text-muted-foreground">Desde empezar gratis hasta soluciones enterprise. Todos los planes incluyen actualizaciones.</p>
-            </div>
-
-            <div className="mb-16">
-              <div className="flex items-center gap-3 mb-8">
-                <Building2 className="h-5 w-5 text-blue-600" />
-                <h3 className="text-xl font-bold">Para Empresas</h3>
+            {/* Company plans */}
+            <div className="mb-14">
+              <div className="flex items-center gap-2.5 mb-8">
+                <Building2 className="h-5 w-5 text-foreground/60" />
+                <h3 className="text-lg font-semibold">Para Empresas</h3>
               </div>
-              <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-3">
-                {companyPlans.map((plan) => (
-                  <div key={plan.name} className={`relative flex flex-col rounded-2xl border bg-card p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${plan.popular ? "border-blue-500 shadow-lg shadow-blue-500/10 scale-105 lg:scale-110" : "border-border/50"}`}>
+              <div className="grid gap-6 lg:grid-cols-3">
+                {companyPlans.map((plan, i) => (
+                  <motion.div
+                    key={plan.name}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                    whileHover={{ scale: 1.02, rotateY: 2 }}
+                    style={{ perspective: "1000px" }}
+                    className={`relative flex flex-col rounded-2xl border bg-card p-7 transition-all duration-300 hover:shadow-2xl ${
+                      plan.popular
+                        ? "border-blue-600 shadow-xl shadow-blue-500/10 ring-1 ring-blue-600/20 dark:shadow-blue-500/20"
+                        : "border-border/60 hover:border-border"
+                    }`}
+                  >
                     {plan.popular && (
-                      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-1 text-xs font-semibold text-white shadow-lg">
-                        <Star className="h-3 w-3 fill-white" />
-                        Más popular
-                      </div>
+                      <div className="absolute -top-3 left-6 inline-flex items-center rounded-md bg-blue-600 px-3 py-1 text-[11px] font-semibold text-white">Más popular</div>
                     )}
-                    <div className="mb-6">
-                      <h3 className="text-lg font-semibold">{plan.name}</h3>
-                      <p className="text-sm text-muted-foreground mt-1">{plan.desc}</p>
+                    <div className="mb-5">
+                      <h4 className="text-lg font-semibold">{plan.name}</h4>
+                      <p className="text-sm text-muted-foreground mt-0.5">{plan.desc}</p>
                     </div>
                     <div className="mb-6">
                       <span className="text-4xl font-bold">S/{plan.price}</span>
                       <span className="text-sm text-muted-foreground ml-1">/mes</span>
                     </div>
-                    <ul className="mb-8 space-y-3 flex-1">
+                    <ul className="mb-8 space-y-2.5 flex-1">
                       {plan.features.map((f) => (
-                        <li key={f} className="flex items-start gap-3 text-sm">
-                          <Check className={`h-4 w-4 mt-0.5 shrink-0 ${plan.popular ? "text-blue-500" : "text-green-500"}`} />
-                          <span>{f}</span>
+                        <li key={f} className="flex items-start gap-2.5 text-sm">
+                          <Check className="h-4 w-4 mt-0.5 shrink-0 text-blue-600" />
+                          <span className="text-muted-foreground">{f}</span>
                         </li>
                       ))}
                     </ul>
                     <Link
                       href={plan.href}
-                      className={`inline-flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-all ${
+                      className={`inline-flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-all ${
                         plan.popular
-                          ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02]"
-                          : "border border-border text-foreground hover:bg-accent"
+                          ? "bg-blue-600 text-white hover:bg-blue-700 shadow-md"
+                          : "border border-border text-foreground hover:bg-muted"
                       }`}
                     >
-                      {plan.cta}
-                      <ArrowRight className="h-3.5 w-3.5" />
+                      {plan.cta} <ArrowRight className="h-3.5 w-3.5" />
                     </Link>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
 
+            {/* Personal plan */}
             <div>
-              <div className="flex items-center gap-3 mb-8">
-                <UserCheck className="h-5 w-5 text-green-600" />
-                <h3 className="text-xl font-bold">Para Personas</h3>
+              <div className="flex items-center gap-2.5 mb-8">
+                <UserCheck className="h-5 w-5 text-foreground/60" />
+                <h3 className="text-lg font-semibold">Para Personas</h3>
               </div>
-              <div className="mx-auto max-w-md">
-                <div className="relative flex flex-col rounded-2xl border border-green-200 dark:border-green-800 bg-card p-8 shadow-lg shadow-green-500/10 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-green-600 to-green-500 px-4 py-1 text-xs font-semibold text-white shadow-lg">
-                    Sin suscripción
-                  </div>
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold">{personalPlan.name}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{personalPlan.desc}</p>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="max-w-md"
+              >
+                <div className="relative flex flex-col rounded-2xl border border-border/60 bg-card p-7 shadow-sm hover:shadow-xl transition-all duration-300">
+                  <div className="mb-5">
+                    <h4 className="text-lg font-semibold">{personalPlan.name}</h4>
+                    <p className="text-sm text-muted-foreground mt-0.5">{personalPlan.desc}</p>
                   </div>
                   <div className="mb-6">
                     <span className="text-4xl font-bold">{personalPlan.price} PEN</span>
                     <span className="text-sm text-muted-foreground ml-1">diagnóstico</span>
                   </div>
-                  <ul className="mb-8 space-y-3 flex-1">
+                  <ul className="mb-8 space-y-2.5 flex-1">
                     {personalPlan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-3 text-sm">
-                        <Check className="h-4 w-4 mt-0.5 shrink-0 text-green-500" />
-                        <span>{f}</span>
+                      <li key={f} className="flex items-start gap-2.5 text-sm">
+                        <Check className="h-4 w-4 mt-0.5 shrink-0 text-green-600" />
+                        <span className="text-muted-foreground">{f}</span>
                       </li>
                     ))}
                   </ul>
-                  <Link
-                    href={personalPlan.href}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-green-600 to-green-500 py-3 text-sm font-semibold text-white shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30 hover:scale-[1.02] transition-all"
-                  >
-                    {personalPlan.cta}
-                    <ArrowRight className="h-3.5 w-3.5" />
+                  <Link href={personalPlan.href} className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 py-2.5 text-sm font-semibold text-white hover:bg-green-700 transition-all shadow-sm">
+                    {personalPlan.cta} <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>
 
-        <section className="bg-muted/30 border-y border-border/50 py-20 sm:py-28">
+        {/* ── TESTIMONIALS ── */}
+        <section className="border-t border-border/40 py-16 sm:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
-            <div className="mx-auto max-w-2xl text-center mb-16">
-              <div className="inline-flex items-center gap-2 rounded-full border border-pink-200 dark:border-pink-800 bg-pink-50 dark:bg-pink-950/50 px-4 py-1 text-xs font-semibold text-pink-700 dark:text-pink-300 mb-4">Métodos de Pago</div>
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Paga como prefieras</h2>
-              <p className="mt-4 text-muted-foreground">YAPE, PLIN, Visa o Mastercard. Sin fricción, sin complicaciones.</p>
-            </div>
-            <div className="rounded-2xl border border-border/50 bg-card p-8 text-center transition-all hover:shadow-lg duration-300 max-w-4xl mx-auto">
-              <Image
-                src="/payment-methods.svg"
-                alt="Métodos de pago aceptados: YAPE, PLIN, Visa, Mastercard"
-                width={800}
-                height={200}
-                className="mx-auto"
-              />
-            </div>
+            <SectionHeading overline="Testimonios" title="Equipos que ya confían" />
+            <TestimonialCarousel />
           </div>
         </section>
 
-        <section className="bg-muted/30 border-y border-border/50 py-20 sm:py-28">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6">
-            <div className="mx-auto max-w-2xl text-center mb-16">
-              <div className="inline-flex items-center gap-2 rounded-full border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/50 px-4 py-1 text-xs font-semibold text-green-700 dark:text-green-300 mb-4">Testimonios</div>
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Lo que dicen nuestros clientes</h2>
-              <p className="mt-4 text-muted-foreground">Equipos de TI y usuarios individuales que ya confían en Flix Support.</p>
-            </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {testimonials.map((t) => (
-                <div key={t.name} className="rounded-2xl border border-border/50 bg-card p-6 transition-all hover:shadow-lg hover:-translate-y-0.5 duration-300">
-                  <StarRating rating={t.rating} />
-                  <p className="mt-4 text-sm text-muted-foreground leading-relaxed">&ldquo;{t.text}&rdquo;</p>
-                  <div className="mt-6 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-xs font-bold text-white">
-                      {t.avatar}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold">{t.name}</p>
-                      <p className="text-xs text-muted-foreground">{t.role}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
+        {/* ── CTA ── */}
         <section className="relative overflow-hidden py-20 sm:py-28">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-800" />
-          <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-white/5 blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full bg-purple-400/10 blur-3xl" />
+          <div className="absolute inset-0 bg-gray-950 dark:bg-black" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.25),transparent)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_80%_80%,rgba(139,92,246,0.15),transparent)]" />
           <div className="relative mx-auto max-w-3xl px-4 sm:px-6 text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Transforma tu soporte TI hoy</h2>
-            <p className="mt-4 text-lg text-blue-100/80">Empieza gratis. Sin tarjeta de crédito. Sin compromiso. Configuración en 5 minutos.</p>
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/register" className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-base font-semibold text-blue-700 shadow-xl transition-all hover:shadow-2xl hover:scale-105 active:scale-100">
-                <Building2 className="h-4 w-4" />
-                Crear cuenta empresa
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link href="/register" className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-8 py-3.5 text-base font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20">
-                <UserCheck className="h-4 w-4" />
-                Soporte personal
-              </Link>
-            </div>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm text-blue-100/60">
-              <div className="flex items-center gap-2">
-                <Smartphone className="h-4 w-4" />
-                <span>YAPE</span>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+                Tu help desk,<br /><span className="text-blue-400">sin complicaciones</span>
+              </h2>
+              <p className="mt-5 text-lg text-gray-300">Empieza gratis. Sin tarjeta. Sin compromiso.</p>
+              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link href="/register" className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-base font-semibold text-gray-900 shadow-xl transition-all hover:shadow-2xl hover:-translate-y-0.5">
+                  <Building2 className="h-4 w-4" /> Crear cuenta empresa
+                </Link>
+                <Link href="/register" className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-8 py-3.5 text-base font-semibold text-white transition-all hover:bg-white/15">
+                  <UserCheck className="h-4 w-4" /> Soporte personal
+                </Link>
               </div>
-              <div className="flex items-center gap-2">
-                <Smartphone className="h-4 w-4" />
-                <span>PLIN</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold">VISA</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold">Mastercard</span>
-              </div>
-            </div>
+            </motion.div>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-border/50 bg-muted/30">
+      {/* Footer */}
+      <footer className="border-t border-border/40 bg-card">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-lg">
-                  <Wrench className="h-4 w-4" />
-                </div>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground text-background"><Wrench className="h-4 w-4" /></div>
                 <span className="text-base font-bold">Flix<span className="text-blue-600">Support</span></span>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">Plataforma moderna de gestión de soporte técnico con IA predictiva. Para empresas y personas.</p>
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">Plataforma de gestión de soporte técnico. Para empresas y personas.</p>
             </div>
             <div>
               <h4 className="text-sm font-semibold mb-4">Producto</h4>
               <ul className="space-y-2.5 text-sm text-muted-foreground">
                 <li><Link href="#features" className="hover:text-foreground transition-colors">Características</Link></li>
                 <li><Link href="#pricing" className="hover:text-foreground transition-colors">Precios</Link></li>
+                <li><Link href="/kiosk" className="hover:text-foreground transition-colors">Kiosko</Link></li>
                 <li><Link href="/register" className="hover:text-foreground transition-colors">Crear cuenta</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-semibold mb-4">Empresa</h4>
               <ul className="space-y-2.5 text-sm text-muted-foreground">
-                <li><span className="hover:text-foreground transition-colors cursor-default">Sobre nosotros</span></li>
-                <li><span className="hover:text-foreground transition-colors cursor-default">Blog</span></li>
-                <li><span className="hover:text-foreground transition-colors cursor-default">Contacto</span></li>
+                <li><span className="cursor-default">Sobre nosotros</span></li>
+                <li><span className="cursor-default">Contacto</span></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-semibold mb-4">Legal</h4>
               <ul className="space-y-2.5 text-sm text-muted-foreground">
-                <li><span className="hover:text-foreground transition-colors cursor-default">Términos y condiciones</span></li>
-                <li><span className="hover:text-foreground transition-colors cursor-default">Política de privacidad</span></li>
+                <li><span className="cursor-default">Términos y condiciones</span></li>
+                <li><span className="cursor-default">Política de privacidad</span></li>
               </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold mb-4">Métodos de Pago</h4>
-              <Image
-                src="/payment-methods.svg"
-                alt="Métodos de pago aceptados"
-                width={200}
-                height={50}
-                className="opacity-70"
-              />
+              <div className="mt-6">
+                <Image src="/payment-methods.svg" alt="Métodos de pago" width={180} height={28} className="opacity-60" />
+              </div>
             </div>
           </div>
-          <div className="mt-10 pt-8 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} Flix Support. Proyecto de Gestión de Servicios en TI &mdash; UNAP 2026</p>
-            <div className="flex items-center gap-4">
-              <span className="hover:text-foreground transition-colors cursor-default">Términos</span>
-              <span className="hover:text-foreground transition-colors cursor-default">Privacidad</span>
-            </div>
+          <div className="mt-12 pt-8 border-t border-border/40 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+            <p>&copy; {new Date().getFullYear()} Flix Support. Proyecto de Gestión de Servicios en TI — UNAP 2026</p>
           </div>
         </div>
       </footer>

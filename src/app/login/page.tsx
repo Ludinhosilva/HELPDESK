@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -12,10 +12,16 @@ import { Wrench, ArrowLeft, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [redirectTo, setRedirectTo] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setRedirectTo(params.get("redirect"));
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -33,7 +39,9 @@ export default function LoginPage() {
         setError(data.message || "Error al iniciar sesion");
         return;
       }
-      if (data.user.role === "SUPER_ADMIN") {
+      if (redirectTo) {
+        router.push(redirectTo);
+      } else if (data.user.role === "SUPER_ADMIN") {
         router.push("/super-admin");
       } else {
         router.push("/dashboard");

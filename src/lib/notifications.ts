@@ -1,3 +1,5 @@
+import { prisma } from "@/core/prisma";
+
 interface NotificationClient {
   userId: string;
   orgId: string;
@@ -30,6 +32,58 @@ declare global {
     subscribe: typeof subscribe;
     notify: typeof notify;
   } | undefined;
+}
+
+const priorityLabels: Record<string, string> = {
+  URGENT: "Urgente",
+  HIGH: "Alta",
+  MEDIUM: "Media",
+  LOW: "Baja",
+};
+
+interface CreateNotificationParams {
+  userId: string;
+  ticketId: string;
+  ticketNumber: number;
+  type: string;
+  title: string;
+  message: string;
+  priority?: string;
+}
+
+export async function createNotification(params: CreateNotificationParams) {
+  const { userId, ticketId, ticketNumber, type, title, message, priority } = params;
+
+  const notification = await prisma.notification.create({
+    data: {
+      userId,
+      ticketId,
+      ticketNumber,
+      type,
+      title,
+      message,
+      priority: priority || "MEDIUM",
+    },
+  });
+
+  notify(
+    "notification",
+    JSON.stringify({
+      id: notification.id,
+      type,
+      title,
+      message,
+      priority: notification.priority,
+      priorityLabel: priorityLabels[notification.priority] || notification.priority,
+      ticketId,
+      ticketNumber,
+      createdAt: notification.createdAt.toISOString(),
+      read: false,
+    }),
+    userId
+  );
+
+  return notification;
 }
 
 export function notifyTicketAssignment(ticketId: string, ticketNumber: number, title: string, assigneeId: string, orgId: string) {

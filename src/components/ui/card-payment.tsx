@@ -124,134 +124,133 @@ export function CardPayment({
   const displayExpiry = expiry || "MM/AA";
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="text-center">
-        <h2 className="text-xl font-bold">{title}</h2>
-        <p className="text-sm text-muted-foreground mt-1">
+        <h2 className="text-lg font-bold">{title}</h2>
+        <p className="text-xs text-muted-foreground mt-0.5">
           Pago simulado &mdash; Solo con fines demostrativos
         </p>
       </div>
 
-      {/* Tarjeta de crédito visual */}
-      <div
-        ref={cardRef}
-        className={cn(
-          "relative w-full max-w-sm mx-auto h-52 rounded-2xl p-5 text-white shadow-2xl transition-all duration-500",
-          "bg-gradient-to-br",
-          gradient
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Tarjeta de crédito visual */}
+        <div
+          ref={cardRef}
+          className={cn(
+            "relative w-full h-36 rounded-xl p-4 text-white shadow-xl transition-all duration-500",
+            "bg-gradient-to-br",
+            gradient
+          )}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <CreditCard className="h-4 w-4 opacity-70" />
+            <span className="text-sm font-bold tracking-widest italic opacity-90">
+              {brandName}
+            </span>
+          </div>
+
+          <div className="text-lg font-mono tracking-[0.25em] mb-4 drop-shadow-sm">
+            {displayNumber}
+          </div>
+
+          <div className="flex justify-between text-[10px]">
+            <div className="min-w-0 flex-1 mr-2">
+              <p className="opacity-60 mb-0.5">TITULAR</p>
+              <p className="font-mono tracking-wider text-xs truncate max-w-[140px]">
+                {displayName}
+              </p>
+            </div>
+            <div>
+              <p className="opacity-60 mb-0.5">VENCE</p>
+              <p className="font-mono tracking-wider text-xs">{displayExpiry}</p>
+            </div>
+          </div>
+
+          {/* Chip dorado */}
+          <div className="absolute top-4 left-4 h-7 w-10 rounded bg-gradient-to-br from-yellow-300 to-yellow-500 opacity-80 shadow-inner border border-yellow-600/30" />
+        </div>
+
+        {/* Formulario */}
+        {step === "form" && (
+          <form onSubmit={handleSubmit} className="space-y-2.5">
+            <div className="space-y-1">
+              <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Número de tarjeta</label>
+              <div className="relative">
+                <Input
+                  value={cardNumber}
+                  onChange={handleNumberChange}
+                  placeholder="4242 4242 4242 4242"
+                  maxLength={19}
+                  className="font-mono text-base tracking-widest pl-9 h-10"
+                  autoComplete="cc-number"
+                />
+                <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                {brandName && (
+                  <Badge variant="outline" className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] px-1.5 py-0 h-5">
+                    {brandName}
+                  </Badge>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Titular de la tarjeta</label>
+              <Input
+                value={cardName}
+                onChange={handleNameChange}
+                placeholder="LUDWING SILVA"
+                className="font-mono tracking-wider h-10"
+                autoComplete="cc-name"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Vencimiento</label>
+                <Input
+                  value={expiry}
+                  onChange={handleExpiryChange}
+                  placeholder="MM/AA"
+                  maxLength={5}
+                  className="font-mono h-10"
+                  autoComplete="cc-exp"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">CVV</label>
+                <PasswordInput
+                  value={cvv}
+                  onChange={(e) => {
+                    const digits = e.target.value.replace(/\D/g, "").slice(0, 4);
+                    setCvv(digits);
+                  }}
+                  placeholder="•••"
+                  className="font-mono h-10"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground pt-0.5">
+              <Lock className="h-3 w-3 shrink-0" />
+              <span>Pago 100% seguro — Solo con fines demostrativos</span>
+            </div>
+
+            <div className="flex gap-3 pt-1">
+              <Button type="button" variant="outline" className="flex-1 h-10" onClick={onCancel}>
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                className="flex-1 h-10 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white shadow-lg shadow-blue-500/25"
+                disabled={cardNumber.replace(/\s/g, "").length < 16 || !cardName || expiry.length < 5 || cvv.length < 3}
+              >
+                <Lock className="mr-1.5 h-3.5 w-3.5" />
+                Pagar S/{(amount / 100).toFixed(2)}
+              </Button>
+            </div>
+          </form>
         )}
-      >
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-2">
-            <div className="h-9 w-14 rounded-md bg-yellow-400/90 shadow-inner" />
-            <CreditCard className="h-5 w-5 opacity-70" />
-          </div>
-          <span className="text-lg font-bold tracking-widest italic opacity-90">
-            {brandName}
-          </span>
-        </div>
-
-        <div className="text-xl sm:text-2xl font-mono tracking-[0.3em] mb-6 drop-shadow-sm">
-          {displayNumber}
-        </div>
-
-        <div className="flex justify-between text-xs">
-          <div>
-            <p className="opacity-60 mb-0.5">TITULAR</p>
-            <p className="font-mono tracking-wider text-sm truncate max-w-[180px]">
-              {displayName}
-            </p>
-          </div>
-          <div>
-            <p className="opacity-60 mb-0.5">VENCE</p>
-            <p className="font-mono tracking-wider text-sm">{displayExpiry}</p>
-          </div>
-        </div>
-
-        {/* Chip dorado */}
-        <div className="absolute top-5 left-5 h-8 w-11 rounded-md bg-gradient-to-br from-yellow-300 to-yellow-500 opacity-80 shadow-inner border border-yellow-600/30" />
       </div>
-
-      {/* Formulario */}
-      {step === "form" && (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Número de tarjeta</label>
-            <div className="relative">
-              <Input
-                value={cardNumber}
-                onChange={handleNumberChange}
-                placeholder="4242 4242 4242 4242"
-                maxLength={19}
-                className="font-mono text-lg tracking-widest pl-10"
-                autoComplete="cc-number"
-              />
-              <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              {brandName && (
-                <Badge variant="outline" className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] px-1.5 py-0">
-                  {brandName}
-                </Badge>
-              )}
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Titular de la tarjeta</label>
-            <Input
-              value={cardName}
-              onChange={handleNameChange}
-              placeholder="LUDWING SILVA"
-              className="font-mono tracking-wider"
-              autoComplete="cc-name"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Vencimiento</label>
-              <Input
-                value={expiry}
-                onChange={handleExpiryChange}
-                placeholder="MM/AA"
-                maxLength={5}
-                className="font-mono"
-                autoComplete="cc-exp"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">CVV</label>
-              <PasswordInput
-                value={cvv}
-                onChange={(e) => {
-                  const digits = e.target.value.replace(/\D/g, "").slice(0, 4);
-                  setCvv(digits);
-                }}
-                placeholder="•••"
-                className="font-mono"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs text-muted-foreground pt-1">
-            <Lock className="h-3 w-3" />
-            <span>Pago simulado 100% seguro &mdash; Solo con fines demostrativos</span>
-          </div>
-
-          <div className="flex gap-3 pt-2">
-            <Button type="button" variant="outline" className="flex-1" onClick={onCancel}>
-              Cancelar
-            </Button>
-            <Button
-              type="submit"
-              className="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white shadow-lg shadow-blue-500/25"
-              disabled={cardNumber.replace(/\s/g, "").length < 16 || !cardName || expiry.length < 5 || cvv.length < 3}
-            >
-              <Lock className="mr-2 h-4 w-4" />
-              Pagar S/{(amount / 100).toFixed(2)}
-            </Button>
-          </div>
-        </form>
-      )}
 
       {/* Procesando */}
       {step === "processing" && (

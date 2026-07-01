@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { WifiOff, Printer, Gauge, Lock, Monitor, HelpCircle, CheckCircle2, Loader2, Zap, ArrowLeft } from "lucide-react";
+import { WifiOff, Printer, Gauge, Lock, Monitor, HelpCircle, CheckCircle2, Loader2, Zap, ArrowLeft, LogIn } from "lucide-react";
 import Link from "next/link";
 
-type Step = "idle" | "scanning" | "done" | "error";
+type Step = "idle" | "scanning" | "done" | "error" | "login_required";
 
 const issues = [
   { label: "No tengo internet", icon: WifiOff },
@@ -42,8 +42,23 @@ export default function KioskPage() {
 
   // Flujo principal
   const handleIssueSelect = async (label: string) => {
-    setStep("scanning");
+    // Verificar autenticacion antes de proceder
     setSelectedIssue(label);
+    setScanProgress(0);
+    setScanMessage("Verificando sesión...");
+
+    try {
+      const authCheck = await fetch("/api/profile", { method: "HEAD" });
+      if (!authCheck.ok) {
+        setStep("login_required");
+        return;
+      }
+    } catch {
+      setStep("login_required");
+      return;
+    }
+
+    setStep("scanning");
     setScanProgress(0);
     setScanMessage("Conectando con FlixSupport...");
 
@@ -159,11 +174,11 @@ export default function KioskPage() {
         {/* Footer */}
         <div className="mt-12">
           <Link
-            href="/dashboard"
+            href="/"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            Volver al panel
+            Volver al inicio
           </Link>
         </div>
       </div>
@@ -246,6 +261,45 @@ export default function KioskPage() {
             100% { transform: scale(1); opacity: 1; }
           }
         `}</style>
+      </div>
+    );
+  }
+
+  // ============================
+  // RENDER: Estado LOGIN_REQUIRED
+  // ============================
+  if (step === "login_required") {
+    return (
+      <div className="min-h-dvh bg-gradient-to-br from-blue-50 via-white to-sky-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex flex-col items-center justify-center p-6">
+        <div className="text-center max-w-md">
+          <div className="mb-8">
+            <div className="w-24 h-24 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto">
+              <LogIn className="h-12 w-12 text-amber-600 dark:text-amber-400" />
+            </div>
+          </div>
+
+          <h2 className="text-2xl font-bold text-foreground mb-3">Inicia sesión para continuar</h2>
+          <p className="text-muted-foreground mb-2">Necesitas estar autenticado para crear un ticket desde el kiosko.</p>
+          <p className="text-sm text-muted-foreground/70 mb-8">
+            Es rápido y te permitirá dar seguimiento a tu reporte.
+          </p>
+
+          <div className="flex gap-3 justify-center">
+            <Link
+              href="/login?redirect=/kiosk"
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-medium px-8 py-3 rounded-xl transition-colors shadow-lg shadow-blue-500/25"
+            >
+              <LogIn className="h-4 w-4" />
+              Iniciar sesión
+            </Link>
+            <button
+              onClick={reset}
+              className="bg-card hover:bg-accent border border-border text-foreground font-medium px-6 py-3 rounded-xl transition-colors"
+            >
+              Volver
+            </button>
+          </div>
+        </div>
       </div>
     );
   }

@@ -36,6 +36,8 @@ export async function middleware(request: NextRequest) {
     pathname === "/" ||
     pathname === "/login" ||
     pathname === "/register" ||
+    pathname === "/register/super-admin" ||
+    pathname.startsWith("/kiosk") ||
     pathname.startsWith("/api/auth/");
 
   if (isPublic) {
@@ -103,7 +105,6 @@ export const config = {
     "/settings/:path*",
     "/profile/:path*",
     "/notifications/:path*",
-    "/kiosk",
     "/super-admin/:path*",
     "/api/:path*",
   ],

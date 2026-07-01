@@ -1,0 +1,31 @@
+{
+  "name": "Flix Support",
+  "short_name": "FlixSupport",
+  "description": "Helpdesk SaaS — Soporte técnico con IA, Kanban, y notificaciones en tiempo real",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"],
+  "lang": "es-PE",
+  "dir": "ltr"
+}

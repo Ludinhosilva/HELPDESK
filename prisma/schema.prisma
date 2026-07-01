@@ -41,6 +41,8 @@ model User {
   assignedTickets Ticket[] @relation("TicketAssignee")
   comments       Comment[]
   evaluations    Evaluation[]
+  notifications  Notification[]
+  pushTokens     PushToken[]
 
   @@unique([email, organizationId])
   @@index([organizationId, role])
@@ -86,6 +88,7 @@ model Ticket {
   comments            Comment[]
   history             TicketHistory[]
   evaluation          Evaluation?
+  notifications       Notification[]
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
 
@@ -200,4 +203,35 @@ model EmailLog {
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   ticketId       String?
   sentAt         DateTime     @default(now())
+}
+
+model Notification {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticketId     String?
+  ticket       Ticket?  @relation(fields: [ticketId], references: [id], onDelete: SetNull)
+  type         String
+  title        String
+  message      String
+  priority     String   @default("MEDIUM")
+  read         Boolean  @default(false)
+  ticketNumber Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId, read, createdAt])
+  @@index([userId, createdAt])
+}
+
+model PushToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String
+  platform  String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, token])
+  @@index([userId])
 }

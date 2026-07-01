@@ -121,7 +121,7 @@ export function groqToClassification(groq: GroqTriageOutput, text: string): Clas
     category: groq.category,
     categoryConfidence: groq.categoryConfidence,
     priority: groq.priority,
-    priorityReason: `Determinado por IA (Groq/Llama 3): prioridad ${groq.priority} basada en análisis de urgencia y criticidad del problema.`,
+    priorityReason: `Prioridad ${groq.priority} determinada por IA basándose en la urgencia y criticidad del problema.`,
     urgency: groq.urgency as "low" | "medium" | "high" | "critical",
     complexity: groq.complexity as "SIMPLE" | "MEDIUM" | "COMPLEX",
     requiresTicket: groq.requiresTicket,
@@ -130,6 +130,6 @@ export function groqToClassification(groq: GroqTriageOutput, text: string): Clas
     suggestedSteps: groq.steps,
     followUpQuestions: [],
     knowledgeMatch,
-    analysis: `🤖 **Análisis por IA (Llama 3)**:\n\n**Diagnóstico**: ${groq.diagnosis}\n\n**Categoría**: ${groq.category.toUpperCase()} (${Math.round(groq.categoryConfidence * 100)}% confianza)\n**Urgencia**: ${groq.urgency.toUpperCase()}\n**Prioridad**: ${groq.priority}\n**Tiempo estimado**: ${groq.estimatedTime}\n**Requiere ticket**: ${groq.requiresTicket ? 'Sí' : 'No (posible auto-resolución)'}`,
+    analysis: `Diagnóstico: ${groq.diagnosis}\n\nCategoría: ${groq.category.toUpperCase()} (${Math.round(groq.categoryConfidence * 100)}% confianza)\nUrgencia: ${groq.urgency.toUpperCase()}\nPrioridad: ${groq.priority}\nTiempo estimado: ${groq.estimatedTime}\nRequiere ticket: ${groq.requiresTicket ? 'Sí' : 'No (posible auto-resolución)'}`,
   };
 }

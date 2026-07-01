@@ -28,6 +28,9 @@ import { cn } from "@/lib/utils";
 import { getRoleTheme } from "@/lib/theme";
 import { RoleBadge } from "@/components/ui/role-badge";
 import { DarkModeToggle } from "@/components/ui/dark-mode-toggle";
+import { NotificationsBell } from "@/components/notifications";
+import { MobileNotificationBanner } from "@/components/mobile-notification-banner";
+import { usePushNotifications } from "@/hooks/use-push-notifications";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -92,6 +95,7 @@ export default function SuperAdminShell({
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  usePushNotifications();
   const theme = getRoleTheme(user.role);
 
   function handleLogout() {
@@ -179,6 +183,7 @@ export default function SuperAdminShell({
 
           <div className="flex items-center gap-1">
             <DarkModeToggle />
+            <NotificationsBell />
           </div>
 
           <DropdownMenu>
@@ -217,6 +222,8 @@ export default function SuperAdminShell({
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
+
+        <MobileNotificationBanner />
 
         <main className="flex-1 overflow-y-auto p-4 lg:p-6 page-transition">{children}</main>
       </div>

@@ -43,6 +43,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DarkModeToggle } from "@/components/ui/dark-mode-toggle";
 import { NotificationsBell } from "@/components/notifications";
+import { MobileNotificationBanner } from "@/components/mobile-notification-banner";
+import { usePushNotifications } from "@/hooks/use-push-notifications";
 
 interface UserPayload {
   id: string;
@@ -89,6 +91,7 @@ export default function DashboardShell({
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  usePushNotifications();
 
   const navItems = allNavItems.filter((item) => item.roles.includes(user.role));
   const theme = getRoleTheme(user.role);
@@ -209,6 +212,8 @@ export default function DashboardShell({
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
+
+        <MobileNotificationBanner />
 
         <main className="flex-1 overflow-y-auto p-4 lg:p-6 page-transition">{children}</main>
       </div>

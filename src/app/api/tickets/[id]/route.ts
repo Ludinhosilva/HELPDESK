@@ -5,7 +5,7 @@ import {
   VALID_STATUS_TRANSITIONS,
 } from "@/modules/tickets/types/ticket.types";
 import { getAuthFromHeaders } from "@/lib/auth-helpers";
-import { notifyTicketAssignment, notifyTicketUpdate } from "@/lib/notifications";
+import { notifyTicketAssignment, notifyTicketUpdate, createNotification } from "@/lib/notifications";
 
 export async function GET(
   request: NextRequest,
@@ -186,6 +186,8 @@ export async function PATCH(
 
     const isStatusChange = data.status && data.status !== existing.status;
     const isAssignmentChange = data.assignedToId !== undefined && data.assignedToId !== existing.assignedToId;
+    const isPriorityChange = data.priority && data.priority !== existing.priority;
+    const notifyPriority = data.priority || existing.priority;
 
     const ticket = await prisma.ticket.update({
       where: { id },
@@ -210,12 +212,44 @@ export async function PATCH(
 
     if (isStatusChange) {
       notifyTicketUpdate(id, existing.ticketNumber, existing.title, "STATUS_CHANGE", existing.organizationId, existing.createdById);
+      await createNotification({
+        userId: existing.createdById,
+        ticketId: id,
+        ticketNumber: existing.ticketNumber,
+        type: "STATUS_CHANGE",
+        title: "Cambio de estado",
+        message: `TK-${existing.ticketNumber} pasó a ${data.status}`,
+        priority: notifyPriority,
+      });
     }
     if (isAssignmentChange) {
       if (data.assignedToId) {
         notifyTicketAssignment(id, existing.ticketNumber, existing.title, data.assignedToId, existing.organizationId);
+        await createNotification({
+          userId: data.assignedToId,
+          ticketId: id,
+          ticketNumber: existing.ticketNumber,
+          type: "TICKET_ASSIGNED",
+          title: "Ticket asignado",
+          message: `TK-${existing.ticketNumber} - "${existing.title}" asignado a ti`,
+          priority: notifyPriority,
+        });
       }
       notifyTicketUpdate(id, existing.ticketNumber, existing.title, "ASSIGNMENT", existing.organizationId, existing.createdById);
+    }
+    if (isPriorityChange) {
+      notifyTicketUpdate(id, existing.ticketNumber, existing.title, "PRIORITY_CHANGE", existing.organizationId, existing.assignedToId || existing.createdById);
+      if (existing.assignedToId) {
+        await createNotification({
+          userId: existing.assignedToId,
+          ticketId: id,
+          ticketNumber: existing.ticketNumber,
+          type: "PRIORITY_CHANGE",
+          title: "Cambio de prioridad",
+          message: `TK-${existing.ticketNumber} prioridad cambiada a ${notifyPriority}`,
+          priority: notifyPriority,
+        });
+      }
     }
 
     return NextResponse.json(ticket);

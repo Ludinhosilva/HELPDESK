@@ -109,16 +109,8 @@ export function AITriage({ onComplete }: AITriageProps) {
 
       const triageResult = data as TriageResult;
 
-      // Badge indicando el motor de IA
-      const isGroq = data.aiProvider === "groq";
-      const providerBadge = isGroq
-        ? "🤖 **IA: Groq / Llama 3.1** — Análisis inteligente en tiempo real"
-        : "📋 **IA: Motor de reglas** — Análisis basado en patrones";
-
       // Mostrar análisis detallado
       const analysisLines: string[] = [];
-      analysisLines.push(providerBadge);
-      analysisLines.push("");
       analysisLines.push(`🔍 **Análisis**: He detectado un problema de tipo **${triageResult.category.toUpperCase()}** (${Math.round((triageResult.categoryConfidence || 0.7) * 100)}% de confianza).`);
 
       if (data.classification?.diagnosis) {
@@ -355,16 +347,38 @@ export function AITriage({ onComplete }: AITriageProps) {
                     : "bg-muted border border-border/50 text-foreground rounded-bl-md"
                 )}
               >
-                {m.text.split("\n").map((line, j) => (
-                  <span key={j}>
-                    {line.startsWith("**") && line.endsWith("**") ? (
-                      <strong>{line.replace(/\*\*/g, "")}</strong>
-                    ) : (
-                      line
-                    )}
-                    {j < m.text.split("\n").length - 1 && <br />}
-                  </span>
-                ))}
+                {m.text.split("\n").map((line, j) => {
+                  const trimmed = line.trim();
+                  // Skip markdown horizontal rules
+                  if (trimmed === "***" || trimmed === "---" || trimmed === "___") return null;
+                  // Clean triple asterisks and other noise
+                  const cleaned = trimmed.replace(/\*\*\*/g, "").replace(/^#+\s*/, "");
+                  if (!cleaned) return null;
+                  // **bold**
+                  if (cleaned.startsWith("**") && cleaned.endsWith("**")) {
+                    return (
+                      <span key={j}>
+                        <strong>{cleaned.replace(/\*\*/g, "")}</strong>
+                        <br />
+                      </span>
+                    );
+                  }
+                  // *italic*
+                  if (cleaned.startsWith("*") && cleaned.endsWith("*") && !cleaned.startsWith("**")) {
+                    return (
+                      <span key={j}>
+                        <em>{cleaned.replace(/^\*|\*$/g, "")}</em>
+                        <br />
+                      </span>
+                    );
+                  }
+                  return (
+                    <span key={j}>
+                      {cleaned.replace(/\*\*/g, "").replace(/\*/g, "")}
+                      <br />
+                    </span>
+                  );
+                })}
 
                 {/* Opciones clickeables para diagnóstico interactivo */}
                 {m.options && m.options.length > 0 && (

@@ -78,7 +78,7 @@ function buildTriageResultFromGroq(
 
   let solution = "";
   if (groq.steps.length > 0) {
-    solution = `**Diagnóstico IA**: ${groq.diagnosis}\n\n**Pasos sugeridos**:\n`;
+    solution = `Diagnóstico: ${groq.diagnosis}\n\nPasos sugeridos:\n`;
     groq.steps.forEach((step, i) => {
       solution += `${i + 1}. ${step}\n`;
     });
@@ -107,7 +107,7 @@ function buildTriageResultFromGroq(
     solution,
     requiresPayment,
     estimatedCost,
-    reason: `Problema clasificado por IA (Groq/Llama 3) como **${groq.category.toUpperCase()}** con ${Math.round(groq.categoryConfidence * 100)}% de confianza. Urgencia: ${groq.urgency.toUpperCase()}.`,
+    reason: `Problema clasificado por IA como **${groq.category.toUpperCase()}** con ${Math.round(groq.categoryConfidence * 100)}% de confianza. Urgencia: ${groq.urgency.toUpperCase()}.`,
     suggestedAction,
     sentiment: {
       level: sentiment.level,
