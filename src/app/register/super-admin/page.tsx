@@ -44,7 +44,7 @@ export default function SuperAdminRegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-dvh flex-col items-center justify-center bg-gray-50 px-4 py-8">
       <div className="w-full max-w-md mb-4">
         <Link href="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4" /> Volver al inicio

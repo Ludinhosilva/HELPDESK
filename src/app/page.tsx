@@ -55,7 +55,7 @@ function AnimatedStat({ end, suffix, value, label }: { end?: number; suffix?: st
   const { value: count, ref } = useCountUp(end || 0, 2000);
   return (
     <div ref={ref} className="text-center">
-      <div className="text-3xl sm:text-4xl font-bold tabular-nums text-foreground">
+      <div className="text-3xl sm:text-4xl font-bold tabular-nums bg-gradient-to-br from-blue-400 to-purple-500 bg-clip-text text-transparent">
         {value || `${count}${suffix || ""}`}
       </div>
       <div className="text-xs sm:text-sm text-muted-foreground mt-1">{label}</div>
@@ -109,12 +109,12 @@ function TestimonialCarousel() {
             <div className="flex gap-1 mb-4">
               {[1,2,3,4,5].map((i) => <Sparkles key={i} className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />)}
             </div>
-            <p className="text-sm text-foreground/80 leading-relaxed italic">&ldquo;{t.text}&rdquo;</p>
+            <p className="text-sm text-white/80 leading-relaxed italic">&ldquo;{t.text}&rdquo;</p>
             <div className="mt-5 flex items-center gap-3 border-t border-border/40 pt-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 text-sm font-semibold text-blue-600 dark:text-blue-400">{t.name.charAt(0)}</div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-400/30 to-purple-400/30 text-sm font-semibold text-blue-400">{t.name.charAt(0)}</div>
               <div>
-                <p className="text-sm font-semibold">{t.name}</p>
-                <p className="text-xs text-muted-foreground">{t.role}</p>
+                <p className="text-sm font-semibold text-white/90">{t.name}</p>
+                <p className="text-xs text-gray-400">{t.role}</p>
               </div>
             </div>
           </div>
@@ -139,9 +139,9 @@ function SectionHeading({ overline, title, subtitle }: { overline: string; title
       transition={{ duration: 0.5 }}
       className="mb-8 sm:mb-12"
     >
-      <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">{overline}</p>
-      <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-5xl">{title}</h2>
-      {subtitle && <p className="mt-4 max-w-xl text-muted-foreground text-lg">{subtitle}</p>}
+      <p className="text-sm font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent uppercase tracking-widest">{overline}</p>
+      <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-5xl">{title}</h2>
+      {subtitle && <p className="mt-4 max-w-xl text-gray-400 text-lg">{subtitle}</p>}
     </motion.div>
   );
 }
@@ -152,7 +152,7 @@ export default function HomePage() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-dvh flex-col bg-background">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-transparent bg-background/70 backdrop-blur-xl dark:bg-black/50">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
@@ -210,11 +210,11 @@ export default function HomePage() {
             <div className="absolute -bottom-60 -left-40 w-[700px] h-[700px] rounded-full bg-gradient-to-tr from-amber-200/30 via-pink-200/20 to-blue-200/30 blur-3xl" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-gradient-to-r from-blue-300/20 to-purple-300/20 blur-2xl" />
           </div>
-          {/* Dark mode: animated mesh */}
+          {/* Dark mode: vibrant glow */}
             <div className="absolute inset-0 hidden dark:block">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.15),transparent)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_80%_80%,rgba(139,92,246,0.1),transparent)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_20%_50%,rgba(6,182,212,0.08),transparent)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.2),transparent)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_80%_80%,rgba(168,85,247,0.15),transparent)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_20%_50%,rgba(6,182,212,0.12),transparent)]" />
           </div>
 
           <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
@@ -224,32 +224,32 @@ export default function HomePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: "easeOut" }}
               >
-                <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 px-4 py-1.5 text-sm font-medium text-blue-700 dark:text-blue-300 mb-6">
+                <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-500/10 dark:to-purple-500/10 px-4 py-1.5 text-sm font-semibold text-blue-500 dark:text-blue-300 mb-6">
                   <Sparkles className="h-3.5 w-3.5" />
                   Nueva plataforma
                 </div>
                 <h1 className="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
-                  <span className="font-light text-muted-foreground">Soporte TI</span>
+                  <span className="font-light text-white/90">Soporte TI</span>
                   <br />
-                  <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-purple-600 dark:from-blue-400 dark:via-cyan-400 dark:to-purple-400 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-purple-400 bg-clip-text text-transparent">
                     que funciona
                   </span>
                 </h1>
-                <p className="mt-4 sm:mt-6 max-w-lg text-base sm:text-lg text-muted-foreground leading-relaxed">
+                <p className="mt-4 sm:mt-6 max-w-lg text-base sm:text-lg text-gray-300 leading-relaxed">
                   La plataforma que tu equipo de help desk merece. Tickets, Kanban, analytics y pagos con YAPE/PLIN. Para empresas y personas.
                 </p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                  <Link href="/register" className="group inline-flex items-center gap-2 rounded-xl bg-blue-600 px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5">
+                  <Link href="/register" className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-blue-500/30 transition-all hover:from-blue-400 hover:to-blue-500 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5">
                     <Building2 className="h-4 w-4" /> Para Empresas <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                   </Link>
-                  <Link href="/register" className="group inline-flex items-center gap-2 rounded-xl border-2 border-border px-7 py-3.5 text-base font-semibold text-foreground transition-all hover:border-foreground/30 hover:-translate-y-0.5 dark:border-white/20 dark:hover:border-white/40">
+                  <Link href="/register" className="group inline-flex items-center gap-2 rounded-xl border-2 border-white/20 px-7 py-3.5 text-base font-semibold text-white/80 transition-all hover:border-white/40 hover:text-white hover:-translate-y-0.5">
                     <UserCheck className="h-4 w-4" /> Soporte Personal <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                   </Link>
                 </div>
-                <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> Sin tarjeta</span>
-                  <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> 50 tickets gratis</span>
-                  <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> YAPE / PLIN</span>
+                <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-gray-400">
+                  <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-400" /> Sin tarjeta</span>
+                  <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-400" /> 50 tickets gratis</span>
+                  <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-400" /> YAPE / PLIN</span>
                 </div>
               </motion.div>
 
@@ -307,13 +307,13 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.05 }}
-                  className={`group rounded-2xl border border-border/50 bg-card p-5 sm:p-6 transition-all duration-200 hover:border-border hover:shadow-md ${f.span === 2 ? "sm:col-span-2" : ""}`}
+                  className={`group rounded-2xl border border-border/50 bg-card/60 p-5 sm:p-6 transition-all duration-200 hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/5 ${f.span === 2 ? "sm:col-span-2" : ""}`}
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-muted-foreground group-hover:text-blue-600 group-hover:bg-blue-50 dark:group-hover:bg-blue-950/30 transition-colors">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500/10 to-purple-500/10 text-blue-500 dark:text-blue-400 group-hover:from-blue-500/20 group-hover:to-purple-500/20 group-hover:scale-110 transition-all duration-200">
                     <f.icon className="h-5 w-5" />
                   </div>
-                  <h3 className="mt-4 text-base font-semibold">{f.title}</h3>
-                  <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+                  <h3 className="mt-4 text-base font-semibold text-foreground/90">{f.title}</h3>
+                  <p className="mt-1.5 text-sm text-gray-400 leading-relaxed">{f.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -341,9 +341,9 @@ export default function HomePage() {
                     transition={{ duration: 0.5, delay: i * 0.1 }}
                     whileHover={{ scale: 1.02, rotateY: 2 }}
                     style={{ perspective: "1000px" }}
-                    className={`relative flex flex-col rounded-2xl border bg-card p-7 transition-all duration-300 hover:shadow-2xl ${
+                    className={`relative flex flex-col rounded-2xl border bg-card/80 p-7 transition-all duration-300 hover:shadow-2xl ${
                       plan.popular
-                        ? "border-blue-600 shadow-xl shadow-blue-500/10 ring-1 ring-blue-600/20 dark:shadow-blue-500/20"
+                        ? "border-blue-400 shadow-xl shadow-blue-500/20 ring-1 ring-blue-400/30 dark:shadow-blue-500/30 bg-gradient-to-b from-blue-500/5 to-transparent"
                         : "border-border/60 hover:border-border"
                     }`}
                   >
@@ -394,14 +394,14 @@ export default function HomePage() {
                 transition={{ duration: 0.5 }}
                 className="max-w-md"
               >
-                <div className="relative flex flex-col rounded-2xl border border-border/60 bg-card p-7 shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="relative flex flex-col rounded-2xl border border-green-400/30 bg-card/80 bg-gradient-to-b from-green-500/5 to-transparent p-7 shadow-sm hover:shadow-xl hover:shadow-green-500/10 transition-all duration-300">
                   <div className="mb-5">
-                    <h4 className="text-lg font-semibold">{personalPlan.name}</h4>
-                    <p className="text-sm text-muted-foreground mt-0.5">{personalPlan.desc}</p>
+                    <h4 className="text-lg font-semibold text-foreground/90">{personalPlan.name}</h4>
+                    <p className="text-sm text-gray-400 mt-0.5">{personalPlan.desc}</p>
                   </div>
                   <div className="mb-6">
-                    <span className="text-4xl font-bold">{personalPlan.price} PEN</span>
-                    <span className="text-sm text-muted-foreground ml-1">diagnóstico</span>
+                    <span className="text-4xl font-bold bg-gradient-to-br from-green-400 to-emerald-500 bg-clip-text text-transparent">{personalPlan.price} PEN</span>
+                    <span className="text-sm text-gray-400 ml-1">diagnóstico</span>
                   </div>
                   <ul className="mb-8 space-y-2.5 flex-1">
                     {personalPlan.features.map((f) => (
@@ -411,7 +411,7 @@ export default function HomePage() {
                       </li>
                     ))}
                   </ul>
-                  <Link href={personalPlan.href} className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 py-2.5 text-sm font-semibold text-white hover:bg-green-700 transition-all shadow-sm">
+                  <Link href={personalPlan.href} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 py-2.5 text-sm font-semibold text-white hover:from-green-400 hover:to-emerald-500 transition-all shadow-md shadow-green-500/20">
                     {personalPlan.cta} <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
@@ -431,8 +431,9 @@ export default function HomePage() {
         {/* ── CTA ── */}
         <section className="relative overflow-hidden py-20 sm:py-28">
           <div className="absolute inset-0 bg-gray-950 dark:bg-black" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.25),transparent)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_80%_80%,rgba(139,92,246,0.15),transparent)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.35),transparent)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_80%_80%,rgba(168,85,247,0.25),transparent)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_20%_50%,rgba(6,182,212,0.15),transparent)]" />
           <div className="relative mx-auto max-w-3xl px-4 sm:px-6 text-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -441,14 +442,14 @@ export default function HomePage() {
               transition={{ duration: 0.6 }}
             >
               <h2 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
-                Tu help desk,<br /><span className="text-blue-400">sin complicaciones</span>
+                Tu help desk,<br /><span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-purple-400 bg-clip-text text-transparent">sin complicaciones</span>
               </h2>
               <p className="mt-5 text-lg text-gray-300">Empieza gratis. Sin tarjeta. Sin compromiso.</p>
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link href="/register" className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-base font-semibold text-gray-900 shadow-xl transition-all hover:shadow-2xl hover:-translate-y-0.5">
+                <Link href="/register" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-blue-500/30 transition-all hover:from-blue-400 hover:to-blue-500 hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-0.5">
                   <Building2 className="h-4 w-4" /> Crear cuenta empresa
                 </Link>
-                <Link href="/register" className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-8 py-3.5 text-base font-semibold text-white transition-all hover:bg-white/15">
+                <Link href="/register" className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-8 py-3.5 text-base font-semibold text-white transition-all hover:bg-white/15 hover:border-white/30">
                   <UserCheck className="h-4 w-4" /> Soporte personal
                 </Link>
               </div>
