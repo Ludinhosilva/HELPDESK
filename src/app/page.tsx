@@ -22,11 +22,11 @@ const statsData = [
 ];
 
 const featuresData = [
-  { icon: ClipboardList, title: "Gestión de Tickets", desc: "Crea, asigna y haz seguimiento con estados visuales. Comentarios, historial y evaluación post-resolución integrados.", img: "/screenshots/dashboard.svg", reverse: false },
-  { icon: BarChart3, title: "Analytics en Tiempo Real", desc: "Dashboard con métricas en vivo, gráficos por categoría, rendimiento del equipo y tendencias. Todo auto-actualizado.", img: "/screenshots/dashboard.svg", reverse: true },
-  { icon: Columns3, title: "Tablero Kanban", desc: "Visualiza tus tickets en columnas de estado. Arrastra y suelta para mover tickets entre etapas. Ideal para equipos ágiles.", img: "/screenshots/kanban.svg", reverse: false },
-  { icon: Brain, title: "Clasificación Automática", desc: "El sistema analiza cada ticket y sugiere categoría, prioridad y solución. Tú tomas la decisión final.", img: "/screenshots/dashboard.svg", reverse: true },
-  { icon: Zap, title: "Ticket Exprés", desc: "Respuesta garantizada en menos de 2 horas. Pago integrado con YAPE, PLIN o tarjeta. Ideal para urgencias.", img: "/screenshots/ticket.svg", reverse: false },
+  { icon: ClipboardList, title: "Gestión de Tickets", desc: "Crea, asigna y haz seguimiento con estados visuales.", span: 2 },
+  { icon: BarChart3, title: "Analytics en Tiempo Real", desc: "Dashboard con métricas en vivo y tendencias.", span: 1 },
+  { icon: Columns3, title: "Tablero Kanban", desc: "Arrastra y suelta tickets entre etapas.", span: 1 },
+  { icon: Brain, title: "Clasificación Automática", desc: "El sistema sugiere categoría, prioridad y solución.", span: 1 },
+  { icon: Zap, title: "Ticket Exprés", desc: "Respuesta garantizada en menos de 2 horas.", span: 2 },
 ];
 
 const companyPlans = [
@@ -299,36 +299,21 @@ export default function HomePage() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <SectionHeading overline="Lo que incluye" title="Todo el poder de un help desk moderno" subtitle="Herramientas reales que tu equipo va a usar. Sin relleno." />
 
-            <div className="space-y-16 sm:space-y-20">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {featuresData.map((f, i) => (
                 <motion.div
                   key={f.title}
-                  initial={{ opacity: 0, y: 40 }}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.6, delay: i * 0.1 }}
-                  className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center"
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                  className={`group rounded-2xl border border-border/50 bg-card p-5 sm:p-6 transition-all duration-200 hover:border-border hover:shadow-md ${f.span === 2 ? "sm:col-span-2" : ""}`}
                 >
-                  <div className={f.reverse ? "lg:order-2" : ""}>
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 mb-5">
-                      <f.icon className="h-6 w-6" />
-                    </div>
-                    <h3 className="text-2xl sm:text-3xl font-bold">{f.title}</h3>
-                    <p className="mt-2 sm:mt-3 text-muted-foreground text-lg leading-relaxed max-w-md">{f.desc}</p>
-                    <ul className="mt-4 space-y-2">
-                      {["Configuración en minutos", "Soporte multiplataforma", "Actualizaciones automáticas"].map((feat) => (
-                        <li key={feat} className="flex items-center gap-2.5 text-sm text-muted-foreground">
-                          <Check className="h-4 w-4 text-green-500 shrink-0" /> {feat}
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-muted-foreground group-hover:text-blue-600 group-hover:bg-blue-50 dark:group-hover:bg-blue-950/30 transition-colors">
+                    <f.icon className="h-5 w-5" />
                   </div>
-                  <div className={`relative ${f.reverse ? "lg:order-1" : ""}`}>
-                    <div className="rounded-2xl border border-border/40 bg-card shadow-xl shadow-blue-500/5 dark:shadow-blue-500/10 overflow-hidden">
-                      <Image src={f.img} alt={f.title} width={600} height={380} className="w-full" />
-                    </div>
-                    <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-blue-500/5 to-purple-500/5 blur-xl -z-10 dark:from-blue-500/10 dark:to-purple-500/10" />
-                  </div>
+                  <h3 className="mt-4 text-base font-semibold">{f.title}</h3>
+                  <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
                 </motion.div>
               ))}
             </div>

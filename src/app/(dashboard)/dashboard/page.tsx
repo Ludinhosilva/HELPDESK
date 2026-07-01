@@ -42,18 +42,18 @@ const priorityLabels: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
-  OPEN: "bg-blue-100 text-blue-700 border-blue-200",
-  IN_PROGRESS: "bg-yellow-100 text-yellow-700 border-yellow-200",
-  ON_HOLD: "bg-orange-100 text-orange-700 border-orange-200",
-  RESOLVED: "bg-green-100 text-green-700 border-green-200",
-  CLOSED: "bg-gray-100 text-gray-700 border-gray-200",
+  OPEN: "bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800",
+  IN_PROGRESS: "bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800",
+  ON_HOLD: "bg-orange-100 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800",
+  RESOLVED: "bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800",
+  CLOSED: "bg-gray-100 dark:bg-gray-800/30 text-gray-700 dark:text-gray-400 border-gray-200 dark:border-gray-700",
 };
 
 const priorityColors: Record<string, string> = {
-  LOW: "bg-gray-100 text-gray-700 border-gray-200",
-  MEDIUM: "bg-blue-100 text-blue-700 border-blue-200",
-  HIGH: "bg-orange-100 text-orange-700 border-orange-200",
-  URGENT: "bg-red-100 text-red-700 border-red-200",
+  LOW: "bg-gray-100 dark:bg-gray-800/30 text-gray-700 dark:text-gray-400 border-gray-200 dark:border-gray-700",
+  MEDIUM: "bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800",
+  HIGH: "bg-orange-100 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800",
+  URGENT: "bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800",
 };
 
 function formatDate(d: Date) {
